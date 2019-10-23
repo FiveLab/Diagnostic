@@ -3,6 +3,8 @@ Diagnostic
 
 The library for diagnostic application.
 
+[![Build Status](https://travis-ci.org/FiveLab/Diagnostic.svg?branch=master)](https://travis-ci.org/FiveLab/Diagnostic)
+
 Why?
 ----
 
