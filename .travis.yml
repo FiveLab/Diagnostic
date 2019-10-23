@@ -9,15 +9,26 @@ before_install:
     - chmod +x docker-compose
     - sudo mv docker-compose /usr/local/bin
 
-before_script:
-    - docker-compose up -d --build
-    - docker-compose exec diagnostic composer install
+jobs:
+    include:
+        -   stage: docker-compose up
+            script:
+                - docker-compose up -d --build
+                - docker-compose exec diagnostic composer update --prefer-stable
 
-script:
-    - docker-compose exec diagnostic bin/phpcs --config-set show_warnings 0
-    - docker-compose exec diagnostic bin/phpcs --standard=vendor/escapestudios/symfony2-coding-standard/Symfony/ src/
-    - docker-compose exec diagnostic bin/phpcs --standard=tests/phpcs-ruleset.xml tests/
-    - docker-compose exec diagnostic bin/phpunit
+        -   stage: code style
+            script:
+                - docker-compose exec diagnostic bin/phpcs --config-set show_warnings 0
+                - docker-compose exec diagnostic bin/phpcs --standard=vendor/escapestudios/symfony2-coding-standard/Symfony/ src/
+                - docker-compose exec diagnostic bin/phpcs --standard=tests/phpcs-ruleset.xml tests/
+
+        -   stage: test on stable
+            script:
+                - docker-compose exec diagnostic bin/phpunit
+
+        -   stage: test on lowest
+            script:
+                - docker-compose exec diagnostic composer update --prefer-lowest
 
 after_script:
     - docker-compose kill
