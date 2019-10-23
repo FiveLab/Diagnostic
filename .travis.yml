@@ -1,0 +1,23 @@
+sudo: required
+
+services:
+    - docker
+
+before_install:
+    - sudo rm /usr/local/bin/docker-compose
+    - curl -L https://github.com/docker/compose/releases/download/1.24.1/docker-compose-`uname -s`-`uname -m` > docker-compose
+    - chmod +x docker-compose
+    - sudo mv docker-compose /usr/local/bin
+
+before_script:
+    - docker-compose up -d --build
+    - docker-compose exec diagnostic composer install
+
+script:
+    - docker-compose exec diagnostic bin/phpcs --config-set show_warnings 0
+    - docker-compose exec diagnostic bin/phpcs --standard=vendor/escapestudios/symfony2-coding-standard/Symfony/ src/
+    - docker-compose exec diagnostic bin/phpcs --standard=tests/phpcs-ruleset.xml tests/
+    - docker-compose exec diagnostic bin/phpunit
+
+after_script:
+    - docker-compose kill
