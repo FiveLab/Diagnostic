@@ -1,0 +1,113 @@
+<?php
+
+declare(strict_types = 1);
+
+namespace FiveLab\Component\Diagnostic\Check\Eloquent;
+
+use Illuminate\Database\ConnectionInterface;
+use FiveLab\Component\Diagnostic\Check\CheckInterface;
+use FiveLab\Component\Diagnostic\Result\Failure;
+use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
+use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterface;
+
+/**
+ * Check MySQL version.
+ */
+class DatabaseMysqlVersionCheck implements CheckInterface
+{
+    const MYSQL_EXTRACT_VERSION_REGEX = '/^([\d\.]+)/';
+
+    /**
+     * @var ConnectionInterface
+     */
+    private $connection;
+
+    /**
+     * @var string
+     */
+    private $expectedVersion;
+
+    /**
+     * @var VersionComparatorInterface
+     */
+    private $versionComparator;
+
+    /**
+     * @var string
+     */
+    private $actualVersion = 'unknown';
+
+    /**
+     * Constructor.
+     *
+     * @param ConnectionInterface             $connection
+     * @param string                          $expectedVersion
+     * @param VersionComparatorInterface|null $versionComparator
+     */
+    public function __construct(ConnectionInterface $connection, string $expectedVersion, VersionComparatorInterface $versionComparator = null)
+    {
+        $this->connection = $connection;
+        $this->expectedVersion = $expectedVersion;
+        $this->versionComparator = $versionComparator ?: new SemverVersionComparator();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function check(): ResultInterface
+    {
+        try {
+            $query = "SHOW VARIABLES WHERE Variable_name = 'version'";
+            $result = $this->connection->select($this->connection->raw($query));
+            $mysqlVersionVariableContent = $result[0]->Value;
+        } catch (\Throwable $e) {
+            return new Failure(\sprintf(
+                'Failed checking MySQL version: %s.',
+                \rtrim($e->getMessage(), '.')
+            ));
+        }
+        $this->actualVersion = $this->extractMysqlServerDistribVersion($mysqlVersionVariableContent);
+        if (!$this->versionComparator->satisfies($this->actualVersion, $this->expectedVersion)) {
+            return new Failure(\sprintf(
+                'Expected MySQL server of version "%s", found "%s".',
+                $this->expectedVersion,
+                $this->actualVersion
+            ));
+        }
+
+        return new Success('MySQL version matches an expected one.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtraParameters(): array
+    {
+        $parameters = [];
+
+        if ($this->connection instanceof ConnectionInterface) {
+            $parameters = $this->connection->getConfig();
+            $parameters['password'] = '***';
+        }
+
+        $parameters['actualVersion'] = $this->actualVersion;
+        $parameters['expectedVersion'] = $this->expectedVersion;
+
+        return $parameters;
+    }
+
+    /**
+     * @param string $buildVersion
+     *
+     * @return string
+     */
+    private function extractMysqlServerDistribVersion(string $buildVersion): string
+    {
+        $matches = [];
+        preg_match(self::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
+
+        return \rtrim($matches[0], '.');
+    }
+}

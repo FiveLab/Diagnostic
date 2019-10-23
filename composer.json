@@ -1,0 +1,72 @@
+{
+    "name": "fivelab/diagnostic",
+    "description": "The library for diagnostic application.",
+    "keywords": ["health", "check"],
+    "type": "library",
+    "license": "MIT",
+
+    "authors": [
+        {
+            "name": "Vitaliy Zhuk",
+            "email": "v.zhuk@fivelab.org"
+        },
+
+        {
+            "name": "FiveLab Team",
+            "email": "dev@fivelab.org",
+            "homepage": "http://fivelab.org"
+        }
+    ],
+
+    "require": {
+        "php": "^7.1",
+        "ext-json": "*",
+        "symfony/event-dispatcher": "~2.3|~3.0|~4.0"
+    },
+
+    "require-dev": {
+        "ext-amqp": "*",
+        "ext-redis": "*",
+        "phpunit/phpunit": "~8.0.0",
+        "phpmetrics/phpmetrics": "^2.0",
+        "escapestudios/symfony2-coding-standard": "~3.5.0",
+        "symfony/dependency-injection": "~2.3|~3.0",
+        "symfony/console": "~2.4|~3.0",
+        "swiftmailer/swiftmailer": "~5.0|~6.0",
+        "doctrine/dbal": "~2.2",
+        "guzzlehttp/guzzle": "~6.0",
+        "composer/semver": "~1.0",
+        "predis/predis": "~1.1",
+        "doctrine/orm": "~2.6",
+        "elasticsearch/elasticsearch": "~6.7.0",
+        "react/promise": "~2.3",
+        "illuminate/database": "^6.0"
+    },
+
+    "suggest": {
+        "symfony/dependency-injection": "Add diagnostic checks by tag to container.",
+        "symfony/console": "For run diagnostic commands",
+        "doctrine/dbal": "For check connect to database via DBAL connection.",
+        "doctrine/orm": "For check access to tables.",
+        "guzzlehttp/guzzle": "For HTTP checks resources.",
+        "composer/semver": "For compare versions.",
+        "elasticsearch/elasticsearch": "For check connect and existence some indices/templates/etc... in elasticsearch.",
+        "illuminate/database": "For check connect to database via illuminate components."
+    },
+
+    "autoload": {
+        "psr-4": {
+            "FiveLab\\Component\\Diagnostic\\": "src/"
+        }
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "FiveLab\\Component\\Diagnostic\\Tests\\": "tests/"
+        }
+    },
+
+    "config": {
+        "bin-dir": "bin"
+    }
+}
