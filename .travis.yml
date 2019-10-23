@@ -23,6 +23,7 @@ script:
 
     # Test on lowest vendors
     - docker-compose exec diagnostic composer update --prefer-lowest
+    - docker-compose exec diagnostic bin/phpunit
 
 after_script:
     - docker-compose kill
