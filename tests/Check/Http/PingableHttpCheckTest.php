@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Http;
 
-use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\BufferStream;
 use GuzzleHttp\Psr7\Request;
@@ -22,6 +22,7 @@ use FiveLab\Component\Diagnostic\Check\Http\PingableHttpCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
+use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -30,7 +31,7 @@ use Psr\Http\Message\StreamInterface;
 class PingableHttpCheckTest extends TestCase
 {
     /**
-     * @var Client|MockObject
+     * @var ClientInterface|MockObject
      */
     private $client;
 
@@ -39,7 +40,7 @@ class PingableHttpCheckTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->client = $this->createMock(Client::class);
+        $this->client = $this->createMock(ClientInterface::class);
     }
 
     /**
@@ -64,7 +65,10 @@ class PingableHttpCheckTest extends TestCase
 
         $this->client->expects(self::once())
             ->method('send')
-            ->with($expectedRequest)
+            ->with($expectedRequest, [
+                RequestOptions::TIMEOUT     => 5,
+                RequestOptions::HTTP_ERRORS => false,
+            ])
             ->willReturn($response);
 
         $check = new PingableHttpCheck($method, $url, $headers, $body, $expectedStatusCode, $expectedApplicationName, $expectedApplicationRoles, $expectedVersion, $this->client);

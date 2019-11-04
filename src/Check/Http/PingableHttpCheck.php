@@ -14,6 +14,8 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Check\Http;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
@@ -71,7 +73,7 @@ class PingableHttpCheck implements CheckInterface
     private $expectedVersion;
 
     /**
-     * @var Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -96,11 +98,11 @@ class PingableHttpCheck implements CheckInterface
      * @param string                     $expectedApplicationName
      * @param array                      $expectedApplicationRoles
      * @param string                     $expectedVersion
-     * @param Client                     $client
+     * @param ClientInterface            $client
      * @param VersionComparatorInterface $versionComparator
      * @param HttpSecurityEncoder        $httpSecurityEncoder
      */
-    public function __construct(string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedApplicationName, array $expectedApplicationRoles = [], string $expectedVersion = null, Client $client = null, VersionComparatorInterface $versionComparator = null, HttpSecurityEncoder $httpSecurityEncoder = null)
+    public function __construct(string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedApplicationName, array $expectedApplicationRoles = [], string $expectedVersion = null, ClientInterface $client = null, VersionComparatorInterface $versionComparator = null, HttpSecurityEncoder $httpSecurityEncoder = null)
     {
         $this->client = $client ?: new Client();
 
@@ -129,9 +131,10 @@ class PingableHttpCheck implements CheckInterface
 
         try {
             $response = $this->client->send($request, [
-                RequestOptions::TIMEOUT => 5,
+                RequestOptions::TIMEOUT     => 5,
+                RequestOptions::HTTP_ERRORS => false,
             ]);
-        } catch (RequestException $e) {
+        } catch (GuzzleException $e) {
             return new Failure(\sprintf(
                 'Fail send HTTP request. Error: %s.',
                 \rtrim($e->getMessage(), '.')

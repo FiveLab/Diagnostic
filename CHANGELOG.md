@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+v1.0.1
+------
+
+Add next checks:
+
+* `\FiveLab\Component\Diagnostic\Check\Http\HttpCheck` - check connect to resource by HTTP.
+
 v1.0.0
 ------
 
