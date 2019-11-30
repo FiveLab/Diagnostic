@@ -40,10 +40,12 @@
         "doctrine/orm": "~2.6",
         "elasticsearch/elasticsearch": "~6.7.0",
         "react/promise": "~2.3",
-        "illuminate/database": "^6.0"
+        "illuminate/database": "^6.0",
+        "aws/aws-sdk-php": "~3.0"
     },
 
     "suggest": {
+        "ext-pdo": "For check connection via PDO.",
         "symfony/dependency-injection": "Add diagnostic checks by tag to container.",
         "symfony/console": "For run diagnostic commands",
         "doctrine/dbal": "For check connect to database via DBAL connection.",
@@ -51,7 +53,8 @@
         "guzzlehttp/guzzle": "For HTTP checks resources.",
         "composer/semver": "For compare versions.",
         "elasticsearch/elasticsearch": "For check connect and existence some indices/templates/etc... in elasticsearch.",
-        "illuminate/database": "For check connect to database via illuminate components."
+        "illuminate/database": "For check connect to database via illuminate components.",
+        "aws/aws-sdk-php": "For check AWS services."
     },
 
     "autoload": {

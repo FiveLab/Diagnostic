@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+v1.0.2
+------
+
+Add next checks:
+
+* `\FiveLab\Component\Diagnostic\Check\Pdo\PdoConnectionCheck` - check connect to database via PDO.
+* `\FiveLab\Component\Diagnostic\Check\Aws\DynamoDb\DynamoDbTableExistCheck` - check table exist in [AWS DynamoDB](https://aws.amazon.com/dynamodb/).
+
 v1.0.1
 ------
 
