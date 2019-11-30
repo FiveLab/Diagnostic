@@ -34,7 +34,7 @@
         "symfony/console": "~2.4|~3.0",
         "swiftmailer/swiftmailer": "~5.0|~6.0",
         "doctrine/dbal": "~2.2",
-        "guzzlehttp/guzzle": "~6.0",
+        "guzzlehttp/guzzle": "~6.3",
         "composer/semver": "~1.0",
         "predis/predis": "~1.1",
         "doctrine/orm": "~2.6",
