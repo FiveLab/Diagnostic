@@ -118,7 +118,8 @@ class RabbitMqManagementExchangeCheckTest extends AbstractRabbitMqTestCase
         $check = new RabbitMqManagementExchangeCheck($connectionParameters, $this->exchangeName, 'direct');
         $result = $check->check();
 
-        self::assertEquals(new Failure('Fail connect to RabbitMQ Management API. Error: cURL error 6: Could not resolve host: some-foo-bar (see https://curl.haxx.se/libcurl/c/libcurl-errors.html).'), $result);
+        self::assertInstanceOf(Failure::class, $result);
+        self::assertStringStartsWith('Fail connect to RabbitMQ Management API. Error: cURL error 6: Could not resolve host: some-foo-bar', $result->getMessage());
     }
 
     /**
