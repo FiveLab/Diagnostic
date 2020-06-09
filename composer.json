@@ -34,6 +34,7 @@
         "symfony/console": "~2.4|~3.0",
         "swiftmailer/swiftmailer": "~5.0|~6.0",
         "doctrine/dbal": "~2.2",
+        "guzzlehttp/guzzle": "~6.3",
         "php-http/httplug": "~2.0",
         "php-http/guzzle6-adapter": "~2.0",
         "php-http/message": "~1.0",
