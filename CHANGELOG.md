@@ -1,6 +1,35 @@
 CHANGELOG
 =========
 
+v1.1.0
+------
+
+### HTTP
+
+Use [php-http](http://docs.php-http.org/en/latest/) for http checks (this changes does not has backward compatibility).
+
+Affected checks:
+
+* `\FiveLab\Component\Diagnostic\Check\Http\HttpCheck`
+* `\FiveLab\Component\Diagnostic\Check\Http\PingableHttpCheck`
+
+These changes affected only if you pass `Client` directly in `__constuctor`.
+
+### RabbitMQ
+
+Add `\FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters` for collect all required parameters
+for connect to RabbitMQ.
+
+This change affected all RabbitMQ checks.
+
+### Other
+
+Add next checks:
+
+* `\FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementCheck` - check access to RabbitMQ Management via API.
+* `\FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementExchangeCheck` - check existence exchange with specified type.
+* `\FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementQueueCheck` - check existence queue.
+
 v1.0.2
 ------
 

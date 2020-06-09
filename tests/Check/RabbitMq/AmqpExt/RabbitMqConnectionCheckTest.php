@@ -43,7 +43,8 @@ class RabbitMqConnectionCheckTest extends AbstractRabbitMqTestCase
         $check = new RabbitMqConnectionCheck($this->getRabbitMqConnectionParameters());
 
         self::assertEquals([
-            'dsn'            => $this->getRabbitMqConnectionParameters()->getDsn(false, true),
+            'dsn'   => $this->getRabbitMqConnectionParameters()->getDsn(false, true),
+            'vhost' => '/',
         ], $check->getExtraParameters());
     }
 
