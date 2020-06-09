@@ -14,6 +14,7 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Check\RabbitMq\AmqpExt;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
+use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
@@ -24,21 +25,17 @@ use FiveLab\Component\Diagnostic\Result\Success;
 class RabbitMqConnectionCheck implements CheckInterface
 {
     /**
-     * @var array
+     * @var RabbitMqConnectionParameters
      */
-    private $connectionParameters = [];
+    private $connectionParameters;
 
     /**
      * Constructor.
      *
-     * @param array $connectionParameters
+     * @param RabbitMqConnectionParameters $connectionParameters
      */
-    public function __construct(array $connectionParameters)
+    public function __construct(RabbitMqConnectionParameters $connectionParameters)
     {
-        if (!\array_key_exists('connect_timeout', $connectionParameters)) {
-            $connectionParameters['connect_timeout'] = 5;
-        }
-
         $this->connectionParameters = $connectionParameters;
     }
 
@@ -51,7 +48,16 @@ class RabbitMqConnectionCheck implements CheckInterface
             return new Failure('The ext-amqp not installed.');
         }
 
-        $connection = new \AMQPConnection($this->connectionParameters);
+        $connectionParameters = [
+            'host'            => $this->connectionParameters->getHost(),
+            'port'            => $this->connectionParameters->getPort(),
+            'vhost'           => $this->connectionParameters->getVhost(),
+            'login'           => $this->connectionParameters->getUsername(),
+            'password'        => $this->connectionParameters->getPassword(),
+            'connect_timeout' => 5,
+        ];
+
+        $connection = new \AMQPConnection($connectionParameters);
 
         try {
             $connection->connect();
@@ -67,12 +73,9 @@ class RabbitMqConnectionCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        $extra = $this->connectionParameters;
-
-        if (\array_key_exists('password', $extra)) {
-            $extra['password'] = '***';
-        }
-
-        return $extra;
+        return [
+            'dsn'   => $this->connectionParameters->getDsn(false, true),
+            'vhost' => $this->connectionParameters->getVhost(),
+        ];
     }
 }

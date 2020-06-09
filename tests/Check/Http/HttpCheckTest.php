@@ -8,11 +8,11 @@ use FiveLab\Component\Diagnostic\Check\Http\HttpCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\RequestOptions;
+use Http\Client\Exception\TransferException;
+use Http\Client\HttpClient;
+use Http\Message\MessageFactory\GuzzleMessageFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -20,7 +20,7 @@ use Psr\Http\Message\ResponseInterface;
 class HttpCheckTest extends TestCase
 {
     /**
-     * @var ClientInterface|MockObject
+     * @var HttpClient|MockObject
      */
     private $client;
 
@@ -29,7 +29,7 @@ class HttpCheckTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->client = $this->createMock(ClientInterface::class);
+        $this->client = $this->createMock(HttpClient::class);
     }
 
     /**
@@ -51,14 +51,11 @@ class HttpCheckTest extends TestCase
         $expectedRequest = new Request($method, $url, $headers, $body);
 
         $this->client->expects(self::once())
-            ->method('send')
-            ->with($expectedRequest, [
-                RequestOptions::TIMEOUT     => 5,
-                RequestOptions::HTTP_ERRORS => false,
-            ])
+            ->method('sendRequest')
+            ->with($expectedRequest)
             ->willReturn($response);
 
-        $check = new HttpCheck($method, $url, $headers, $body, $expectedStatusCode, $expectedBody, $this->client);
+        $check = new HttpCheck($method, $url, $headers, $body, $expectedStatusCode, $expectedBody, $this->client, new GuzzleMessageFactory());
 
         $result = $check->check();
 
@@ -68,16 +65,16 @@ class HttpCheckTest extends TestCase
     /**
      * @test
      */
-    public function shouldFailIfClientThrowException()
+    public function shouldFailIfClientThrowException(): void
     {
         $expectedRequest = new Request('GET', '/some');
 
         $this->client->expects(self::once())
-            ->method('send')
+            ->method('sendRequest')
             ->with($expectedRequest)
             ->willThrowException(new TransferException('some'));
 
-        $check = new HttpCheck('GET', '/some', [], '', 200, null, $this->client);
+        $check = new HttpCheck('GET', '/some', [], '', 200, null, $this->client, new GuzzleMessageFactory());
 
         $result = $check->check();
 
@@ -87,16 +84,16 @@ class HttpCheckTest extends TestCase
     /**
      * @test
      */
-    public function shouldSuccessGetParameters()
+    public function shouldSuccessGetParameters(): void
     {
         $expectedRequest = new Request('GET', '/some');
 
         $this->client->expects(self::once())
-            ->method('send')
+            ->method('sendRequest')
             ->with($expectedRequest)
             ->willReturn(new Response(200));
 
-        $check = new HttpCheck('GET', '/some', [], '', 200, null, $this->client);
+        $check = new HttpCheck('GET', '/some', [], '', 200, null, $this->client, new GuzzleMessageFactory());
 
         $check->check();
 
@@ -112,16 +109,16 @@ class HttpCheckTest extends TestCase
     /**
      * @test
      */
-    public function shouldSuccessGetParametersWithBody()
+    public function shouldSuccessGetParametersWithBody(): void
     {
         $expectedRequest = new Request('GET', '/some');
 
         $this->client->expects(self::once())
-            ->method('send')
+            ->method('sendRequest')
             ->with($expectedRequest)
             ->willReturn(new Response(200, [], '{"result": "ok"}'));
 
-        $check = new HttpCheck('GET', '/some', [], '', 200, '{"result": "ok"}', $this->client);
+        $check = new HttpCheck('GET', '/some', [], '', 200, '{"result": "ok"}', $this->client, new GuzzleMessageFactory());
 
         $check->check();
 

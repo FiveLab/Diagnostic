@@ -14,6 +14,7 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\RabbitMq\AmqpExt;
 
 use FiveLab\Component\Diagnostic\Check\RabbitMq\AmqpExt\RabbitMqConnectionCheck;
+use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
@@ -39,21 +40,10 @@ class RabbitMqConnectionCheckTest extends AbstractRabbitMqTestCase
      */
     public function shouldSuccessGetExtraParams(): void
     {
-        $check = new RabbitMqConnectionCheck([
-            'host'     => $this->getRabbitMqHost(),
-            'port'     => $this->getRabbitMqPort(),
-            'vhost'    => $this->getRabbitMqVhost(),
-            'login'    => $this->getRabbitMqLogin(),
-            'password' => $this->getRabbitMqPassword(),
-        ]);
+        $check = new RabbitMqConnectionCheck($this->getRabbitMqConnectionParameters());
 
         self::assertEquals([
-            'host'            => $this->getRabbitMqHost(),
-            'port'            => $this->getRabbitMqPort(),
-            'vhost'           => $this->getRabbitMqVhost(),
-            'login'           => $this->getRabbitMqLogin(),
-            'password'        => '***',
-            'connect_timeout' => 5,
+            'dsn'            => $this->getRabbitMqConnectionParameters()->getDsn(false, true),
         ], $check->getExtraParameters());
     }
 
@@ -62,15 +52,7 @@ class RabbitMqConnectionCheckTest extends AbstractRabbitMqTestCase
      */
     public function shouldReturnOkIfSuccessConnect(): void
     {
-        $options = [
-            'host'     => $this->getRabbitMqHost(),
-            'port'     => $this->getRabbitMqPort(),
-            'vhost'    => $this->getRabbitMqVhost(),
-            'login'    => $this->getRabbitMqLogin(),
-            'password' => $this->getRabbitMqPassword(),
-        ];
-
-        $check = new RabbitMqConnectionCheck($options);
+        $check = new RabbitMqConnectionCheck($this->getRabbitMqConnectionParameters());
 
         $result = $check->check();
 
@@ -82,15 +64,15 @@ class RabbitMqConnectionCheckTest extends AbstractRabbitMqTestCase
      */
     public function shouldReturnFailIfPasswordIsWrong(): void
     {
-        $options = [
-            'host'     => $this->getRabbitMqHost(),
-            'port'     => $this->getRabbitMqPort(),
-            'vhost'    => $this->getRabbitMqVhost(),
-            'login'    => $this->getRabbitMqLogin(),
-            'password' => \uniqid(),
-        ];
+        $connectionParameters = new RabbitMqConnectionParameters(
+            $this->getRabbitMqHost(),
+            $this->getRabbitMqPort(),
+            $this->getRabbitMqLogin(),
+            \uniqid(),
+            $this->getRabbitMqVhost()
+        );
 
-        $check = new RabbitMqConnectionCheck($options);
+        $check = new RabbitMqConnectionCheck($connectionParameters);
 
         $result = $check->check();
 
@@ -105,15 +87,15 @@ class RabbitMqConnectionCheckTest extends AbstractRabbitMqTestCase
      */
     public function shouldFailIfHostIsDown(): void
     {
-        $options = [
-            'host'     => \uniqid(),
-            'port'     => $this->getRabbitMqPort(),
-            'vhost'    => $this->getRabbitMqVhost(),
-            'login'    => $this->getRabbitMqLogin(),
-            'password' => $this->getRabbitMqPassword(),
-        ];
+        $connectionParameters = new RabbitMqConnectionParameters(
+            \uniqid(),
+            $this->getRabbitMqPort(),
+            $this->getRabbitMqLogin(),
+            $this->getRabbitMqPassword(),
+            $this->getRabbitMqVhost()
+        );
 
-        $check = new RabbitMqConnectionCheck($options);
+        $check = new RabbitMqConnectionCheck($connectionParameters);
 
         $result = $check->check();
 

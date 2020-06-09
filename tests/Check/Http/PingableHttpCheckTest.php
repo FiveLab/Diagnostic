@@ -13,16 +13,16 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Http;
 
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\BufferStream;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
 use FiveLab\Component\Diagnostic\Check\Http\PingableHttpCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
-use GuzzleHttp\RequestOptions;
+use GuzzleHttp\Psr7\BufferStream;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use Http\Client\Exception\TransferException;
+use Http\Client\HttpClient;
+use Http\Message\MessageFactory\GuzzleMessageFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -31,7 +31,7 @@ use Psr\Http\Message\StreamInterface;
 class PingableHttpCheckTest extends TestCase
 {
     /**
-     * @var ClientInterface|MockObject
+     * @var HttpClient|MockObject
      */
     private $client;
 
@@ -40,7 +40,7 @@ class PingableHttpCheckTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->client = $this->createMock(ClientInterface::class);
+        $this->client = $this->createMock(HttpClient::class);
     }
 
     /**
@@ -64,14 +64,11 @@ class PingableHttpCheckTest extends TestCase
         $expectedRequest = new Request($method, $url, $headers, $body);
 
         $this->client->expects(self::once())
-            ->method('send')
-            ->with($expectedRequest, [
-                RequestOptions::TIMEOUT     => 5,
-                RequestOptions::HTTP_ERRORS => false,
-            ])
+            ->method('sendRequest')
+            ->with($expectedRequest)
             ->willReturn($response);
 
-        $check = new PingableHttpCheck($method, $url, $headers, $body, $expectedStatusCode, $expectedApplicationName, $expectedApplicationRoles, $expectedVersion, $this->client);
+        $check = new PingableHttpCheck($method, $url, $headers, $body, $expectedStatusCode, $expectedApplicationName, $expectedApplicationRoles, $expectedVersion, $this->client, new GuzzleMessageFactory());
 
         $result = $check->check();
 
@@ -86,11 +83,11 @@ class PingableHttpCheckTest extends TestCase
         $expectedRequest = new Request('GET', '/some', [], '');
 
         $this->client->expects(self::once())
-            ->method('send')
-            ->with(self::isInstanceOf(Request::class))
-            ->willThrowException(new RequestException('some', $expectedRequest));
+            ->method('sendRequest')
+            ->with($expectedRequest)
+            ->willThrowException(new TransferException('some'));
 
-        $check = new PingableHttpCheck('GET', '/some', [], '', 200, 'some', [], '1.1', $this->client);
+        $check = new PingableHttpCheck('GET', '/some', [], '', 200, 'some', [], '1.1', $this->client, new GuzzleMessageFactory());
 
         $result = $check->check();
 

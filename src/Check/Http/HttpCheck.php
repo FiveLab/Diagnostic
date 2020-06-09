@@ -9,11 +9,11 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\HttpSecurityEncoder;
-use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\RequestOptions;
+use Http\Client\HttpClient;
+use Http\Discovery\HttpClientDiscovery;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Message\RequestFactory;
+use Psr\Http\Client\ClientExceptionInterface;
 
 /**
  * Simple check connect to resource by HTTP.
@@ -51,9 +51,14 @@ class HttpCheck implements CheckInterface
     private $expectedBody;
 
     /**
-     * @var ClientInterface
+     * @var HttpClient
      */
     private $client;
+
+    /**
+     * @var RequestFactory
+     */
+    private $requestFactory;
 
     /**
      * @var HttpSecurityEncoder
@@ -74,10 +79,11 @@ class HttpCheck implements CheckInterface
      * @param string              $body
      * @param integer             $expectedStatusCode
      * @param string              $expectedBody
-     * @param ClientInterface     $client
+     * @param HttpClient          $client
+     * @param RequestFactory      $requestFactory
      * @param HttpSecurityEncoder $securityEncoder
      */
-    public function __construct(string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedBody = null, ClientInterface $client = null, HttpSecurityEncoder $securityEncoder = null)
+    public function __construct(string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedBody = null, HttpClient $client = null, RequestFactory $requestFactory = null, HttpSecurityEncoder $securityEncoder = null)
     {
         $this->method = $method;
         $this->url = $url;
@@ -85,7 +91,8 @@ class HttpCheck implements CheckInterface
         $this->body = $body;
         $this->expectedStatusCode = $expectedStatusCode;
         $this->expectedBody = $expectedBody;
-        $this->client = $client ?: new Client();
+        $this->client = $client ?: HttpClientDiscovery::find();
+        $this->requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
         $this->httpSecurityEncoder = $securityEncoder ?: new HttpSecurityEncoder();
     }
 
@@ -94,16 +101,13 @@ class HttpCheck implements CheckInterface
      */
     public function check(): ResultInterface
     {
-        $request = new Request($this->method, $this->url, $this->headers, $this->body);
+        $request = $this->requestFactory->createRequest($this->method, $this->url, $this->headers, $this->body);
 
         try {
-            $response = $this->client->send($request, [
-                RequestOptions::TIMEOUT     => 5,
-                RequestOptions::HTTP_ERRORS => false,
-            ]);
+            $response = $this->client->sendRequest($request);
 
-            $this->responseBody = $response->getBody()->getContents();
-        } catch (GuzzleException $e) {
+            $this->responseBody = (string) $response->getBody();
+        } catch (ClientExceptionInterface $e) {
             return new Failure(\sprintf(
                 'Fail send HTTP request. Error: %s.',
                 \rtrim($e->getMessage(), '.')

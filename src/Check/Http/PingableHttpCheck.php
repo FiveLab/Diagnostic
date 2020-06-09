@@ -13,12 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Http;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\RequestOptions;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
@@ -26,6 +20,11 @@ use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\HttpSecurityEncoder;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterface;
+use Http\Client\HttpClient;
+use Http\Discovery\HttpClientDiscovery;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Message\RequestFactory;
+use Psr\Http\Client\ClientExceptionInterface;
 
 /**
  * Check the pingable resources with application name, roles and version.
@@ -73,9 +72,14 @@ class PingableHttpCheck implements CheckInterface
     private $expectedVersion;
 
     /**
-     * @var ClientInterface
+     * @var HttpClient
      */
     private $client;
+
+    /**
+     * @var RequestFactory
+     */
+    private $requestFactory;
 
     /**
      * @var VersionComparatorInterface
@@ -98,14 +102,13 @@ class PingableHttpCheck implements CheckInterface
      * @param string                     $expectedApplicationName
      * @param array                      $expectedApplicationRoles
      * @param string                     $expectedVersion
-     * @param ClientInterface            $client
+     * @param HttpClient                 $client
+     * @param RequestFactory             $requestFactory
      * @param VersionComparatorInterface $versionComparator
      * @param HttpSecurityEncoder        $httpSecurityEncoder
      */
-    public function __construct(string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedApplicationName, array $expectedApplicationRoles = [], string $expectedVersion = null, ClientInterface $client = null, VersionComparatorInterface $versionComparator = null, HttpSecurityEncoder $httpSecurityEncoder = null)
+    public function __construct(string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedApplicationName, array $expectedApplicationRoles = [], string $expectedVersion = null, HttpClient $client = null, RequestFactory $requestFactory = null, VersionComparatorInterface $versionComparator = null, HttpSecurityEncoder $httpSecurityEncoder = null)
     {
-        $this->client = $client ?: new Client();
-
         $this->method = $method;
         $this->url = $url;
         $this->headers = $headers;
@@ -114,7 +117,8 @@ class PingableHttpCheck implements CheckInterface
         $this->expectedApplicationName = $expectedApplicationName;
         $this->expectedApplicationRoles = $expectedApplicationRoles;
         $this->expectedVersion = $expectedVersion;
-        $this->client = $client ?: new Client();
+        $this->client = $client ?: HttpClientDiscovery::find();
+        $this->requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
         $this->httpSecurityEncoder = $httpSecurityEncoder ?: new HttpSecurityEncoder();
 
         if ($this->expectedVersion) {
@@ -127,14 +131,11 @@ class PingableHttpCheck implements CheckInterface
      */
     public function check(): ResultInterface
     {
-        $request = new Request($this->method, $this->url, $this->headers, $this->body);
+        $request = $this->requestFactory->createRequest($this->method, $this->url, $this->headers, $this->body);
 
         try {
-            $response = $this->client->send($request, [
-                RequestOptions::TIMEOUT     => 5,
-                RequestOptions::HTTP_ERRORS => false,
-            ]);
-        } catch (GuzzleException $e) {
+            $response = $this->client->sendRequest($request);
+        } catch (ClientExceptionInterface $e) {
             return new Failure(\sprintf(
                 'Fail send HTTP request. Error: %s.',
                 \rtrim($e->getMessage(), '.')
@@ -147,7 +148,7 @@ class PingableHttpCheck implements CheckInterface
             return new Failure('Server returns empty response.');
         }
 
-        \set_error_handler(function () {
+        \set_error_handler(static function () {
         });
 
         $json = \json_decode((string) $body, true);
