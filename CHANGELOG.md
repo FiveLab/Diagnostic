@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+v1.1.1
+------
+
+Fix `\FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters` for correct
+get DNS if username and password not provided.
+
 v1.1.0
 ------
 

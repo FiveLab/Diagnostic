@@ -68,11 +68,16 @@ class ElasticsearchConnectionParameters
      */
     public function getDsn(): string
     {
+        $userPass = '';
+
+        if ($this->username) {
+            $userPass = \sprintf('%s:%s@', $this->username, $this->password);
+        }
+
         return \sprintf(
-            '%s://%s:%s@%s:%s',
+            '%s://%s%s:%s',
             $this->ssl ? 'https' : 'http',
-            $this->username,
-            $this->password,
+            $userPass,
             $this->host,
             $this->port
         );
