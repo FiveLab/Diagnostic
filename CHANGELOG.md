@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+v1.1.2
+------
+
+Add next checks:
+
+* `\FiveLab\Component\Diagnostic\Check\PhpIni\PhpIniParameterCheck` - for check php.ini parameters.
+
+
 v1.1.1
 ------
 
