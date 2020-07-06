@@ -78,5 +78,12 @@
 
     "config": {
         "bin-dir": "bin"
+    },
+
+    "extra": {
+        "thanks": {
+            "name": "fivelab/diagnostic",
+            "url": "https://github.com/FiveLab/Diagnostic"
+        }
     }
 }
