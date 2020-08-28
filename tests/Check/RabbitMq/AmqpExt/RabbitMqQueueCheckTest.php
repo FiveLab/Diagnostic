@@ -126,7 +126,7 @@ class RabbitMqQueueCheckTest extends AbstractRabbitMqTestCase
         return [
             'below maximum'  => [
                 Success::class,
-                'There 4 messages in queue test_queue',
+                'There are 4 messages in queue test_queue',
                 4,
                 5,
                 null,
@@ -134,7 +134,7 @@ class RabbitMqQueueCheckTest extends AbstractRabbitMqTestCase
             ],
             'above minimum'  => [
                 Success::class,
-                'There 6 messages in queue test_queue',
+                'There are 6 messages in queue test_queue',
                 6,
                 null,
                 null,

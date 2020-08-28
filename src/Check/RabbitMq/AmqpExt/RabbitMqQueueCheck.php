@@ -125,7 +125,7 @@ class RabbitMqQueueCheck extends AbstractRabbitMqCheck
             );
         }
 
-        return new Success(sprintf('There %d messages in queue %s', $messageCount, $this->queueName));
+        return new Success(sprintf('There are %d messages in queue %s', $messageCount, $this->queueName));
     }
 
     /**
