@@ -37,7 +37,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
             self::markTestSkipped('The RabbitMQ is not configured.');
         }
 
-        $this->queueName = 'test_'.\uniqid();
+        $this->queueName = 'test_'.\uniqid((string) \random_int(0, PHP_INT_MAX), true);
         $this->declareQueue($this->queueName);
     }
 
