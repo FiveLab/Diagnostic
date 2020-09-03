@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+Untagged
+--------
+
+* `\FiveLab\Component\Diagnostic\Check\Environment\EnvExistenceCheck` - for check existence variable in ENV.
+
 v1.1.2
 ------
 
