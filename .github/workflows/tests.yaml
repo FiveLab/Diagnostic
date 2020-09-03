@@ -1,0 +1,115 @@
+name: Testing
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    code-style:
+        name: Check code style
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    coverage: "none"
+                    extensions: "json,amqp,redis"
+                    ini-values: "memory_limit=-1"
+                    php-version: "7.4"
+                    tools: "composer"
+
+            -   name: Install vendors
+                run: composer install --prefer-dist
+
+            -   name: Configure PHPCS
+                run: bin/phpcs --config-set show_warnings 0
+
+            -   name: Check style on sources
+                run: bin/phpcs --standard=vendor/escapestudios/symfony2-coding-standard/Symfony/ src/
+
+            -   name: Check style on tests
+                run: bin/phpcs --standard=tests/phpcs-ruleset.xml tests/
+
+    tests:
+        name: Run tests
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                php: [ '7.2', '7.3', '7.4' ]
+
+        services:
+            rabbitmq:
+                image: rabbitmq:3-management
+                ports:
+                    - 5672:5672
+                    - 15672:15672
+
+            redis:
+                image: redis:5
+                ports:
+                    - 6379:6379
+
+            mysql:
+                image: mysql:5.7
+                env:
+                    MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+                    MYSQL_DATABASE: diagnostic
+                ports:
+                    - 3306:3306
+
+            mailcatcher:
+                image: schickling/mailcatcher
+                ports:
+                    - 1025:1025
+
+            elasticsearch:
+                image: docker.elastic.co/elasticsearch/elasticsearch:6.8.0
+                ports:
+                    - 9200:9200
+
+            dynamodb:
+                image: amazon/dynamodb-local
+                ports:
+                    - 8000:8000
+
+        env:
+            RABBITMQ_HOST: '127.0.0.1'
+            DATABASE_HOST: '127.0.0.1'
+            REDIS_HOST: '127.0.0.1'
+            MAILER_HOST: '127.0.0.1'
+            ELASTICSEARCH_HOST: '127.0.0.1'
+            AWS_DYNAMODB_ENDPOINT: 'http://127.0.0.1:8000'
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    coverage: "none"
+                    extensions: "json,amqp,redis,curl"
+                    ini-values: "memory_limit=-1"
+                    php-version: "${{ matrix.php }}"
+                    tools: "composer"
+
+            -   name: Get Composer Cache Directory
+                id: composer-cache
+                run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            -   uses: actions/cache@v2
+                with:
+                    path: ${{ steps.composer-cache.outputs.dir }}
+                    key: ${{ runner.os }}-composer-${{ matrix.php }}
+                    restore-keys: ${{ runner.os }}-composer-${{ matrix.php }}
+
+            -   name: Install vendors
+                run: composer install --prefer-dist
+
+            -   name: Run tests
+                run: bin/phpunit

@@ -38,7 +38,7 @@ class RabbitMqManagementExchangeCheckTest extends AbstractRabbitMqTestCase
             self::markTestSkipped('The RabbitMQ is not configured.');
         }
 
-        $this->exchangeName = 'test_'.\uniqid();
+        $this->exchangeName = 'test_'.\uniqid((string) \random_int(0, PHP_INT_MAX), true);
         $this->declareExchange($this->exchangeName, 'direct');
     }
 

@@ -45,6 +45,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         $context = \stream_context_create([
             'http' => [
                 'method'  => 'PUT',
+                'header'  => 'content-type:application/x-www-form-urlencoded',
                 'content' => \json_encode($options),
             ],
         ]);
@@ -112,6 +113,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         $context = \stream_context_create([
             'http' => [
                 'method'  => 'PUT',
+                'header'  => 'content-type:application/x-www-form-urlencoded',
                 'content' => \json_encode($options),
             ],
         ]);
