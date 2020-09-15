@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\RabbitMq\Management;
 
@@ -57,7 +57,8 @@ class RabbitMqManagementQueueCheck implements CheckInterface
     private $maxMessages;
 
     /**
-     * must be between 0 and 100
+     * Must be between 0 and 100
+     *
      * @var int
      */
     private $maxWarningPercentage;
@@ -130,6 +131,7 @@ class RabbitMqManagementQueueCheck implements CheckInterface
         }
 
         $result = $this->checkMessageLimits($response);
+
         if ($result) {
             return $result;
         }
@@ -159,7 +161,7 @@ class RabbitMqManagementQueueCheck implements CheckInterface
      */
     private function checkMessageLimits(ResponseInterface $response): ?ResultInterface
     {
-        if (!\is_int($this->maxMessages) && !\is_int($this->minMessages)) {
+        if (!$this->maxMessages && !$this->minMessages) {
             return null;
         }
 
@@ -168,11 +170,13 @@ class RabbitMqManagementQueueCheck implements CheckInterface
         $queuedMessages = $queueDetails['messages'] ?? 0;
 
         $maxMessagesResult = $this->checkForMaxMessages($queuedMessages);
+
         if ($maxMessagesResult) {
             return $maxMessagesResult;
         }
 
         $minMessagesResult = $this->checkForMinMessages($queuedMessages);
+
         if ($minMessagesResult) {
             return $minMessagesResult;
         }
@@ -187,7 +191,7 @@ class RabbitMqManagementQueueCheck implements CheckInterface
      */
     private function checkForMaxMessages(int $queuedMessages): ?ResultInterface
     {
-        if (!\is_int($this->maxMessages)) {
+        if (!$this->maxMessages) {
             return null;
         }
 
@@ -219,7 +223,7 @@ class RabbitMqManagementQueueCheck implements CheckInterface
      */
     private function checkForMinMessages(int $queuedMessages): ?ResultInterface
     {
-        if (!\is_int($this->minMessages) || $queuedMessages >= $this->minMessages) {
+        if (!$this->minMessages || $queuedMessages >= $this->minMessages) {
             return null;
         }
 

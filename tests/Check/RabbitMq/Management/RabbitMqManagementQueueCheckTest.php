@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\RabbitMq\Management;
 
@@ -144,7 +144,6 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
 
     /**
      * @test
-     * @dataProvider lengthCheckProvider
      *
      * @param string   $resultClass
      * @param string   $resultText
@@ -153,11 +152,9 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
      * @param int|null $percentage
      * @param int|null $min
      *
-     * @throws \AMQPChannelException
-     * @throws \AMQPConnectionException
-     * @throws \AMQPExchangeException
+     * @dataProvider lengthCheckProvider
      */
-    public function shouldCheckQueueLength(string $resultClass, string $resultText, int $actualLength, int $max = null, int $percentage = null, int $min = null)
+    public function shouldCheckQueueLength(string $resultClass, string $resultText, int $actualLength, int $max = null, int $percentage = null, int $min = null): void
     {
         $this->publishDummyMessagesToQueue($this->queueName, $actualLength);
 
@@ -171,7 +168,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
 
         $check = new RabbitMqManagementQueueCheck($connectionParameters, $this->queueName, $max, $min, $percentage);
 
-        sleep(6);   // RabbitMQ-management does not update stats fast
+        \sleep(6); // RabbitMQ-management does not update stats fast (By default emit stats every 5 seconds).
         $result = $check->check();
 
         self::assertInstanceOf($resultClass, $result, $result->getMessage());
@@ -192,6 +189,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
                 null,
                 null,
             ],
+
             'above minimum'  => [
                 Success::class,
                 'Success check queue via RabbitMQ Management API.',
@@ -200,6 +198,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
                 null,
                 5,
             ],
+
             'above maximum'  => [
                 Failure::class,
                 '6 messages found! Max allowed 5 for queue '.$this->queueName,
@@ -208,6 +207,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
                 null,
                 1,
             ],
+
             'warning amount' => [
                 Warning::class,
                 'Warning! 6 messages found. Max 10 for queue '.$this->queueName,
@@ -216,6 +216,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
                 50,
                 1,
             ],
+
             'below minimum'  => [
                 Failure::class,
                 '2 messages found! Minimum required 5 for queue '.$this->queueName,
@@ -228,12 +229,10 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
     }
 
     /**
+     * Publish some messages to queue
+     *
      * @param string $queueName
      * @param int    $amount
-     *
-     * @throws \AMQPChannelException
-     * @throws \AMQPConnectionException
-     * @throws \AMQPExchangeException
      */
     private function publishDummyMessagesToQueue(string $queueName, int $amount = 1): void
     {
@@ -244,6 +243,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
             'login'    => $this->getRabbitMqLogin(),
             'password' => $this->getRabbitMqPassword(),
         ]);
+
         $connection->connect();
 
         $channel = new \AMQPChannel($connection);
