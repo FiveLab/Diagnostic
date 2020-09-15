@@ -1,8 +1,16 @@
 CHANGELOG
 =========
 
+v1.1.4
+------
+
+* `\FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementQueueCheck` - extends check for check
+   max available messages in the queue. 
+
 v1.1.3
---------
+------
+
+Add next checks:
 
 * `\FiveLab\Component\Diagnostic\Check\Environment\EnvExistenceCheck` - for check existence variable in ENV.
 
