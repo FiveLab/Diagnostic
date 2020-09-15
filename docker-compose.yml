@@ -6,12 +6,12 @@ services:
         container_name: 'diagnostic'
         tty: true
         environment:
-            RABBITMQ_HOST: 'diagnostic-rabbitmq'
+            RABBITMQ_HOST: 'rabbitmq'
             DATABASE_HOST: 'diagnostic-mysql'
             REDIS_HOST: 'diagnostic-redis'
             MAILER_HOST: 'diagnostic-mailcatcher'
-            ELASTICSEARCH_HOST: 'diagnostic-elasticsearch'
-            AWS_DYNAMODB_ENDPOINT: 'http://diagnostic-dynamodb:8000'
+            ELASTICSEARCH_HOST: 'elasticsearch'
+            AWS_DYNAMODB_ENDPOINT: 'http://dynamodb:8000'
         volumes:
             - './:/code'
         networks:
