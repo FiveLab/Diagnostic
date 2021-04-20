@@ -21,7 +21,7 @@ class DefinitionCollection implements \IteratorAggregate, \Countable
     /**
      * @var array|CheckDefinitionInterface[]
      */
-    private $definitions;
+    private array $definitions;
 
     /**
      * Constructor.
@@ -65,9 +65,8 @@ class DefinitionCollection implements \IteratorAggregate, \Countable
         }
 
         $groups = \array_merge(...$groups);
-        $groups = \array_unique($groups);
 
-        return $groups;
+        return \array_unique($groups);
     }
 
     /**

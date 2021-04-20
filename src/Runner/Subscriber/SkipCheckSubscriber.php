@@ -27,7 +27,7 @@ class SkipCheckSubscriber implements EventSubscriberInterface
     /**
      * @var SkipRegistryInterface
      */
-    private $skipRegistry;
+    private SkipRegistryInterface $skipRegistry;
 
     /**
      * Constructor.
@@ -43,18 +43,22 @@ class SkipCheckSubscriber implements EventSubscriberInterface
      * Call before run check.
      *
      * @param BeforeRunCheckEvent $event
+     *
+     * @return BeforeRunCheckEvent
      */
-    public function onBeforeRunCheck(BeforeRunCheckEvent $event): void
+    public function onBeforeRunCheck(BeforeRunCheckEvent $event): BeforeRunCheckEvent
     {
         if ($this->skipRegistry->isShouldBeSkipped($event->getDefinition())) {
             $event->setResult(new Skip('Must be skipped.'));
         }
+
+        return $event;
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             RunnerEvents::RUN_CHECK_BEFORE => 'onBeforeRunCheck',

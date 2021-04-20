@@ -23,7 +23,7 @@ class CheckDefinitionsInGroupFilter
     /**
      * @var string
      */
-    private $groupName;
+    private string $groupName;
 
     /**
      * Constructor.

@@ -1,8 +1,28 @@
 CHANGELOG
 =========
 
+v1.2.0
+------
+
+* Remove support PHP 7.3 and early (Support only 7.4).
+* Add support PHP 8.0
+* Add custom `HttpInterface` layer for work with HTTP requests based on PSR-17.
+
+> Note: this changes does not have backward compatibility. We affect all checks based on HTTP requests
+> (rabbitmq management checks, http checks). For fix, you must pass correct `HttpInterface` to checks 
+> (if you use specific client and request factory, without discovery based on php-http).
+
+
+v1.1.4
+------
+
+* `\FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementQueueCheck` - extends check for check
+   max available messages in the queue. 
+
 v1.1.3
---------
+------
+
+Add next checks:
 
 * `\FiveLab\Component\Diagnostic\Check\Environment\EnvExistenceCheck` - for check existence variable in ENV.
 

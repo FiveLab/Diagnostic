@@ -24,7 +24,7 @@ class DefinitionCollectionBuilderTest extends TestCase
     /**
      * @var DefinitionCollectionBuilder
      */
-    private $builder;
+    private DefinitionCollectionBuilder $builder;
 
     /**
      * {@inheritdoc}
@@ -147,7 +147,7 @@ class DefinitionCollectionBuilderTest extends TestCase
     {
         $check = $this->createMock(CheckInterface::class);
 
-        $check->uniqueIdentifier = \uniqid();
+        $check->uniqueIdentifier = \uniqid((string) \random_int(0, PHP_INT_MAX), true);
 
         return $check;
     }

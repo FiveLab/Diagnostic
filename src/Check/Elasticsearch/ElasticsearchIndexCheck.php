@@ -29,29 +29,29 @@ class ElasticsearchIndexCheck implements CheckInterface
     /**
      * @var ElasticsearchConnectionParameters
      */
-    private $connectionParameters;
+    private ElasticsearchConnectionParameters $connectionParameters;
 
     /**
      * @var string
      */
-    private $index;
+    private string $index;
 
     /**
      * @var array
      */
-    private $expectedSettings = [];
+    private array $expectedSettings;
 
     /**
      * @var array
      */
-    private $actualSettings = [];
+    private array $actualSettings = [];
 
     /**
      * Constructor.
      *
      * @param ElasticsearchConnectionParameters $connectionParams
      * @param string                            $index
-     * @param array|null                        $expectedSettings
+     * @param array                             $expectedSettings
      */
     public function __construct(ElasticsearchConnectionParameters $connectionParams, string $index, array $expectedSettings = [])
     {
@@ -98,7 +98,7 @@ class ElasticsearchIndexCheck implements CheckInterface
 
         if (\count($this->expectedSettings)) {
             foreach ($this->expectedSettings as $settingName => $expectedValue) {
-                $actualValue = $this->tryGetSettingFromIndexSettings($settingName, $this->actualSettings);
+                $actualValue = ElasticsearchHelper::tryGetSpecificSettingFromSettings($settingName, $this->actualSettings);
 
                 if ($actualValue instanceof Failure) {
                     return $actualValue;
@@ -113,7 +113,6 @@ class ElasticsearchIndexCheck implements CheckInterface
             }
         }
 
-
         return new Success('Success check Elasticsearch index.');
     }
 
@@ -122,57 +121,17 @@ class ElasticsearchIndexCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        $parameters = [
-            'host' => $this->connectionParameters->getHost(),
-            'port' => $this->connectionParameters->getPort(),
-            'ssl'  => $this->connectionParameters->isSsl() ? 'yes' : 'no',
-        ];
+        $parameters = ElasticsearchHelper::convertConnectionParametersToArray($this->connectionParameters);
 
-        if ($this->connectionParameters->getUsername() || $this->connectionParameters->getPassword()) {
-            $parameters['user'] = $this->connectionParameters->getUsername() ?: '(null)';
-            $parameters['pass'] = '***';
-        }
+        $actualSettings = $this->actualSettings;
+
+        // Remove specific parameters
+        unset($actualSettings['index']['routing']);
 
         return \array_merge($parameters, [
-            'index'                => $this->index,
-            'expected settings'       => \count($this->expectedSettings) ? $this->expectedSettings : '(none)',
-            'actual settings'         => $this->actualSettings,
+            'index'             => $this->index,
+            'expected settings' => \count($this->expectedSettings) ? $this->expectedSettings : '(none)',
+            'actual settings'   => $actualSettings,
         ]);
-    }
-
-    /**
-     * Try to get the setting from array
-     *
-     * @param string $path
-     * @param array  $settings
-     *
-     * @return Failure|mixed
-     */
-    private function tryGetSettingFromIndexSettings(string $path, array $settings)
-    {
-        $pathParts = \explode('.', $path);
-
-        $processedPath = '';
-
-        while ($pathPart = \array_shift($pathParts)) {
-            $processedPath .= $pathPart.'.';
-
-            if (!\array_key_exists($pathPart, $settings)) {
-                return new Failure(\sprintf(
-                    'The setting "%s" is missed.',
-                    \rtrim($processedPath, '.')
-                ));
-            }
-
-            if (\count($pathParts)) {
-                // Not last element. Get inner array.
-                $settings = $settings[$pathPart];
-            } else {
-                // Last element. Get value.
-                return $settings[$pathPart];
-            }
-        }
-
-        return new Failure(\sprintf('Cannot get setting by path: "%s".', $path));
     }
 }

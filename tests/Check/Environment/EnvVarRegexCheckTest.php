@@ -68,29 +68,29 @@ class EnvVarRegexCheckTest extends TestCase
     /**
      * @test
      */
-    public function shouldThrowExceptionForEmpyVariableName()
+    public function shouldThrowExceptionForEmpyVariableName(): void
     {
-        self::expectException(\InvalidArgumentException::class);
-        self::expectExceptionMessage('Environment variable name should not be empty.');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Environment variable name should not be empty.');
 
-        $check = new EnvVarRegexCheck('', '/^BAR$/');
+        new EnvVarRegexCheck('', '/^BAR$/');
     }
 
     /**
      * @test
      */
-    public function shouldThrowExceptionForInvalidRegexPattern()
+    public function shouldThrowExceptionForInvalidRegexPattern(): void
     {
-        self::expectException(\InvalidArgumentException::class);
-        self::expectExceptionMessage('Invalid regex pattern.');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid regex pattern.');
 
-        $check = new EnvVarRegexCheck(self::ENV_VAR_NAME, 'NOT_A_REGEX_PATTERN');
+        new EnvVarRegexCheck(self::ENV_VAR_NAME, 'NOT_A_REGEX_PATTERN');
     }
 
     /**
      * @test
      */
-    public function shouldFailForUnsetVariable()
+    public function shouldFailForUnsetVariable(): void
     {
         $pattern = '/^BAR$/';
         $expectedResult = new Failure('Environment variable is not set.');
@@ -134,7 +134,7 @@ class EnvVarRegexCheckTest extends TestCase
             'envvar not matches in_array pattern' => [
                 'BAR',
                 '/^\b(EVIL|GOOD)\b$/',
-                new Failure('Environment variable doesn\'t match pattern.'),
+                new Failure('Environment variable does not match pattern.'),
                 [
                     'variableName'  => self::ENV_VAR_NAME,
                     'pattern'       => '/^\b(EVIL|GOOD)\b$/',

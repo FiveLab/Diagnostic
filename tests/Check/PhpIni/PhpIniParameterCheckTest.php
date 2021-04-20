@@ -53,7 +53,7 @@ class PhpIniParameterCheckTest extends TestCase
 
         $result = $check->check();
 
-        self::assertEquals(new Success('Succecss check php.ini parameter.'), $result);
+        self::assertEquals(new Success('Success check php.ini parameter.'), $result);
     }
 
     /**

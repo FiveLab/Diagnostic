@@ -30,7 +30,7 @@ class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
     /**
      * @var OutputInterface
      */
-    private $output;
+    private OutputInterface $output;
 
     /**
      * Constructor.
@@ -46,8 +46,10 @@ class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
      * On check complete
      *
      * @param CompleteRunCheckEvent $event
+     *
+     * @return CompleteRunCheckEvent
      */
-    public function onCheckComplete(CompleteRunCheckEvent $event): void
+    public function onCheckComplete(CompleteRunCheckEvent $event): CompleteRunCheckEvent
     {
         $definition = $event->getDefinition();
         $result = $event->getResult();
@@ -87,6 +89,8 @@ class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
             $this->writeAdditionalParameters($definition->getCheck()->getExtraParameters());
             $this->output->writeln('');
         }
+
+        return $event;
     }
 
     /**

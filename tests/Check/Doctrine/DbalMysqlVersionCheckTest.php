@@ -184,7 +184,7 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
      * @param string $buildVersion
      * @param string $expected
      */
-    public function mysqlVersionRegexShouldExtractValidVersions(string $buildVersion, string $expected)
+    public function mysqlVersionRegexShouldExtractValidVersions(string $buildVersion, string $expected): void
     {
         $matches = [];
         preg_match(DbalMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
@@ -194,11 +194,12 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
 
     /**
      * @test
+     *
      * @dataProvider invalidBuildVersionProvider
      *
      * @param string $version
      */
-    public function mysqlVersionRegexShouldNotExtractInvalidVersions(string $version)
+    public function mysqlVersionRegexShouldNotExtractInvalidVersions(string $version): void
     {
         $matches = [];
         preg_match(DbalMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $version, $matches);

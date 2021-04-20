@@ -17,13 +17,11 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use FiveLab\Component\Diagnostic\Util\HttpSecurityEncoder;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterface;
-use Http\Client\HttpClient;
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Message\RequestFactory;
 use Psr\Http\Client\ClientExceptionInterface;
 
 /**
@@ -34,80 +32,74 @@ class PingableHttpCheck implements CheckInterface
     /**
      * @var string
      */
-    private $method;
+    private string $method;
 
     /**
      * @var string
      */
-    private $url;
+    private string $url;
 
     /**
      * @var array
      */
-    private $headers;
+    private array $headers;
 
     /**
-     * @var string|null
+     * @var string
      */
-    private $body;
+    private string $body;
 
     /**
      * @var int
      */
-    private $expectedStatusCode;
+    private int $expectedStatusCode;
 
     /**
      * @var string
      */
-    private $expectedApplicationName;
+    private string $expectedApplicationName;
 
     /**
      * @var array
      */
-    private $expectedApplicationRoles;
+    private array $expectedApplicationRoles;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $expectedVersion;
+    private ?string $expectedVersion;
 
     /**
-     * @var HttpClient
+     * @var HttpAdapterInterface
      */
-    private $client;
-
-    /**
-     * @var RequestFactory
-     */
-    private $requestFactory;
+    private HttpAdapterInterface $http;
 
     /**
      * @var VersionComparatorInterface
      */
-    private $versionComparator;
+    private VersionComparatorInterface $versionComparator;
 
     /**
      * @var HttpSecurityEncoder
      */
-    private $httpSecurityEncoder;
+    private HttpSecurityEncoder $httpSecurityEncoder;
 
     /**
      * Constructor.
      *
-     * @param string                     $method
-     * @param string                     $url
-     * @param array                      $headers
-     * @param string|null                $body
-     * @param int                        $expectedStatusCode
-     * @param string                     $expectedApplicationName
-     * @param array                      $expectedApplicationRoles
-     * @param string                     $expectedVersion
-     * @param HttpClient                 $client
-     * @param RequestFactory             $requestFactory
-     * @param VersionComparatorInterface $versionComparator
-     * @param HttpSecurityEncoder        $httpSecurityEncoder
+     * @param string                          $method
+     * @param string                          $url
+     * @param array                           $headers
+     * @param string                          $body
+     * @param int                             $expectedStatusCode
+     * @param string                          $expectedApplicationName
+     * @param array                           $expectedApplicationRoles
+     * @param string|null                     $expectedVersion
+     * @param HttpAdapterInterface|null       $http
+     * @param VersionComparatorInterface|null $versionComparator
+     * @param HttpSecurityEncoder|null        $httpSecurityEncoder
      */
-    public function __construct(string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedApplicationName, array $expectedApplicationRoles = [], string $expectedVersion = null, HttpClient $client = null, RequestFactory $requestFactory = null, VersionComparatorInterface $versionComparator = null, HttpSecurityEncoder $httpSecurityEncoder = null)
+    public function __construct(string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedApplicationName, array $expectedApplicationRoles = [], string $expectedVersion = null, HttpAdapterInterface $http = null, VersionComparatorInterface $versionComparator = null, HttpSecurityEncoder $httpSecurityEncoder = null)
     {
         $this->method = $method;
         $this->url = $url;
@@ -117,8 +109,7 @@ class PingableHttpCheck implements CheckInterface
         $this->expectedApplicationName = $expectedApplicationName;
         $this->expectedApplicationRoles = $expectedApplicationRoles;
         $this->expectedVersion = $expectedVersion;
-        $this->client = $client ?: HttpClientDiscovery::find();
-        $this->requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
+        $this->http = $http ?: new HttpAdapter();
         $this->httpSecurityEncoder = $httpSecurityEncoder ?: new HttpSecurityEncoder();
 
         if ($this->expectedVersion) {
@@ -131,10 +122,10 @@ class PingableHttpCheck implements CheckInterface
      */
     public function check(): ResultInterface
     {
-        $request = $this->requestFactory->createRequest($this->method, $this->url, $this->headers, $this->body);
+        $request = $this->http->createRequest($this->method, $this->url, $this->headers, $this->body);
 
         try {
-            $response = $this->client->sendRequest($request);
+            $response = $this->http->sendRequest($request);
         } catch (ClientExceptionInterface $e) {
             return new Failure(\sprintf(
                 'Fail send HTTP request. Error: %s.',
@@ -148,13 +139,6 @@ class PingableHttpCheck implements CheckInterface
             return new Failure('Server returns empty response.');
         }
 
-        \set_error_handler(static function () {
-        });
-
-        $json = \json_decode((string) $body, true);
-
-        \restore_error_handler();
-
         if ($response->getStatusCode() !== $this->expectedStatusCode) {
             return new Failure(\sprintf(
                 'The server return "%d" status code, but we expect "%d" status code.',
@@ -163,10 +147,12 @@ class PingableHttpCheck implements CheckInterface
             ));
         }
 
-        if (null === $json && $error = \json_last_error_msg()) {
+        try {
+            $json = \json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $error) {
             return new Failure(\sprintf(
                 'Cannot decode the response to JSON. Error: %s.',
-                \rtrim($error, '.')
+                $error->getMessage()
             ));
         }
 
@@ -221,7 +207,7 @@ class PingableHttpCheck implements CheckInterface
         return [
             'method'              => $this->method,
             'url'                 => $uri,
-            'headers'             => \json_encode($headers),
+            'headers'             => \json_encode($headers, JSON_THROW_ON_ERROR),
             'body'                => $this->body,
             'status code'         => $this->expectedStatusCode,
             'application name'    => $this->expectedApplicationName,

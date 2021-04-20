@@ -26,12 +26,12 @@ class SkipCheckSubscriberTest extends TestCase
     /**
      * @var SkipRegistryInterface|MockObject
      */
-    private $skipRegistry;
+    private SkipRegistryInterface $skipRegistry;
 
     /**
      * @var SkipCheckSubscriber
      */
-    private $subscriber;
+    private SkipCheckSubscriber $subscriber;
 
     /**
      * {@inheritdoc}

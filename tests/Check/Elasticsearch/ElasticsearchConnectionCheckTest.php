@@ -60,7 +60,7 @@ class ElasticsearchConnectionCheckTest extends AbstractElasticsearchTestCase
 
         $result = $check->check();
 
-        self::assertEquals(new Failure('Fail connect to ElasticSearch or send ping request.'), $result);
+        self::assertEquals(new Failure('Fail connect to ElasticSearch: No alive nodes found in your cluster.'), $result);
     }
 
     /**

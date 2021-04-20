@@ -13,12 +13,12 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Doctrine;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOMySql\Driver;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use FiveLab\Component\Diagnostic\Check\Doctrine\ReadAccessToTablesFromEntityManagerCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
@@ -30,12 +30,12 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDatabaseTestC
     /**
      * @var EntityManager
      */
-    private $entityManager;
+    private EntityManager $entityManager;
 
     /**
      * @var SchemaTool
      */
-    private $schemaTool;
+    private SchemaTool $schemaTool;
 
     /**
      * {@inheritdoc}
@@ -44,8 +44,6 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDatabaseTestC
     {
         if (!$this->canTestingWithDatabase()) {
             self::markTestSkipped('The database not configured.');
-
-            return;
         }
 
         $this->setUpDatabase();

@@ -28,17 +28,17 @@ class DynamoDbTableExistCheck implements CheckInterface
     /**
      * @var Sdk
      */
-    private $sdk;
+    private Sdk $sdk;
 
     /**
      * @var string
      */
-    private $tableName;
+    private string $tableName;
 
     /**
      * @var string
      */
-    private $endpoint;
+    private string $endpoint;
 
     /**
      * Constructor.

@@ -14,8 +14,6 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Command;
 
 use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
-use FiveLab\Component\Diagnostic\Check\Definition\Filter\CheckDefinitionsInGroupFilter;
-use FiveLab\Component\Diagnostic\Check\Definition\Filter\OrXFilter;
 use FiveLab\Component\Diagnostic\Runner\RunnerInterface;
 use FiveLab\Component\Diagnostic\Runner\Subscriber\ConsoleOutputDebugSubscriber;
 use Symfony\Component\Console\Command\Command;
@@ -28,15 +26,17 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RunDiagnosticCommand extends Command
 {
+    use FilterDefinitionsTrait;
+
     /**
      * @var RunnerInterface
      */
-    private $runner;
+    private RunnerInterface $runner;
 
     /**
      * @var DefinitionCollection
      */
-    private $definitions;
+    private DefinitionCollection $definitions;
 
     /**
      * Constructor.
@@ -66,7 +66,7 @@ class RunDiagnosticCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         if (\method_exists($this->runner, 'getEventDispatcher')) {
             $this->runner->getEventDispatcher()
@@ -84,24 +84,7 @@ class RunDiagnosticCommand extends Command
         $definitions = clone $this->definitions;
 
         if ($input->getOption('group')) {
-            $groups = $input->getOption('group');
-
-            $notExistenceGroups = \array_diff($groups, $definitions->getGroups());
-
-            if (\count($notExistenceGroups)) {
-                throw new \InvalidArgumentException(\sprintf(
-                    'The groups "%s" is not configured in your definitions.',
-                    \implode('", "', $notExistenceGroups)
-                ));
-            }
-
-            $filters = \array_map(function (string $group) {
-                return new CheckDefinitionsInGroupFilter($group);
-            }, $input->getOption('group'));
-
-            $filter = new OrXFilter(...$filters);
-
-            $definitions = $definitions->filter($filter);
+            $definitions = $this->filterDefinitionsByGroupInInput($definitions, $input->getOption('group'));
         }
 
         return (int) !$this->runner->run($definitions);

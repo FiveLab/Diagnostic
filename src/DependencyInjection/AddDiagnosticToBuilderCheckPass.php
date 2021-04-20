@@ -27,12 +27,12 @@ class AddDiagnosticToBuilderCheckPass implements CompilerPassInterface
     /**
      * @var string
      */
-    private $builderServiceName;
+    private string $builderServiceName;
 
     /**
      * @var string
      */
-    private $checkTagName;
+    private string $checkTagName;
 
     /**
      * Constructor.
@@ -86,15 +86,10 @@ class AddDiagnosticToBuilderCheckPass implements CompilerPassInterface
             }
 
             foreach ($tags as $attributes) {
-                $attributes = \array_merge([
-                    'key'   => $serviceId,
-                    'group' => '',
-                ], $attributes);
-
                 $builderDefinition->addMethodCall('addCheck', [
-                    $attributes['key'],
+                    $attributes['key'] ?? $serviceId,
                     new Reference($serviceId),
-                    $attributes['group'],
+                    $attributes['group'] ?? '',
                 ]);
             }
         }

@@ -15,7 +15,7 @@ namespace FiveLab\Component\Diagnostic\Check\Doctrine;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Connection as DriverConnection;
-use Doctrine\DBAL\Driver\PDOException;
+use Doctrine\DBAL\Driver\Exception;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
@@ -29,7 +29,7 @@ class DbalConnectionCheck implements CheckInterface
     /**
      * @var DriverConnection
      */
-    private $connection;
+    private DriverConnection $connection;
 
     /**
      * Constructor.
@@ -48,7 +48,7 @@ class DbalConnectionCheck implements CheckInterface
     {
         try {
             $this->connection->executeQuery('SELECT 1');
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
             return new Failure(\sprintf(
                 'Fail connect to database. Error: %s.',
                 \rtrim($e->getMessage(), '.')

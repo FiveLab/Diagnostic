@@ -77,6 +77,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
 
         $actualBuildVersion = $this->getMysqlServerBuildVersion($connection);
         $actualDistribVersion = $this->extractMysqlServerDistribVersion($actualBuildVersion);
+
         self::assertEquals([
             'driver'          => 'mysql',
             'host'            => $this->getDatabaseHost(),

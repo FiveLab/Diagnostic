@@ -14,7 +14,6 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\RabbitMq\Management;
 
 use FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementExchangeCheck;
-use FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementQueueCheck;
 use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
@@ -23,9 +22,9 @@ use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
 class RabbitMqManagementExchangeCheckTest extends AbstractRabbitMqTestCase
 {
     /**
-     * @var string
+     * @var string|null
      */
-    private $exchangeName;
+    private ?string $exchangeName = null;
 
     /**
      * {@inheritdoc}

@@ -21,7 +21,7 @@ class HttpSecurityEncoderTest extends TestCase
     /**
      * @var HttpSecurityEncoder
      */
-    private $encoder;
+    private HttpSecurityEncoder $encoder;
 
     /**
      * {@inheritdoc}

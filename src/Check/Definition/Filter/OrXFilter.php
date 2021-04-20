@@ -23,7 +23,7 @@ class OrXFilter
     /**
      * @var array|callable[]
      */
-    private $filters;
+    private array $filters;
 
     /**
      * Constructor.

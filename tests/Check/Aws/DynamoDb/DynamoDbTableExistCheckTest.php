@@ -13,7 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Aws\DynamoDb;
 
-use Aws\Credentials\Credentials;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\Sdk;
 use FiveLab\Component\Diagnostic\Check\Aws\DynamoDb\DynamoDbTableExistCheck;
@@ -26,7 +25,7 @@ class DynamoDbTableExistCheckTest extends AbstractAwsTestCase
     /**
      * @var DynamoDbClient
      */
-    private $dynamodb;
+    private DynamoDbClient $dynamodb;
 
     /**
      * {@inheritdoc}

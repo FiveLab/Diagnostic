@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 abstract class AbstractElasticsearchTestCase extends TestCase
 {
     /**
-     * Get the elastcsearch host
+     * Get the elasticsearch host
      *
      * @return string|null
      */

@@ -23,7 +23,7 @@ class EnvVariableSkipRegistry implements SkipRegistryInterface
     /**
      * @var array
      */
-    private $skipKeys = [];
+    private array $skipKeys = [];
 
     /**
      * Constructor.

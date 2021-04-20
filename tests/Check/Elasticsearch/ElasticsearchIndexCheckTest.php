@@ -35,15 +35,14 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
         $settings = [
             'settings' => [
                 'number_of_shards'         => 3,
-                'index.mapper.dynamic'     => false,
                 'index.number_of_replicas' => 1,
+                'index.refresh_interval'   => '5s',
             ],
             'mappings' => [
-                'customer' => [
-                    'properties' => [
-                        'login' => [
-                            'type' => 'text',
-                        ],
+                'dynamic'    => false,
+                'properties' => [
+                    'login' => [
+                        'type' => 'text',
                     ],
                 ],
             ],
@@ -91,7 +90,7 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
             'test-index',
             [
                 'index.number_of_shards' => '3',
-                'index.mapper.dynamic'   => 'false',
+                'index.refresh_interval' => '5s',
             ]
         );
 
@@ -176,7 +175,7 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
             'test-index',
             [
                 'index.number_of_shards'   => '3',
-                'index.mapper.dynamic'     => 'false',
+                'index.refresh_interval'   => '5s',
                 'index.number_of_replicas' => '1',
             ]
         );
@@ -197,16 +196,14 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
             'index'             => 'test-index',
             'expected settings' => [
                 'index.number_of_shards'   => '3',
-                'index.mapper.dynamic'     => 'false',
+                'index.refresh_interval'   => '5s',
                 'index.number_of_replicas' => '1',
             ],
             'actual settings'   => [
                 'index' => [
                     'number_of_shards'   => '3',
                     'provided_name'      => 'test-index',
-                    'mapper'             => [
-                        'dynamic' => 'false',
-                    ],
+                    'refresh_interval'   => '5s',
                     'number_of_replicas' => '1',
                 ],
             ],

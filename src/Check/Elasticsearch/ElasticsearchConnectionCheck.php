@@ -32,7 +32,7 @@ class ElasticsearchConnectionCheck implements CheckInterface
     /**
      * @var ElasticsearchConnectionParameters
      */
-    private $connectionParameters;
+    private ElasticsearchConnectionParameters $connectionParameters;
 
     /**
      * Constructor.
@@ -78,17 +78,6 @@ class ElasticsearchConnectionCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        $params = [
-            'host' => $this->connectionParameters->getHost(),
-            'port' => $this->connectionParameters->getPort(),
-            'ssl'  => $this->connectionParameters->isSsl() ? 'yes' : 'no',
-        ];
-
-        if ($this->connectionParameters->getUsername() || $this->connectionParameters->getPassword()) {
-            $params['user'] = $this->connectionParameters->getUsername() ?: '(null)';
-            $params['pass'] = '***';
-        }
-
-        return $params;
+        return ElasticsearchHelper::convertConnectionParametersToArray($this->connectionParameters);
     }
 }

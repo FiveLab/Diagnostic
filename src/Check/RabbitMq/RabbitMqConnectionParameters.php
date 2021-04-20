@@ -21,32 +21,32 @@ class RabbitMqConnectionParameters
     /**
      * @var string
      */
-    private $host;
+    private string $host;
 
     /**
      * @var int
      */
-    private $port;
+    private int $port;
 
     /**
      * @var string
      */
-    private $username;
+    private string $username;
 
     /**
      * @var string
      */
-    private $password;
+    private string $password;
 
     /**
      * @var string
      */
-    private $vhost;
+    private string $vhost;
 
     /**
      * @var bool
      */
-    private $ssl;
+    private bool $ssl;
 
     /**
      * Constructor.
@@ -136,7 +136,7 @@ class RabbitMqConnectionParameters
      *
      * @return string
      */
-    public function getDsn($httpTransport, bool $maskedPassword): string
+    public function getDsn(bool $httpTransport, bool $maskedPassword): string
     {
         $prefix = $this->isSsl() ? 'ssl' : 'tcp';
 

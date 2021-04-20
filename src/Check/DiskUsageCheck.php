@@ -25,17 +25,17 @@ class DiskUsageCheck implements CheckInterface
     /**
      * @var int
      */
-    private $criticalThreshold;
+    private int $criticalThreshold;
 
     /**
      * @var int
      */
-    private $warningThreshold;
+    private int $warningThreshold;
 
     /**
      * @var string
      */
-    private $path;
+    private string $path;
 
     /**
      * Constructor.

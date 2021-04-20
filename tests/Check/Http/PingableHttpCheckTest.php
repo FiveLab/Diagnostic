@@ -17,12 +17,12 @@ use FiveLab\Component\Diagnostic\Check\Http\PingableHttpCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use GuzzleHttp\Psr7\BufferStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Http\Client\Exception\TransferException;
 use Http\Client\HttpClient;
-use Http\Message\MessageFactory\GuzzleMessageFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -68,7 +68,7 @@ class PingableHttpCheckTest extends TestCase
             ->with($expectedRequest)
             ->willReturn($response);
 
-        $check = new PingableHttpCheck($method, $url, $headers, $body, $expectedStatusCode, $expectedApplicationName, $expectedApplicationRoles, $expectedVersion, $this->client, new GuzzleMessageFactory());
+        $check = new PingableHttpCheck($method, $url, $headers, $body, $expectedStatusCode, $expectedApplicationName, $expectedApplicationRoles, $expectedVersion, new HttpAdapter($this->client));
 
         $result = $check->check();
 
@@ -87,7 +87,7 @@ class PingableHttpCheckTest extends TestCase
             ->with($expectedRequest)
             ->willThrowException(new TransferException('some'));
 
-        $check = new PingableHttpCheck('GET', '/some', [], '', 200, 'some', [], '1.1', $this->client, new GuzzleMessageFactory());
+        $check = new PingableHttpCheck('GET', '/some', [], '', 200, 'some', [], '1.1', new HttpAdapter($this->client));
 
         $result = $check->check();
 
@@ -99,7 +99,7 @@ class PingableHttpCheckTest extends TestCase
      */
     public function shouldSuccessGetExtraParameters(): void
     {
-        $check = new PingableHttpCheck('GET', '/some', ['Content-Type' => 'text/plain'], 'Foo Bar', 200, 'some', ['foo', 'bar'], '1.1', $this->client);
+        $check = new PingableHttpCheck('GET', '/some', ['Content-Type' => 'text/plain'], 'Foo Bar', 200, 'some', ['foo', 'bar'], '1.1', new HttpAdapter($this->client));
 
         self::assertEquals([
             'method'              => 'GET',
@@ -118,7 +118,7 @@ class PingableHttpCheckTest extends TestCase
      */
     public function shouldEncodeUriIfUriContainPassword(): void
     {
-        $check = new PingableHttpCheck('GET', 'https://user:pass@domain.com/some?key=foo#frag', ['Content-Type' => 'text/plain'], '', 200, '', [], '', $this->client);
+        $check = new PingableHttpCheck('GET', 'https://user:pass@domain.com/some?key=foo#frag', ['Content-Type' => 'text/plain'], '', 200, '', [], '', new HttpAdapter($this->client));
 
         self::assertEquals([
             'method'              => 'GET',
@@ -137,7 +137,7 @@ class PingableHttpCheckTest extends TestCase
      */
     public function shouldSuccessEncodeAuthorizationHeader(): void
     {
-        $check = new PingableHttpCheck('GET', 'https://domain.com/some', ['Authorization' => 'basic some-foo'], '', 200, '', [], '', $this->client);
+        $check = new PingableHttpCheck('GET', 'https://domain.com/some', ['Authorization' => 'basic some-foo'], '', 200, '', [], '', new HttpAdapter($this->client));
 
         self::assertEquals([
             'method'              => 'GET',
@@ -290,7 +290,7 @@ class PingableHttpCheckTest extends TestCase
             'version'     => $version,
         ];
 
-        $buffer->write(\json_encode($data));
+        $buffer->write(\json_encode($data, JSON_THROW_ON_ERROR));
 
         return $buffer;
     }

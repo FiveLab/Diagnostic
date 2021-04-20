@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
 /*
  * This file is part of the FiveLab Diagnostic package.
@@ -28,17 +28,17 @@ class RedisSetGetCheck implements CheckInterface
     /**
      * @var string
      */
-    private $host;
+    private string $host;
 
     /**
      * @var int
      */
-    private $port;
+    private int $port;
 
     /**
      * @var string|null
      */
-    private $password;
+    private ?string $password;
 
     /**
      * Constructor.

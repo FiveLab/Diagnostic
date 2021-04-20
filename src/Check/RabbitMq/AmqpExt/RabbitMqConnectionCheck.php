@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection ALL */
+/** @noinspection ALL */
+/** @noinspection ALL */
 
 /*
  * This file is part of the FiveLab Diagnostic package.
@@ -27,7 +29,7 @@ class RabbitMqConnectionCheck implements CheckInterface
     /**
      * @var RabbitMqConnectionParameters
      */
-    private $connectionParameters;
+    private RabbitMqConnectionParameters $connectionParameters;
 
     /**
      * Constructor.

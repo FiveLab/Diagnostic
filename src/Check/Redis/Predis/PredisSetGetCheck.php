@@ -29,17 +29,17 @@ class PredisSetGetCheck implements CheckInterface
     /**
      * @var string
      */
-    private $host;
+    private string $host;
 
     /**
      * @var int
      */
-    private $port;
+    private int $port;
 
     /**
      * @var string|null
      */
-    private $password;
+    private ?string $password;
 
     /**
      * Constructor.

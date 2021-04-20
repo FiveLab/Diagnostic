@@ -26,7 +26,7 @@ class SwiftMailerConnectionCheck implements CheckInterface
     /**
      * @var \Swift_Mailer
      */
-    private $swiftmailer;
+    private \Swift_Mailer $swiftmailer;
 
     /**
      * Constructor.

@@ -25,6 +25,7 @@ use FiveLab\Component\Diagnostic\Runner\Event\CompleteRunCheckEvent;
 use FiveLab\Component\Diagnostic\Runner\Runner;
 use FiveLab\Component\Diagnostic\Runner\RunnerEvents;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub\ReturnCallback;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -34,12 +35,12 @@ class RunnerTest extends TestCase
     /**
      * @var EventDispatcherInterface|MockObject
      */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     /**
      * @var Runner
      */
-    private $runner;
+    private Runner $runner;
 
     /**
      * {@inheritdoc}
@@ -82,8 +83,20 @@ class RunnerTest extends TestCase
         $definition1 = $this->createDefinitionWithResult($result);
         $definition2 = $this->createDefinitionWithResult($result);
 
-        $this->expectDispatchForDefinition(0, $definition1, $result);
-        $this->expectDispatchForDefinition(1, $definition2, $result);
+        $this->eventDispatcher->expects(self::exactly(4))
+            ->method('dispatch')
+            ->withConsecutive(
+                [new BeforeRunCheckEvent($definition1), RunnerEvents::RUN_CHECK_BEFORE],
+                [new CompleteRunCheckEvent($definition1, $result), RunnerEvents::RUN_CHECK_COMPLETE],
+                [new BeforeRunCheckEvent($definition2), RunnerEvents::RUN_CHECK_BEFORE],
+                [new CompleteRunCheckEvent($definition2, $result), RunnerEvents::RUN_CHECK_COMPLETE]
+            )
+            ->willReturnOnConsecutiveCalls(
+                self::returnArgument(0),
+                self::returnArgument(0),
+                self::returnArgument(0),
+                self::returnArgument(0)
+            );
 
         $result = $this->runner->run(new DefinitionCollection($definition1, $definition2));
 
@@ -102,9 +115,24 @@ class RunnerTest extends TestCase
         $definition2 = $this->createDefinitionWithResult($fail);
         $definition3 = $this->createDefinitionWithResult($success);
 
-        $this->expectDispatchForDefinition(0, $definition1, $success);
-        $this->expectDispatchForDefinition(1, $definition2, $fail);
-        $this->expectDispatchForDefinition(2, $definition3, $success);
+        $this->eventDispatcher->expects(self::exactly(6))
+            ->method('dispatch')
+            ->withConsecutive(
+                [new BeforeRunCheckEvent($definition1), RunnerEvents::RUN_CHECK_BEFORE],
+                [new CompleteRunCheckEvent($definition1, $success), RunnerEvents::RUN_CHECK_COMPLETE],
+                [new BeforeRunCheckEvent($definition2), RunnerEvents::RUN_CHECK_BEFORE],
+                [new CompleteRunCheckEvent($definition2, $fail), RunnerEvents::RUN_CHECK_COMPLETE],
+                [new BeforeRunCheckEvent($definition3), RunnerEvents::RUN_CHECK_BEFORE],
+                [new CompleteRunCheckEvent($definition3, $success), RunnerEvents::RUN_CHECK_COMPLETE],
+            )
+            ->willReturnOnConsecutiveCalls(
+                self::returnArgument(0),
+                self::returnArgument(0),
+                self::returnArgument(0),
+                self::returnArgument(0),
+                self::returnArgument(0),
+                self::returnArgument(0)
+            );
 
         $result = $this->runner->run(new DefinitionCollection($definition1, $definition2, $definition3));
 
@@ -119,18 +147,28 @@ class RunnerTest extends TestCase
         $definition1 = $this->createDefinitionWithResult();
         $definition2 = $this->createDefinitionWithResult(new Success('some'));
 
-        $this->eventDispatcher->expects(self::at(0))
-            ->method('dispatch')
-            ->with(RunnerEvents::RUN_CHECK_BEFORE, new BeforeRunCheckEvent($definition1))
-            ->willReturnCallback(function (string $eventName, BeforeRunCheckEvent $event) {
-                $event->setResult(new Skip('skipped'));
-            });
+        $def1 = new BeforeRunCheckEvent($definition1);
+        $def1->setResult(new Skip('skipped'));
 
-        $this->eventDispatcher->expects(self::at(1))
+        $this->eventDispatcher->expects(self::exactly(4))
             ->method('dispatch')
-            ->with(RunnerEvents::RUN_CHECK_COMPLETE, new CompleteRunCheckEvent($definition1, new Skip('skipped')));
+            ->withConsecutive(
+                [new BeforeRunCheckEvent($definition1), RunnerEvents::RUN_CHECK_BEFORE],
+                [new CompleteRunCheckEvent($definition1, new Skip('skipped')), RunnerEvents::RUN_CHECK_COMPLETE],
+                [new BeforeRunCheckEvent($definition2), RunnerEvents::RUN_CHECK_BEFORE],
+                [new CompleteRunCheckEvent($definition2, new Success('some')), RunnerEvents::RUN_CHECK_COMPLETE],
+            )
+            ->willReturnOnConsecutiveCalls(
+                new ReturnCallback(static function (BeforeRunCheckEvent $event) {
+                    $event = clone $event;
+                    $event->setResult(new Skip('skipped'));
 
-        $this->expectDispatchForDefinition(1, $definition2, new Success('some'));
+                    return $event;
+                }),
+                new CompleteRunCheckEvent($definition1, new Skip('skipped')),
+                new BeforeRunCheckEvent($definition2),
+                new CompleteRunCheckEvent($definition2, new Success('some'))
+            );
 
         $result = $this->runner->run(new DefinitionCollection($definition1, $definition2));
 
@@ -154,7 +192,16 @@ class RunnerTest extends TestCase
             ->method('getCheck')
             ->willReturn($check);
 
-        $this->expectDispatchForDefinition(0, $definition, new Failure('Catch exception (RuntimeException): some-foo-bar'));
+        $this->eventDispatcher->expects(self::exactly(2))
+            ->method('dispatch')
+            ->withConsecutive(
+                [new BeforeRunCheckEvent($definition), RunnerEvents::RUN_CHECK_BEFORE],
+                [new CompleteRunCheckEvent($definition, new Failure('Catch exception (RuntimeException): some-foo-bar')), RunnerEvents::RUN_CHECK_COMPLETE],
+            )
+            ->willReturnOnConsecutiveCalls(
+                self::returnArgument(0),
+                self::returnArgument(0),
+            );
 
         $result = $this->runner->run(new DefinitionCollection($definition));
 
@@ -162,29 +209,9 @@ class RunnerTest extends TestCase
     }
 
     /**
-     * Expect dispatch for definition
-     *
-     * @param int                      $index
-     * @param CheckDefinitionInterface $definition
-     * @param ResultInterface          $result
-     */
-    private function expectDispatchForDefinition($index, CheckDefinitionInterface $definition, ResultInterface $result): void
-    {
-        $index = $index * 2;
-
-        $this->eventDispatcher->expects(self::at($index))
-            ->method('dispatch')
-            ->with(RunnerEvents::RUN_CHECK_BEFORE, new BeforeRunCheckEvent($definition));
-
-        $this->eventDispatcher->expects(self::at($index + 1))
-            ->method('dispatch')
-            ->with(RunnerEvents::RUN_CHECK_COMPLETE, new CompleteRunCheckEvent($definition, $result));
-    }
-
-    /**
      * Create definition
      *
-     * @param ResultInterface $result
+     * @param ResultInterface|null $result
      *
      * @return CheckDefinitionInterface
      */

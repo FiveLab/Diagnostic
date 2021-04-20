@@ -23,17 +23,17 @@ class CheckDefinition implements CheckDefinitionInterface
     /**
      * @var string
      */
-    private $key;
+    private string $key;
 
     /**
      * @var CheckInterface
      */
-    private $check;
+    private CheckInterface $check;
 
     /**
      * @var array
      */
-    private $groups;
+    private array $groups;
 
     /**
      * Constructor.
