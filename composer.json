@@ -48,7 +48,7 @@
         "doctrine/orm": "~2.6",
         "elasticsearch/elasticsearch": "~7.0",
         "react/promise": "~2.3",
-        "illuminate/database": "^6.0",
+        "illuminate/database": "^7.0",
         "aws/aws-sdk-php": "~3.0"
     },
 

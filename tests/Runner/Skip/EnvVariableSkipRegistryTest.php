@@ -14,6 +14,7 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Runner\Skip;
 
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
+use FiveLab\Component\Diagnostic\Runner\Skip\EnvVariableSkipRegistry;
 use PHPUnit\Framework\TestCase;
 
 class EnvVariableSkipRegistryTest extends TestCase
