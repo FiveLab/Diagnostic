@@ -26,12 +26,12 @@ class EnvVarRegexCheck implements CheckInterface
     /**
      * @var string
      */
-    private $variableName;
+    private string $variableName;
 
     /**
      * @var string
      */
-    private $pattern;
+    private string $pattern;
 
     /**
      * Constructor.
@@ -66,7 +66,7 @@ class EnvVarRegexCheck implements CheckInterface
             return new Success('Environment variable matches pattern.');
         }
 
-        return new Failure('Environment variable doesn\'t match pattern.');
+        return new Failure('Environment variable does not match pattern.');
     }
 
     /**
@@ -95,9 +95,11 @@ class EnvVarRegexCheck implements CheckInterface
      */
     private function isRegularExpression(string $pattern): bool
     {
-        set_error_handler(function () {
+        \set_error_handler(static function () {
         }, E_WARNING);
-        $isRegularExpression = preg_match($pattern, '') !== false;
+
+        $isRegularExpression = \preg_match($pattern, '') !== false;
+
         restore_error_handler();
 
         return $isRegularExpression;

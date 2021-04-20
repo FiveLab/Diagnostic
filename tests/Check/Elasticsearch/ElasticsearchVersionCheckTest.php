@@ -36,7 +36,7 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
      */
     public function shouldSuccessCheckVersions(): void
     {
-        $check = new ElasticsearchVersionCheck($this->getConnectionParameters(), '~6.8.0', '~7.0');
+        $check = new ElasticsearchVersionCheck($this->getConnectionParameters(), '~7.12.0', '~8.0');
 
         $result = $check->check();
 
@@ -48,7 +48,7 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
      */
     public function shouldFailCheckForElasticsearchVersion(): void
     {
-        $check = new ElasticsearchVersionCheck($this->getConnectionParameters(), '~6.7.0');
+        $check = new ElasticsearchVersionCheck($this->getConnectionParameters(), '~6.7');
 
         $result = $check->check();
 
@@ -60,7 +60,7 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
      */
     public function shouldFailCheckLuceneVersion(): void
     {
-        $check = new ElasticsearchVersionCheck($this->getConnectionParameters(), null, '~6.0.0');
+        $check = new ElasticsearchVersionCheck($this->getConnectionParameters(), null, '~6.0');
 
         $result = $check->check();
 

@@ -25,7 +25,7 @@ class EnvExistenceCheckTest extends TestCase
     /**
      * @var EnvExistenceCheck
      */
-    private $check;
+    private EnvExistenceCheck $check;
 
     /**
      * {@inheritdoc}

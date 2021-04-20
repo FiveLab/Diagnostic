@@ -18,10 +18,8 @@ use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
-use Http\Client\HttpClient;
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Message\RequestFactory;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 
 /**
@@ -30,32 +28,25 @@ use Psr\Http\Client\ClientExceptionInterface;
 class RabbitMqManagementVhostCheck implements CheckInterface
 {
     /**
-     * @var HttpClient
+     * @var HttpAdapterInterface
      */
-    private $client;
-
-    /**
-     * @var RequestFactory
-     */
-    private $requestFactory;
+    private HttpAdapterInterface $http;
 
     /**
      * @var RabbitMqConnectionParameters
      */
-    private $connectionParameters;
+    private RabbitMqConnectionParameters $connectionParameters;
 
     /**
      * Constructor.
      *
      * @param RabbitMqConnectionParameters $connectionParameters
-     * @param HttpClient|null              $client
-     * @param RequestFactory|null          $requestFactory
+     * @param HttpAdapterInterface|null    $http
      */
-    public function __construct(RabbitMqConnectionParameters $connectionParameters, HttpClient $client = null, RequestFactory $requestFactory = null)
+    public function __construct(RabbitMqConnectionParameters $connectionParameters, HttpAdapterInterface $http = null)
     {
         $this->connectionParameters = $connectionParameters;
-        $this->client = $client ?: HttpClientDiscovery::find();
-        $this->requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
+        $this->http = $http ?: new HttpAdapter();
     }
 
     /**
@@ -69,12 +60,12 @@ class RabbitMqManagementVhostCheck implements CheckInterface
             \urlencode($this->connectionParameters->getVhost())
         );
 
-        $request = $this->requestFactory->createRequest('GET', $url, [
+        $request = $this->http->createRequest('GET', $url, [
             'accept' => 'application/json',
         ]);
 
         try {
-            $response = $this->client->sendRequest($request);
+            $response = $this->http->sendRequest($request);
         } catch (ClientExceptionInterface $e) {
             return new Failure(\sprintf(
                 'Fail connect to RabbitMQ Management API. Error: %s.',

@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection ALL */
+/** @noinspection ALL */
 
 /*
  * This file is part of the FiveLab Diagnostic package.
@@ -13,7 +14,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Doctrine;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
@@ -26,21 +27,21 @@ use FiveLab\Component\Diagnostic\Result\Success;
 class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
 {
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     /**
      * @var array|string[]
      */
-    private $tables = [];
+    private array $tables = [];
 
     /**
      * Constructor.
      *
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
@@ -76,12 +77,10 @@ class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        $parameters = [
+        return [
             'dbname' => $this->entityManager->getConnection()->getDatabase(),
             'tables' => \implode(', ', $this->tables),
         ];
-
-        return $parameters;
     }
 
     /**
@@ -116,7 +115,7 @@ class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
         $stmt = $connection->prepare(\sprintf('SELECT 1 FROM %s LIMIT 1', $tableName));
 
         try {
-            $stmt->execute();
+            $stmt->executeStatement();
         } catch (\Throwable $e) {
             return false;
         }

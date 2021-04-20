@@ -21,7 +21,7 @@ abstract class AbstractResult implements ResultInterface
     /**
      * @var string
      */
-    private $message;
+    private string $message;
 
     /**
      * Constructor.

@@ -18,10 +18,8 @@ use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
-use Http\Client\HttpClient;
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Message\RequestFactory;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 
 /**
@@ -30,34 +28,29 @@ use Psr\Http\Client\ClientExceptionInterface;
 class RabbitMqManagementExchangeCheck implements CheckInterface
 {
     /**
-     * @var HttpClient
+     * @var HttpAdapterInterface
      */
-    private $client;
-
-    /**
-     * @var RequestFactory
-     */
-    private $requestFactory;
+    private HttpAdapterInterface $http;
 
     /**
      * @var RabbitMqConnectionParameters
      */
-    private $connectionParameters;
+    private RabbitMqConnectionParameters $connectionParameters;
 
     /**
      * @var string
      */
-    private $exchangeName;
+    private string $exchangeName;
 
     /**
      * @var string
      */
-    private $exchangeType;
+    private string $exchangeType;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $actualExchangeType;
+    private ?string $actualExchangeType = null;
 
     /**
      * Constructor.
@@ -65,16 +58,14 @@ class RabbitMqManagementExchangeCheck implements CheckInterface
      * @param RabbitMqConnectionParameters $connectionParameters
      * @param string                       $exchangeName
      * @param string                       $exchangeType
-     * @param HttpClient|null              $client
-     * @param RequestFactory|null          $requestFactory
+     * @param HttpAdapterInterface|null    $http
      */
-    public function __construct(RabbitMqConnectionParameters $connectionParameters, string $exchangeName, string $exchangeType, HttpClient $client = null, RequestFactory $requestFactory = null)
+    public function __construct(RabbitMqConnectionParameters $connectionParameters, string $exchangeName, string $exchangeType, HttpAdapterInterface $http = null)
     {
         $this->connectionParameters = $connectionParameters;
         $this->exchangeName = $exchangeName;
         $this->exchangeType = $exchangeType;
-        $this->client = $client ?: HttpClientDiscovery::find();
-        $this->requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
+        $this->http = $http ?: new HttpAdapter();
     }
 
     /**
@@ -89,12 +80,12 @@ class RabbitMqManagementExchangeCheck implements CheckInterface
             \urlencode($this->exchangeName)
         );
 
-        $request = $this->requestFactory->createRequest('GET', $url, [
+        $request = $this->http->createRequest('GET', $url, [
             'accept' => 'application/json',
         ]);
 
         try {
-            $response = $this->client->sendRequest($request);
+            $response = $this->http->sendRequest($request);
         } catch (ClientExceptionInterface $e) {
             return new Failure(\sprintf(
                 'Fail connect to RabbitMQ Management API. Error: %s.',
@@ -113,13 +104,12 @@ class RabbitMqManagementExchangeCheck implements CheckInterface
             ));
         }
 
-        $exchangeInfo = \json_decode((string) $response->getBody(), true);
+        $exchangeInfo = \json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         $this->actualExchangeType = $exchangeInfo['type'];
 
         if ($this->actualExchangeType !== $this->exchangeType) {
             return new Failure('Invalid exchange types.');
         }
-
 
         return new Success('Success check exchange via RabbitMQ Management API.');
     }

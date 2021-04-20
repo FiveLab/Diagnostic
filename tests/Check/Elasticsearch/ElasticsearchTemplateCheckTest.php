@@ -37,8 +37,8 @@ class ElasticsearchTemplateCheckTest extends AbstractElasticsearchTestCase
             'body' => [
                 'template' => 'my-test-indices-*',
                 'settings' => [
-                    'number_of_shards'     => 3,
-                    'index.mapper.dynamic' => false,
+                    'number_of_shards'       => 3,
+                    'index.refresh_interval' => '10s',
                 ],
             ],
         ]);
@@ -93,7 +93,7 @@ class ElasticsearchTemplateCheckTest extends AbstractElasticsearchTestCase
             ['my-test-indices-*'],
             [
                 'index.number_of_shards' => '3',
-                'index.mapper.dynamic'   => 'false',
+                'index.refresh_interval' => '10s',
             ]
         );
 
@@ -191,7 +191,7 @@ class ElasticsearchTemplateCheckTest extends AbstractElasticsearchTestCase
             ['my-test-indices-*'],
             [
                 'index.number_of_shards' => '3',
-                'index.mapper.dynamic'   => 'false',
+                'index.refresh_interval' => '10s',
             ]
         );
 
@@ -208,14 +208,12 @@ class ElasticsearchTemplateCheckTest extends AbstractElasticsearchTestCase
             'actual index patterns'   => ['my-test-indices-*'],
             'expected settings'       => [
                 'index.number_of_shards' => '3',
-                'index.mapper.dynamic'   => 'false',
+                'index.refresh_interval' => '10s',
             ],
             'actual settings'         => [
                 'index' => [
                     'number_of_shards' => '3',
-                    'mapper'           => [
-                        'dynamic' => 'false',
-                    ],
+                    'refresh_interval' => '10s',
                 ],
             ],
         ], $parameters);

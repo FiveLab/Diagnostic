@@ -21,36 +21,36 @@ class ElasticsearchConnectionParameters
     /**
      * @var string
      */
-    private $host;
+    private string $host;
 
     /**
      * @var int
      */
-    private $port;
+    private int $port;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $username;
+    private ?string $username;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $password;
+    private ?string $password;
 
     /**
      * @var bool
      */
-    private $ssl;
+    private bool $ssl;
 
     /**
      * Constructor.
      *
-     * @param string $host
-     * @param int    $port
-     * @param string $username
-     * @param string $password
-     * @param bool   $ssl
+     * @param string      $host
+     * @param int         $port
+     * @param string|null $username
+     * @param string|null $password
+     * @param bool        $ssl
      */
     public function __construct(string $host, int $port = 9200, string $username = null, string $password = null, bool $ssl = false)
     {

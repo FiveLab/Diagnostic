@@ -26,7 +26,7 @@ class ListGroupsCommand extends Command
     /**
      * @var DefinitionCollection
      */
-    private $definitions;
+    private DefinitionCollection $definitions;
 
     /**
      * Constructor.
@@ -53,7 +53,7 @@ class ListGroupsCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $groups = $this->definitions->getGroups();
 
@@ -64,5 +64,7 @@ class ListGroupsCommand extends Command
         foreach ($groups as $group) {
             $output->writeln($group);
         }
+
+        return 0;
     }
 }

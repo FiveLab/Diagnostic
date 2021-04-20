@@ -25,22 +25,22 @@ class ListGroupsCommandTest extends TestCase
     /**
      * @var ArrayInput
      */
-    private $input;
+    private ArrayInput $input;
 
     /**
      * @var BufferedOutput
      */
-    private $output;
+    private BufferedOutput $output;
 
     /**
      * @var DefinitionCollection|MockObject
      */
-    private $definitions;
+    private DefinitionCollection $definitions;
 
     /**
      * @var ListGroupsCommand
      */
-    private $command;
+    private ListGroupsCommand $command;
 
     /**
      * {@inheritdoc}

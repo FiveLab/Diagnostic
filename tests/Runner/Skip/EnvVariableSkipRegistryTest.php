@@ -11,7 +11,7 @@
 
 declare(strict_types = 1);
 
-namespace FiveLab\Component\Diagnostic\Runner\Skip;
+namespace FiveLab\Component\Diagnostic\Tests\Runner\Skip;
 
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
 use PHPUnit\Framework\TestCase;
@@ -61,7 +61,7 @@ class EnvVariableSkipRegistryTest extends TestCase
      *
      * @return CheckDefinitionInterface
      */
-    private function createDefinitionWithKey($key): CheckDefinitionInterface
+    private function createDefinitionWithKey(string $key): CheckDefinitionInterface
     {
         $definition = $this->createMock(CheckDefinitionInterface::class);
 

@@ -19,7 +19,7 @@ jobs:
                     coverage: "none"
                     extensions: "json,amqp,redis"
                     ini-values: "memory_limit=-1"
-                    php-version: "7.4"
+                    php-version: "8.0"
                     tools: "composer"
 
             -   name: Install vendors
@@ -40,7 +40,7 @@ jobs:
 
         strategy:
             matrix:
-                php: [ '7.2', '7.3', '7.4' ]
+                php: [ '7.4', '8.0' ]
 
         services:
             rabbitmq:
@@ -68,7 +68,7 @@ jobs:
                     - 1025:1025
 
             elasticsearch:
-                image: docker.elastic.co/elasticsearch/elasticsearch:6.8.0
+                image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
                 ports:
                     - 9200:9200
 

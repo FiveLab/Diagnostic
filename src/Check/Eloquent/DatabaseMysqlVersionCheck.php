@@ -26,27 +26,27 @@ use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterfa
  */
 class DatabaseMysqlVersionCheck implements CheckInterface
 {
-    const MYSQL_EXTRACT_VERSION_REGEX = '/^([\d\.]+)/';
+    public const MYSQL_EXTRACT_VERSION_REGEX = '/^([\d\.]+)/';
 
     /**
      * @var ConnectionInterface
      */
-    private $connection;
+    private ConnectionInterface $connection;
 
     /**
      * @var string
      */
-    private $expectedVersion;
+    private string $expectedVersion;
 
     /**
      * @var VersionComparatorInterface
      */
-    private $versionComparator;
+    private VersionComparatorInterface $versionComparator;
 
     /**
      * @var string
      */
-    private $actualVersion = 'unknown';
+    private string $actualVersion = 'unknown';
 
     /**
      * Constructor.
@@ -77,7 +77,9 @@ class DatabaseMysqlVersionCheck implements CheckInterface
                 \rtrim($e->getMessage(), '.')
             ));
         }
-        $this->actualVersion = $this->extractMysqlServerDistribVersion($mysqlVersionVariableContent);
+
+        $this->actualVersion = $this->extractMysqlServerDistributedVersion($mysqlVersionVariableContent);
+
         if (!$this->versionComparator->satisfies($this->actualVersion, $this->expectedVersion)) {
             return new Failure(\sprintf(
                 'Expected MySQL server of version "%s", found "%s".',
@@ -112,10 +114,10 @@ class DatabaseMysqlVersionCheck implements CheckInterface
      *
      * @return string
      */
-    private function extractMysqlServerDistribVersion(string $buildVersion): string
+    private function extractMysqlServerDistributedVersion(string $buildVersion): string
     {
         $matches = [];
-        preg_match(self::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
+        \preg_match(self::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
 
         return \rtrim($matches[0], '.');
     }

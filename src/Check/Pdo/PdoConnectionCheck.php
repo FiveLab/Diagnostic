@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
 /*
  * This file is part of the FiveLab Diagnostic package.
@@ -26,37 +26,37 @@ class PdoConnectionCheck implements CheckInterface
     /**
      * @var string
      */
-    private $driver;
+    private string $driver;
 
     /**
      * @var string
      */
-    private $host;
+    private string $host;
 
     /**
      * @var int
      */
-    private $port;
+    private int $port;
 
     /**
      * @var string
      */
-    private $dbName;
+    private string $dbName;
 
     /**
      * @var string
      */
-    private $user;
+    private string $user;
 
     /**
      * @var string
      */
-    private $password;
+    private string $password;
 
     /**
      * @var array
      */
-    private $options;
+    private array $options;
 
     /**
      * Constructor.

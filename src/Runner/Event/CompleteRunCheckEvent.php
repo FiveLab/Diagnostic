@@ -13,10 +13,9 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Runner\Event;
 
-use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Emit this event after complete run check.
@@ -26,12 +25,12 @@ class CompleteRunCheckEvent extends Event
     /**
      * @var CheckDefinitionInterface
      */
-    private $definition;
+    private CheckDefinitionInterface $definition;
 
     /**
      * @var ResultInterface
      */
-    private $result;
+    private ResultInterface $result;
 
     /**
      * Constructor.

@@ -8,11 +8,11 @@ use FiveLab\Component\Diagnostic\Check\Http\HttpCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Http\Client\Exception\TransferException;
 use Http\Client\HttpClient;
-use Http\Message\MessageFactory\GuzzleMessageFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -55,7 +55,7 @@ class HttpCheckTest extends TestCase
             ->with($expectedRequest)
             ->willReturn($response);
 
-        $check = new HttpCheck($method, $url, $headers, $body, $expectedStatusCode, $expectedBody, $this->client, new GuzzleMessageFactory());
+        $check = new HttpCheck($method, $url, $headers, $body, $expectedStatusCode, $expectedBody, new HttpAdapter($this->client));
 
         $result = $check->check();
 
@@ -74,7 +74,7 @@ class HttpCheckTest extends TestCase
             ->with($expectedRequest)
             ->willThrowException(new TransferException('some'));
 
-        $check = new HttpCheck('GET', '/some', [], '', 200, null, $this->client, new GuzzleMessageFactory());
+        $check = new HttpCheck('GET', '/some', [], '', 200, null, new HttpAdapter($this->client));
 
         $result = $check->check();
 
@@ -93,7 +93,7 @@ class HttpCheckTest extends TestCase
             ->with($expectedRequest)
             ->willReturn(new Response(200));
 
-        $check = new HttpCheck('GET', '/some', [], '', 200, null, $this->client, new GuzzleMessageFactory());
+        $check = new HttpCheck('GET', '/some', [], '', 200, null, new HttpAdapter($this->client));
 
         $check->check();
 
@@ -118,7 +118,7 @@ class HttpCheckTest extends TestCase
             ->with($expectedRequest)
             ->willReturn(new Response(200, [], '{"result": "ok"}'));
 
-        $check = new HttpCheck('GET', '/some', [], '', 200, '{"result": "ok"}', $this->client, new GuzzleMessageFactory());
+        $check = new HttpCheck('GET', '/some', [], '', 200, '{"result": "ok"}', new HttpAdapter($this->client));
 
         $check->check();
 

@@ -8,11 +8,9 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use FiveLab\Component\Diagnostic\Util\HttpSecurityEncoder;
-use Http\Client\HttpClient;
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Message\RequestFactory;
 use Psr\Http\Client\ClientExceptionInterface;
 
 /**
@@ -23,67 +21,61 @@ class HttpCheck implements CheckInterface
     /**
      * @var string
      */
-    private $method;
+    private string $method;
 
     /**
      * @var string
      */
-    private $url;
+    private string $url;
 
     /**
      * @var array
      */
-    private $headers;
+    private array $headers;
 
     /**
      * @var string
      */
-    private $body;
+    private string $body;
 
     /**
      * @var int
      */
-    private $expectedStatusCode;
+    private int $expectedStatusCode;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $expectedBody;
+    private ?string $expectedBody;
 
     /**
-     * @var HttpClient
+     * @var HttpAdapterInterface
      */
-    private $client;
-
-    /**
-     * @var RequestFactory
-     */
-    private $requestFactory;
+    private HttpAdapterInterface $http;
 
     /**
      * @var HttpSecurityEncoder
      */
-    private $httpSecurityEncoder;
+    private HttpSecurityEncoder $httpSecurityEncoder;
 
     /**
      * @var string
      */
-    private $responseBody;
+    private string $responseBody;
 
     /**
      * Constructor.
      *
-     * @param string              $method
-     * @param string              $url
-     * @param array               $headers
-     * @param string              $body
-     * @param integer             $expectedStatusCode
-     * @param string              $expectedBody
-     * @param HttpClient          $client
-     * @param RequestFactory      $requestFactory
-     * @param HttpSecurityEncoder $securityEncoder
+     * @param string                   $method
+     * @param string                   $url
+     * @param array                    $headers
+     * @param string                   $body
+     * @param int                      $expectedStatusCode
+     * @param string|null              $expectedBody
+     * @param HttpAdapter|null         $http
+     * @param HttpSecurityEncoder|null $securityEncoder
      */
-    public function __construct(string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedBody = null, HttpClient $client = null, RequestFactory $requestFactory = null, HttpSecurityEncoder $securityEncoder = null)
+    public function __construct(string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedBody = null, HttpAdapter $http = null, HttpSecurityEncoder $securityEncoder = null)
     {
         $this->method = $method;
         $this->url = $url;
@@ -91,8 +83,7 @@ class HttpCheck implements CheckInterface
         $this->body = $body;
         $this->expectedStatusCode = $expectedStatusCode;
         $this->expectedBody = $expectedBody;
-        $this->client = $client ?: HttpClientDiscovery::find();
-        $this->requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
+        $this->http = $http ?: new HttpAdapter();
         $this->httpSecurityEncoder = $securityEncoder ?: new HttpSecurityEncoder();
     }
 
@@ -101,10 +92,10 @@ class HttpCheck implements CheckInterface
      */
     public function check(): ResultInterface
     {
-        $request = $this->requestFactory->createRequest($this->method, $this->url, $this->headers, $this->body);
+        $request = $this->http->createRequest($this->method, $this->url, $this->headers, $this->body);
 
         try {
-            $response = $this->client->sendRequest($request);
+            $response = $this->http->sendRequest($request);
 
             $this->responseBody = (string) $response->getBody();
         } catch (ClientExceptionInterface $e) {
@@ -140,7 +131,7 @@ class HttpCheck implements CheckInterface
         $parameters = [
             'method'      => $this->method,
             'url'         => $uri,
-            'headers'     => \json_encode($headers),
+            'headers'     => \json_encode($headers, JSON_THROW_ON_ERROR),
             'body'        => $this->body,
             'status code' => $this->expectedStatusCode,
         ];

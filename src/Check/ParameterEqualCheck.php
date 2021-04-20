@@ -35,7 +35,7 @@ class ParameterEqualCheck implements CheckInterface
     /**
      * @var array
      */
-    private $extra;
+    private array $extra;
 
     /**
      * Constructor.
@@ -114,11 +114,11 @@ class ParameterEqualCheck implements CheckInterface
         if (\is_bool($expected)) {
             $this->extra['type'] = 'boolean';
 
-            if ('true' === \strtolower((string) $actual) || '1' === (string) $actual) {
+            if ('1' === (string) $actual || 'true' === \strtolower((string) $actual)) {
                 $actual = true;
             }
 
-            if ('false' === \strtolower((string) $actual) || '0' === (string) $actual) {
+            if ('0' === (string) $actual || 'false' === \strtolower((string) $actual)) {
                 $actual = false;
             }
 
@@ -174,7 +174,7 @@ class ParameterEqualCheck implements CheckInterface
             $precision = \strlen($doubleParts[0]);
 
             $expected = (string) $expected;
-            $actual = (string) \round($actual, $precision);
+            $actual = (string) \round((float) $actual, $precision);
 
             if ($expected !== $actual) {
                 return new Failure('The parameters does not equals.');

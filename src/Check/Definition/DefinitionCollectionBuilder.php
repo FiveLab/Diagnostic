@@ -23,7 +23,7 @@ class DefinitionCollectionBuilder
     /**
      * @var array
      */
-    private $definitions = [];
+    private array $definitions = [];
 
     /**
      * Add check
@@ -32,7 +32,7 @@ class DefinitionCollectionBuilder
      * @param CheckInterface $check
      * @param string|array   $groups
      */
-    public function addCheck(string $key, CheckInterface $check, $groups = [])
+    public function addCheck(string $key, CheckInterface $check, $groups = []): void
     {
         if (!\is_array($groups) && !\is_scalar($groups)) {
             throw new \InvalidArgumentException(\sprintf(

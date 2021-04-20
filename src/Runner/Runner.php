@@ -28,12 +28,12 @@ class Runner implements RunnerInterface
     /**
      * @var EventDispatcherInterface
      */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     /**
      * Constructor.
      *
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param EventDispatcherInterface|null $eventDispatcher
      */
     public function __construct(EventDispatcherInterface $eventDispatcher = null)
     {
@@ -59,10 +59,10 @@ class Runner implements RunnerInterface
         $allSuccess = true;
 
         foreach ($definitions as $definition) {
-            $event = new BeforeRunCheckEvent($definition);
-            $this->eventDispatcher->dispatch(RunnerEvents::RUN_CHECK_BEFORE, $event);
+            $beforeRunEvent = new BeforeRunCheckEvent($definition);
+            $beforeRunEvent = $this->eventDispatcher->dispatch($beforeRunEvent, RunnerEvents::RUN_CHECK_BEFORE);
 
-            $result = $event->getResult();
+            $result = $beforeRunEvent->getResult();
 
             if (!$result) {
                 try {
@@ -80,8 +80,8 @@ class Runner implements RunnerInterface
                 $allSuccess = false;
             }
 
-            $event = new CompleteRunCheckEvent($definition, $result);
-            $this->eventDispatcher->dispatch(RunnerEvents::RUN_CHECK_COMPLETE, $event);
+            $afterRunEvent = new CompleteRunCheckEvent($definition, $result);
+            $this->eventDispatcher->dispatch($afterRunEvent, RunnerEvents::RUN_CHECK_COMPLETE);
         }
 
         return $allSuccess;

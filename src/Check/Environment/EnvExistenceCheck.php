@@ -26,7 +26,7 @@ class EnvExistenceCheck implements CheckInterface
     /**
      * @var string
      */
-    private $envName;
+    private string $envName;
 
     /**
      * Constructor.

@@ -29,40 +29,40 @@ class ElasticsearchTemplateCheck implements CheckInterface
     /**
      * @var ElasticsearchConnectionParameters
      */
-    private $connectionParameters;
+    private ElasticsearchConnectionParameters $connectionParameters;
 
     /**
      * @var string
      */
-    private $name;
+    private string $name;
 
     /**
      * @var array
      */
-    private $expectedPatterns;
+    private array $expectedPatterns;
 
     /**
      * @var array
      */
-    private $expectedSettings = [];
+    private array $expectedSettings;
 
     /**
      * @var array
      */
-    private $actualPatterns = [];
+    private array $actualPatterns = [];
 
     /**
      * @var array
      */
-    private $actualSettings = [];
+    private array $actualSettings = [];
 
     /**
      * Constructor.
      *
      * @param ElasticsearchConnectionParameters $connectionParams
      * @param string                            $name
-     * @param array|null                        $expectedPatterns
-     * @param array|null                        $expectedSettings
+     * @param array                             $expectedPatterns
+     * @param array                             $expectedSettings
      */
     public function __construct(ElasticsearchConnectionParameters $connectionParams, string $name, array $expectedPatterns = [], array $expectedSettings = [])
     {
@@ -120,7 +120,7 @@ class ElasticsearchTemplateCheck implements CheckInterface
 
         if (\count($this->expectedSettings)) {
             foreach ($this->expectedSettings as $settingName => $expectedValue) {
-                $actualValue = $this->tryGetSettingFromTemplateSettings($settingName, $this->actualSettings);
+                $actualValue = ElasticsearchHelper::tryGetSpecificSettingFromSettings($settingName, $this->actualSettings);
 
                 if ($actualValue instanceof Failure) {
                     return $actualValue;
@@ -135,7 +135,6 @@ class ElasticsearchTemplateCheck implements CheckInterface
             }
         }
 
-
         return new Success('Success check Elasticsearch template.');
     }
 
@@ -144,16 +143,7 @@ class ElasticsearchTemplateCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        $parameters = [
-            'host' => $this->connectionParameters->getHost(),
-            'port' => $this->connectionParameters->getPort(),
-            'ssl'  => $this->connectionParameters->isSsl() ? 'yes' : 'no',
-        ];
-
-        if ($this->connectionParameters->getUsername() || $this->connectionParameters->getPassword()) {
-            $parameters['user'] = $this->connectionParameters->getUsername() ?: '(null)';
-            $parameters['pass'] = '***';
-        }
+        $parameters = ElasticsearchHelper::convertConnectionParametersToArray($this->connectionParameters);
 
         return \array_merge($parameters, [
             'template'                => $this->name,
@@ -162,41 +152,5 @@ class ElasticsearchTemplateCheck implements CheckInterface
             'expected settings'       => \count($this->expectedSettings) ? $this->expectedSettings : '(none)',
             'actual settings'         => $this->actualSettings,
         ]);
-    }
-
-    /**
-     * Try to get the setting from array
-     *
-     * @param string $path
-     * @param array  $settings
-     *
-     * @return Failure|mixed
-     */
-    private function tryGetSettingFromTemplateSettings(string $path, array $settings)
-    {
-        $pathParts = \explode('.', $path);
-
-        $processedPath = '';
-
-        while ($pathPart = \array_shift($pathParts)) {
-            $processedPath .= $pathPart.'.';
-
-            if (!\array_key_exists($pathPart, $settings)) {
-                return new Failure(\sprintf(
-                    'The setting "%s" is missed.',
-                    \rtrim($processedPath, '.')
-                ));
-            }
-
-            if (\count($pathParts)) {
-                // Not last element. Get inner array.
-                $settings = $settings[$pathPart];
-            } else {
-                // Last element. Get value.
-                return $settings[$pathPart];
-            }
-        }
-
-        return new Failure(\sprintf('Cannot get setting by path: "%s".', $path));
     }
 }

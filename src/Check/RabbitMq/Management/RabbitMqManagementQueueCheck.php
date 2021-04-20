@@ -19,10 +19,8 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
-use Http\Client\HttpClient;
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Message\RequestFactory;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -32,52 +30,48 @@ use Psr\Http\Message\ResponseInterface;
 class RabbitMqManagementQueueCheck implements CheckInterface
 {
     /**
-     * @var HttpClient
+     * @var HttpAdapterInterface
      */
-    private $client;
-
-    /**
-     * @var RequestFactory
-     */
-    private $requestFactory;
+    private HttpAdapterInterface $http;
 
     /**
      * @var RabbitMqConnectionParameters
      */
-    private $connectionParameters;
+    private RabbitMqConnectionParameters $connectionParameters;
 
     /**
      * @var string
      */
-    private $queueName;
+    private string $queueName;
 
     /**
      * @var int|null
      */
-    private $maxMessages;
+    private ?int $maxMessages;
 
     /**
      * Must be between 0 and 100
      *
-     * @var int
+     * @var int|null
      */
-    private $maxWarningPercentage;
+    private ?int $maxWarningPercentage;
 
     /**
      * @var int|null
      */
-    private $minMessages;
+    private ?int $minMessages;
 
     /**
+     * Constructor.
+     *
      * @param RabbitMqConnectionParameters $connectionParameters
      * @param string                       $queueName
      * @param int|null                     $maxMessages
      * @param int|null                     $minMessages
      * @param int|null                     $maxWarningPercentage
-     * @param HttpClient|null              $client
-     * @param RequestFactory|null          $requestFactory
+     * @param HttpAdapterInterface|null    $http
      */
-    public function __construct(RabbitMqConnectionParameters $connectionParameters, string $queueName, int $maxMessages = null, int $minMessages = null, int $maxWarningPercentage = null, HttpClient $client = null, RequestFactory $requestFactory = null)
+    public function __construct(RabbitMqConnectionParameters $connectionParameters, string $queueName, int $maxMessages = null, int $minMessages = null, int $maxWarningPercentage = null, HttpAdapterInterface $http = null)
     {
         $this->connectionParameters = $connectionParameters;
         $this->queueName = $queueName;
@@ -90,8 +84,7 @@ class RabbitMqManagementQueueCheck implements CheckInterface
 
         $this->maxWarningPercentage = $maxWarningPercentage;
 
-        $this->client = $client ?: HttpClientDiscovery::find();
-        $this->requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
+        $this->http = $http ?: new HttpAdapter();
     }
 
     /**
@@ -106,12 +99,12 @@ class RabbitMqManagementQueueCheck implements CheckInterface
             \urlencode($this->queueName)
         );
 
-        $request = $this->requestFactory->createRequest('GET', $url, [
+        $request = $this->http->createRequest('GET', $url, [
             'accept' => 'application/json',
         ]);
 
         try {
-            $response = $this->client->sendRequest($request);
+            $response = $this->http->sendRequest($request);
         } catch (ClientExceptionInterface $e) {
             return new Failure(\sprintf(
                 'Fail connect to RabbitMQ Management API. Error: %s.',
@@ -165,7 +158,7 @@ class RabbitMqManagementQueueCheck implements CheckInterface
             return null;
         }
 
-        $queueDetails = \json_decode((string) $response->getBody(), true);
+        $queueDetails = \json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         $queuedMessages = $queueDetails['messages'] ?? 0;
 

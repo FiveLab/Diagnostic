@@ -32,27 +32,27 @@ class RunDiagnosticCommandTest extends TestCase
     /**
      * @var RunnerInterface|MockObject
      */
-    private $runner;
+    private RunnerInterface $runner;
 
     /**
      * @var DefinitionCollection|MockObject
      */
-    private $definitions;
+    private DefinitionCollection $definitions;
 
     /**
      * @var InputInterface
      */
-    private $input;
+    private InputInterface $input;
 
     /**
      * @var OutputInterface
      */
-    private $output;
+    private OutputInterface $output;
 
     /**
      * @var RunDiagnosticCommand
      */
-    private $command;
+    private RunDiagnosticCommand $command;
 
     /**
      * {@inheritdoc}
@@ -127,7 +127,7 @@ class RunDiagnosticCommandTest extends TestCase
             ->willReturn(['foo', 'bar', 'some']);
 
         $expectedDefinitions = $this->createMock(DefinitionCollection::class);
-        $expectedDefinitions->uniqueIdentifier = \uniqid();
+        $expectedDefinitions->uniqueIdentifier = \uniqid((string) \random_int(0, PHP_INT_MAX), true);
 
         $this->definitions->expects(self::once())
             ->method('filter')

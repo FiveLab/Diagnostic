@@ -25,34 +25,34 @@ use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterfa
  */
 class DbalMysqlVersionCheck implements CheckInterface
 {
-    const MYSQL_EXTRACT_VERSION_REGEX = '/^([\d\.]+)/';
+    public const MYSQL_EXTRACT_VERSION_REGEX = '/^([\d\.]+)/';
 
     /**
      * @var DriverConnection
      */
-    private $connection;
+    private DriverConnection $connection;
 
     /**
      * @var string
      */
-    private $expectedVersion;
+    private string $expectedVersion;
 
     /**
      * @var VersionComparatorInterface
      */
-    private $versionComparator;
+    private VersionComparatorInterface $versionComparator;
 
     /**
      * @var string
      */
-    private $actualVersion = 'unknown';
+    private string $actualVersion = 'unknown';
 
     /**
      * Constructor.
      *
-     * @param DriverConnection           $connection
-     * @param string                     $expectedVersion   Expected MySQL version in composer format
-     * @param VersionComparatorInterface $versionComparator
+     * @param DriverConnection                $connection
+     * @param string                          $expectedVersion
+     * @param VersionComparatorInterface|null $versionComparator
      *
      * @see https://getcomposer.org/doc/articles/versions.md
      */
@@ -78,7 +78,9 @@ class DbalMysqlVersionCheck implements CheckInterface
                 \rtrim($e->getMessage(), '.')
             ));
         }
-        $this->actualVersion = $this->extractMysqlServerDistribVersion($mysqlVersionVariableContent);
+
+        $this->actualVersion = $this->extractMysqlServerDistributedVersion($mysqlVersionVariableContent);
+
         if (!$this->versionComparator->satisfies($this->actualVersion, $this->expectedVersion)) {
             return new Failure(\sprintf(
                 'Expected MySQL server of version "%s", found "%s".',
@@ -99,11 +101,11 @@ class DbalMysqlVersionCheck implements CheckInterface
 
         if ($this->connection instanceof Connection) {
             $parameters = [
-                'host'            => $this->connection->getHost(),
-                'port'            => $this->connection->getPort(),
-                'user'            => $this->connection->getUsername(),
-                'pass'            => '***',
-                'dbname'          => $this->connection->getDatabase(),
+                'host'   => $this->connection->getHost(),
+                'port'   => $this->connection->getPort(),
+                'user'   => $this->connection->getUsername(),
+                'pass'   => '***',
+                'dbname' => $this->connection->getDatabase(),
             ];
         }
 
@@ -118,10 +120,10 @@ class DbalMysqlVersionCheck implements CheckInterface
      *
      * @return string
      */
-    private function extractMysqlServerDistribVersion(string $buildVersion): string
+    private function extractMysqlServerDistributedVersion(string $buildVersion): string
     {
         $matches = [];
-        preg_match(self::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
+        \preg_match(self::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
 
         return \rtrim($matches[0], '.');
     }

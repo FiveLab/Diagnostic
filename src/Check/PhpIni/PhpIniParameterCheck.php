@@ -26,17 +26,17 @@ class PhpIniParameterCheck implements CheckInterface
     /**
      * @var string
      */
-    private $parameter;
+    private string $parameter;
 
     /**
      * @var string
      */
-    private $expectedValue;
+    private string $expectedValue;
 
     /**
      * @var string
      */
-    private $actualValue;
+    private string $actualValue;
 
     /**
      * Constructor.
@@ -68,7 +68,7 @@ class PhpIniParameterCheck implements CheckInterface
             return new Failure('Fail check php.ini parameter.');
         }
 
-        return new Success('Succecss check php.ini parameter.');
+        return new Success('Success check php.ini parameter.');
     }
 
     /**

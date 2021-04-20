@@ -26,12 +26,12 @@ class PathReadableCheck implements CheckInterface
     /**
      * @var string
      */
-    private $path;
+    private string $path;
 
     /**
      * @var bool
      */
-    private $strict;
+    private bool $strict;
 
     /**
      * Constructor.

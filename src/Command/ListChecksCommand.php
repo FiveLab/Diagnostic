@@ -14,8 +14,6 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Command;
 
 use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
-use FiveLab\Component\Diagnostic\Check\Definition\Filter\CheckDefinitionsInGroupFilter;
-use FiveLab\Component\Diagnostic\Check\Definition\Filter\OrXFilter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -26,10 +24,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ListChecksCommand extends Command
 {
+    use FilterDefinitionsTrait;
+
     /**
      * @var DefinitionCollection
      */
-    private $definitions;
+    private DefinitionCollection $definitions;
 
     /**
      * Constructor.
@@ -57,29 +57,12 @@ class ListChecksCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $definitions = clone $this->definitions;
 
         if ($input->getOption('group')) {
-            $groups = $input->getOption('group');
-
-            $notExistenceGroups = \array_diff($groups, $definitions->getGroups());
-
-            if (\count($notExistenceGroups)) {
-                throw new \InvalidArgumentException(\sprintf(
-                    'The groups "%s" is not configured in your definitions.',
-                    \implode('", "', $notExistenceGroups)
-                ));
-            }
-
-            $filters = \array_map(function (string $group) {
-                return new CheckDefinitionsInGroupFilter($group);
-            }, $input->getOption('group'));
-
-            $filter = new OrXFilter(...$filters);
-
-            $definitions = $definitions->filter($filter);
+            $definitions = $this->filterDefinitionsByGroupInInput($definitions, $input->getOption('group'));
         }
 
         foreach ($definitions as $definition) {
@@ -91,5 +74,7 @@ class ListChecksCommand extends Command
 
             $output->writeln('');
         }
+
+        return 0;
     }
 }

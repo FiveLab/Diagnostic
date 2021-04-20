@@ -30,40 +30,40 @@ class ElasticsearchVersionCheck implements CheckInterface
     /**
      * @var ElasticsearchConnectionParameters
      */
-    private $connectionParameters;
+    private ElasticsearchConnectionParameters $connectionParameters;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $expectedVersion;
+    private ?string $expectedVersion;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $expectedLuceneVersion;
+    private ?string $expectedLuceneVersion;
 
     /**
      * @var VersionComparatorInterface
      */
-    private $versionComparator;
+    private VersionComparatorInterface $versionComparator;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $actualVersion;
+    private ?string $actualVersion = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $actualLuceneVersion;
+    private ?string $actualLuceneVersion = null;
 
     /**
      * Constructor.
      *
      * @param ElasticsearchConnectionParameters $connectionParameters
-     * @param string                            $expectedVersion
-     * @param string                            $expectedLuceneVersion
-     * @param VersionComparatorInterface        $versionComparator
+     * @param string|null                       $expectedVersion
+     * @param string|null                       $expectedLuceneVersion
+     * @param VersionComparatorInterface|null   $versionComparator
      */
     public function __construct(ElasticsearchConnectionParameters $connectionParameters, string $expectedVersion = null, string $expectedLuceneVersion = null, VersionComparatorInterface $versionComparator = null)
     {
@@ -118,16 +118,7 @@ class ElasticsearchVersionCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        $params = [
-            'host' => $this->connectionParameters->getHost(),
-            'port' => $this->connectionParameters->getPort(),
-            'ssl'  => $this->connectionParameters->isSsl() ? 'yes' : 'no',
-        ];
-
-        if ($this->connectionParameters->getUsername() || $this->connectionParameters->getPassword()) {
-            $params['user'] = $this->connectionParameters->getUsername() ?: '(null)';
-            $params['pass'] = '***';
-        }
+        $params = ElasticsearchHelper::convertConnectionParametersToArray($this->connectionParameters);
 
         return \array_merge($params, [
             'actual version'          => $this->actualVersion ?: '(null)',

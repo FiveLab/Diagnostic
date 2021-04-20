@@ -27,12 +27,12 @@ class SymfonyContainerParameterEqualCheck implements CheckInterface
     /**
      * @var ContainerInterface
      */
-    private $container;
+    private ContainerInterface $container;
 
     /**
      * @var string
      */
-    private $parameterName;
+    private string $parameterName;
 
     /**
      * @var mixed
@@ -42,12 +42,12 @@ class SymfonyContainerParameterEqualCheck implements CheckInterface
     /**
      * @var \Closure
      */
-    private $parameterEqualCheckFactory;
+    private \Closure $parameterEqualCheckFactory;
 
     /**
      * @var array
      */
-    private $extra = [];
+    private array $extra = [];
 
     /**
      * Constructor.
@@ -62,7 +62,7 @@ class SymfonyContainerParameterEqualCheck implements CheckInterface
         $this->parameterName = $parameterName;
         $this->expectedValue = $expectedValue;
 
-        $this->parameterEqualCheckFactory = function ($expected, $actual) {
+        $this->parameterEqualCheckFactory = static function ($expected, $actual) {
             return new ParameterEqualCheck($expected, $actual);
         };
     }
@@ -76,9 +76,7 @@ class SymfonyContainerParameterEqualCheck implements CheckInterface
             'parameter name' => $this->parameterName,
         ];
 
-        $extra = \array_merge($extra, $this->extra);
-
-        return $extra;
+        return \array_merge($extra, $this->extra);
     }
 
     /**
@@ -102,7 +100,7 @@ class SymfonyContainerParameterEqualCheck implements CheckInterface
     }
 
     /**
-     * Set factory for create parmaeter check
+     * Set factory for create parameter check
      *
      * @param \Closure $factory
      */

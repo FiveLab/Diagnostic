@@ -28,7 +28,7 @@ class DatabaseConnectionCheck implements CheckInterface
     /**
      * @var ConnectionInterface
      */
-    private $connection;
+    private ConnectionInterface $connection;
 
     /**
      * Constructor.

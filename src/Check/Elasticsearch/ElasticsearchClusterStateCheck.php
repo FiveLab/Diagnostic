@@ -29,12 +29,12 @@ class ElasticsearchClusterStateCheck implements CheckInterface
     /**
      * @var ElasticsearchConnectionParameters
      */
-    private $connectionParameters;
+    private ElasticsearchConnectionParameters $connectionParameters;
 
     /**
      * @var Client
      */
-    private $client;
+    private Client $client;
 
     /**
      * Constructor.
@@ -81,18 +81,7 @@ class ElasticsearchClusterStateCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        $params = [
-            'host' => $this->connectionParameters->getHost(),
-            'port' => $this->connectionParameters->getPort(),
-            'ssl'  => $this->connectionParameters->isSsl() ? 'yes' : 'no',
-        ];
-
-        if ($this->connectionParameters->getUsername() || $this->connectionParameters->getPassword()) {
-            $params['user'] = $this->connectionParameters->getUsername() ?: '(null)';
-            $params['pass'] = '***';
-        }
-
-        return $params;
+        return ElasticsearchHelper::convertConnectionParametersToArray($this->connectionParameters);
     }
 
     /**
@@ -116,16 +105,16 @@ class ElasticsearchClusterStateCheck implements CheckInterface
     }
 
     /**
-     * @param array $responceParams
+     * @param array $responseParams
      *
      * @return ResultInterface
      */
-    private function parseClusterStatus(array $responceParams): ResultInterface
+    private function parseClusterStatus(array $responseParams): ResultInterface
     {
         $default =  new Failure('Cluster status is undefined. Please check the logs.');
 
-        if (\array_key_exists('status', $responceParams)) {
-            switch ($responceParams['status']) {
+        if (\array_key_exists('status', $responseParams)) {
+            switch ($responseParams['status']) {
                 case 'green':
                     return new Success('Cluster status is GREEN.');
 

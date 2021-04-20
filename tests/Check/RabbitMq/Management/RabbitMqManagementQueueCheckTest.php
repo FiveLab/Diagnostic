@@ -23,9 +23,9 @@ use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
 class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
 {
     /**
-     * @var string
+     * @var string|null
      */
-    private $queueName;
+    private ?string $queueName = null;
 
     /**
      * {@inheritdoc}
