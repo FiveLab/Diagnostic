@@ -33,7 +33,7 @@ class ParameterEqualCheck implements CheckInterface
     private $actual;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     private array $extra;
 

@@ -61,13 +61,13 @@ class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
             $statusText = '<error>FAIL</error>';
             $statusVerbosity = OutputInterface::VERBOSITY_NORMAL;
             $paramsVerbosity = OutputInterface::VERBOSITY_NORMAL;
-        } else if ($result instanceof Warning) {
+        } elseif ($result instanceof Warning) {
             $statusText = '<comment>WARN</comment>';
             $statusVerbosity = OutputInterface::VERBOSITY_VERY_VERBOSE;
             $paramsVerbosity = OutputInterface::VERBOSITY_VERY_VERBOSE;
-        } else if ($result instanceof Skip) {
+        } elseif ($result instanceof Skip) {
             $statusText = '<question>SKIP</question>';
-        } else if ($result instanceof Success) {
+        } elseif ($result instanceof Success) {
             $statusText = '<info>OK  </info>';
         } else {
             throw new \InvalidArgumentException(\sprintf(
@@ -95,6 +95,8 @@ class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return array<string, mixed>
      */
     public static function getSubscribedEvents(): array
     {
@@ -106,8 +108,8 @@ class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
     /**
      * Write additional parameters
      *
-     * @param array $params
-     * @param int   $leftPad
+     * @param array<string, array|string|int|float|bool|null> $params
+     * @param int                                             $leftPad
      */
     private function writeAdditionalParameters(array $params, int $leftPad = 1): void
     {

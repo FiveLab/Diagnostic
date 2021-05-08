@@ -37,12 +37,12 @@ class ElasticsearchIndexCheck implements CheckInterface
     private string $index;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private array $expectedSettings;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private array $actualSettings = [];
 
@@ -51,7 +51,7 @@ class ElasticsearchIndexCheck implements CheckInterface
      *
      * @param ElasticsearchConnectionParameters $connectionParams
      * @param string                            $index
-     * @param array                             $expectedSettings
+     * @param array<string, mixed>              $expectedSettings
      */
     public function __construct(ElasticsearchConnectionParameters $connectionParams, string $index, array $expectedSettings = [])
     {

@@ -31,7 +31,7 @@ class CheckDefinition implements CheckDefinitionInterface
     private CheckInterface $check;
 
     /**
-     * @var array
+     * @var array<string>
      */
     private array $groups;
 
@@ -40,7 +40,7 @@ class CheckDefinition implements CheckDefinitionInterface
      *
      * @param string         $key
      * @param CheckInterface $check
-     * @param array          $groups
+     * @param array<string>  $groups
      */
     public function __construct(string $key, CheckInterface $check, array $groups)
     {

@@ -54,20 +54,20 @@ class PdoConnectionCheck implements CheckInterface
     private string $password;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     private array $options;
 
     /**
      * Constructor.
      *
-     * @param string $driver
-     * @param string $host
-     * @param int    $port
-     * @param string $dbName
-     * @param string $user
-     * @param string $password
-     * @param array  $options
+     * @param string       $driver
+     * @param string       $host
+     * @param int          $port
+     * @param string       $dbName
+     * @param string       $user
+     * @param string       $password
+     * @param array<mixed> $options
      */
     public function __construct(string $driver, string $host, int $port, string $dbName, string $user, string $password, array $options = [])
     {

@@ -32,9 +32,9 @@ class ElasticsearchClusterStateCheck implements CheckInterface
     private ElasticsearchConnectionParameters $connectionParameters;
 
     /**
-     * @var Client
+     * @var Client|null
      */
-    private Client $client;
+    private ?Client $client = null;
 
     /**
      * Constructor.
@@ -52,6 +52,7 @@ class ElasticsearchClusterStateCheck implements CheckInterface
     public function check(): ResultInterface
     {
         try {
+            /** @var Client $client */
             $client = $this->createClient();
 
             $client->ping();
@@ -77,7 +78,7 @@ class ElasticsearchClusterStateCheck implements CheckInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getExtraParameters(): array
     {
@@ -85,6 +86,8 @@ class ElasticsearchClusterStateCheck implements CheckInterface
     }
 
     /**
+     * Create client
+     *
      * @return Client|Failure
      */
     private function createClient()
@@ -105,7 +108,9 @@ class ElasticsearchClusterStateCheck implements CheckInterface
     }
 
     /**
-     * @param array $responseParams
+     * Parse cluster status
+     *
+     * @param array<string> $responseParams
      *
      * @return ResultInterface
      */

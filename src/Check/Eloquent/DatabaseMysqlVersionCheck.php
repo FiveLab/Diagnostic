@@ -13,13 +13,13 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Eloquent;
 
-use Illuminate\Database\ConnectionInterface;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterface;
+use Illuminate\Database\ConnectionInterface;
 
 /**
  * Check MySQL version.
@@ -69,7 +69,7 @@ class DatabaseMysqlVersionCheck implements CheckInterface
     {
         try {
             $query = "SHOW VARIABLES WHERE Variable_name = 'version'";
-            $result = $this->connection->select($this->connection->raw($query));
+            $result = $this->connection->select((string) $this->connection->raw($query));
             $mysqlVersionVariableContent = $result[0]->Value;
         } catch (\Throwable $e) {
             return new Failure(\sprintf(

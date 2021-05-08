@@ -62,7 +62,7 @@ class ListChecksCommand extends Command
         $definitions = clone $this->definitions;
 
         if ($input->getOption('group')) {
-            $definitions = $this->filterDefinitionsByGroupInInput($definitions, $input->getOption('group'));
+            $definitions = $this->filterDefinitionsByGroupInInput($definitions, (array) $input->getOption('group'));
         }
 
         foreach ($definitions as $definition) {

@@ -62,7 +62,7 @@ class EnvVarRegexCheck implements CheckInterface
             return new Failure('Environment variable is not set.');
         }
 
-        if (1 === \preg_match($this->pattern, \getenv($this->variableName))) {
+        if (1 === \preg_match($this->pattern, (string) \getenv($this->variableName))) {
             return new Success('Environment variable matches pattern.');
         }
 

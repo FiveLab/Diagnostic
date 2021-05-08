@@ -32,7 +32,7 @@ class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
     private EntityManagerInterface $entityManager;
 
     /**
-     * @var array|string[]
+     * @var array<string>
      */
     private array $tables = [];
 
@@ -86,7 +86,7 @@ class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
     /**
      * Get name of tables
      *
-     * @return array
+     * @return array<string>
      */
     private function getTableNames(): array
     {

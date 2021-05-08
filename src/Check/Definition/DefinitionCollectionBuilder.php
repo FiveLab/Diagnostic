@@ -21,26 +21,19 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 class DefinitionCollectionBuilder
 {
     /**
-     * @var array
+     * @var array<string, array>
      */
     private array $definitions = [];
 
     /**
      * Add check
      *
-     * @param string         $key
-     * @param CheckInterface $check
-     * @param string|array   $groups
+     * @param string               $key
+     * @param CheckInterface       $check
+     * @param array<string>|string $groups
      */
     public function addCheck(string $key, CheckInterface $check, $groups = []): void
     {
-        if (!\is_array($groups) && !\is_scalar($groups)) {
-            throw new \InvalidArgumentException(\sprintf(
-                'Groups must be a string or array, but "%s" given.',
-                \gettype($groups)
-            ));
-        }
-
         $groups = (array) $groups;
 
         $groups = \array_unique($groups);

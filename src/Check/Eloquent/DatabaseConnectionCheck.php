@@ -46,7 +46,7 @@ class DatabaseConnectionCheck implements CheckInterface
     public function check(): ResultInterface
     {
         try {
-            $this->connection->select($this->connection->raw('SELECT 1'));
+            $this->connection->select((string) $this->connection->raw('SELECT 1'));
         } catch (QueryException $e) {
             return new Failure(\sprintf(
                 'Failed establishing database connection. Error: %s.',

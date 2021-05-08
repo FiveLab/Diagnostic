@@ -45,7 +45,7 @@ class SymfonyContainerParameterEqualCheck implements CheckInterface
     private \Closure $parameterEqualCheckFactory;
 
     /**
-     * @var array
+     * @var array<string, string>
      */
     private array $extra = [];
 

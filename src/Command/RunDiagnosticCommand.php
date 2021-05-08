@@ -84,7 +84,7 @@ class RunDiagnosticCommand extends Command
         $definitions = clone $this->definitions;
 
         if ($input->getOption('group')) {
-            $definitions = $this->filterDefinitionsByGroupInInput($definitions, $input->getOption('group'));
+            $definitions = $this->filterDefinitionsByGroupInInput($definitions, (array) $input->getOption('group'));
         }
 
         return (int) !$this->runner->run($definitions);

@@ -25,7 +25,7 @@ class ElasticsearchHelper
      *
      * @param ElasticsearchConnectionParameters $parameters
      *
-     * @return array
+     * @return array<string, string|int>
      */
     public static function convertConnectionParametersToArray(ElasticsearchConnectionParameters $parameters): array
     {
@@ -46,8 +46,8 @@ class ElasticsearchHelper
     /**
      * Try to get specific setting from settings
      *
-     * @param string $path
-     * @param array  $settings
+     * @param string               $path
+     * @param array<string, array> $settings
      *
      * @return string|Failure
      */

@@ -40,7 +40,7 @@ class PingableHttpCheck implements CheckInterface
     private string $url;
 
     /**
-     * @var array
+     * @var array<string, string>
      */
     private array $headers;
 
@@ -60,7 +60,7 @@ class PingableHttpCheck implements CheckInterface
     private string $expectedApplicationName;
 
     /**
-     * @var array
+     * @var array<string>
      */
     private array $expectedApplicationRoles;
 
@@ -89,11 +89,11 @@ class PingableHttpCheck implements CheckInterface
      *
      * @param string                          $method
      * @param string                          $url
-     * @param array                           $headers
+     * @param array<string, string>           $headers
      * @param string                          $body
      * @param int                             $expectedStatusCode
      * @param string                          $expectedApplicationName
-     * @param array                           $expectedApplicationRoles
+     * @param array<string>                   $expectedApplicationRoles
      * @param string|null                     $expectedVersion
      * @param HttpAdapterInterface|null       $http
      * @param VersionComparatorInterface|null $versionComparator

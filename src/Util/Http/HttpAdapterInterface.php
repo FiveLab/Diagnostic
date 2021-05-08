@@ -33,10 +33,10 @@ interface HttpAdapterInterface
     /**
      * Create a request
      *
-     * @param string      $method
-     * @param string      $url
-     * @param array       $headers
-     * @param string|null $body
+     * @param string                $method
+     * @param string                $url
+     * @param array<string, string> $headers
+     * @param string|null           $body
      *
      * @return RequestInterface
      */

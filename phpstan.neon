@@ -1,0 +1,17 @@
+﻿parameters:
+    level: 8
+    paths:
+        - src
+
+    ignoreErrors:
+        -
+            message: '#Parameter \#1 (\$callback|\$input) of function set_error_handler expects#'
+            path: src/
+
+        -
+            message: '#Call to an undefined method Illuminate\\Database\\ConnectionInterface::getConfig\(\)#'
+            path: src/
+
+        -
+            message: '#Call to an undefined method Doctrine\\DBAL\\Driver\\Connection::executeQuery\(\)#'
+            path: src/

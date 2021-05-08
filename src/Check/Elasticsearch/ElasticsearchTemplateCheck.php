@@ -37,22 +37,22 @@ class ElasticsearchTemplateCheck implements CheckInterface
     private string $name;
 
     /**
-     * @var array
+     * @var array<string>
      */
     private array $expectedPatterns;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private array $expectedSettings;
 
     /**
-     * @var array
+     * @var array<string>
      */
     private array $actualPatterns = [];
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private array $actualSettings = [];
 
@@ -61,8 +61,8 @@ class ElasticsearchTemplateCheck implements CheckInterface
      *
      * @param ElasticsearchConnectionParameters $connectionParams
      * @param string                            $name
-     * @param array                             $expectedPatterns
-     * @param array                             $expectedSettings
+     * @param array<string>                     $expectedPatterns
+     * @param array<string, mixed>              $expectedSettings
      */
     public function __construct(ElasticsearchConnectionParameters $connectionParams, string $name, array $expectedPatterns = [], array $expectedSettings = [])
     {

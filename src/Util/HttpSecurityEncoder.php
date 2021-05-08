@@ -81,9 +81,9 @@ class HttpSecurityEncoder
     /**
      * Encode headers
      *
-     * @param array $headers
+     * @param array<string, string|array> $headers
      *
-     * @return array
+     * @return array<string, string|array>
      */
     public function encodeHeaders(array $headers): array
     {

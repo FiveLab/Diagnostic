@@ -21,7 +21,7 @@ use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
 class EnvVariableSkipRegistry implements SkipRegistryInterface
 {
     /**
-     * @var array
+     * @var array<string>
      */
     private array $skipKeys = [];
 

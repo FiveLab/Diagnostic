@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the FiveLab Diagnostic package.
+ *
+ * (c) FiveLab <mail@fivelab.org>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Http;
@@ -29,7 +38,7 @@ class HttpCheck implements CheckInterface
     private string $url;
 
     /**
-     * @var array
+     * @var array<string, string>
      */
     private array $headers;
 
@@ -68,7 +77,7 @@ class HttpCheck implements CheckInterface
      *
      * @param string                   $method
      * @param string                   $url
-     * @param array                    $headers
+     * @param array<string, string>    $headers
      * @param string                   $body
      * @param int                      $expectedStatusCode
      * @param string|null              $expectedBody

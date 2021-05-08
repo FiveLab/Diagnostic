@@ -15,6 +15,8 @@ namespace FiveLab\Component\Diagnostic\Check\Definition;
 
 /**
  * Collection for store check definitions.
+ *
+ * @implements \IteratorAggregate<CheckDefinitionInterface>
  */
 class DefinitionCollection implements \IteratorAggregate, \Countable
 {
@@ -36,9 +38,9 @@ class DefinitionCollection implements \IteratorAggregate, \Countable
     /**
      * {@inheritdoc}
      *
-     * @return \ArrayIterator|CheckDefinitionInterface[]
+     * @return \ArrayIterator<int, CheckDefinitionInterface>
      */
-    public function getIterator(): \Iterator
+    public function getIterator(): iterable
     {
         return new \ArrayIterator($this->definitions);
     }
@@ -54,7 +56,7 @@ class DefinitionCollection implements \IteratorAggregate, \Countable
     /**
      * Get all groups
      *
-     * @return array
+     * @return array<string>
      */
     public function getGroups(): array
     {

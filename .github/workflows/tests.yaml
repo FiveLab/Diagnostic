@@ -25,9 +25,6 @@ jobs:
             -   name: Install vendors
                 run: composer install --prefer-dist
 
-            -   name: Configure PHPCS
-                run: bin/phpcs --config-set show_warnings 0
-
             -   name: Check style on sources
                 run: bin/phpcs --standard=vendor/escapestudios/symfony2-coding-standard/Symfony/ src/
 

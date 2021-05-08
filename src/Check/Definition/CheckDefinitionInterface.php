@@ -37,7 +37,7 @@ interface CheckDefinitionInterface
     /**
      * Get group names of this check
      *
-     * @return array
+     * @return array<string>
      */
     public function getGroups(): array;
 }

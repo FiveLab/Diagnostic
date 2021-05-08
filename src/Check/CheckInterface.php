@@ -30,7 +30,7 @@ interface CheckInterface
     /**
      * Get extra parameters of check. The url as an example.
      *
-     * @return array
+     * @return array<string, array|string|int|float|bool|null>
      */
     public function getExtraParameters(): array;
 }

@@ -60,6 +60,7 @@ class Runner implements RunnerInterface
 
         foreach ($definitions as $definition) {
             $beforeRunEvent = new BeforeRunCheckEvent($definition);
+            /** @var BeforeRunCheckEvent $beforeRunEvent */
             $beforeRunEvent = $this->eventDispatcher->dispatch($beforeRunEvent, RunnerEvents::RUN_CHECK_BEFORE);
 
             $result = $beforeRunEvent->getResult();
