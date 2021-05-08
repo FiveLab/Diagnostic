@@ -31,6 +31,29 @@ jobs:
             -   name: Check style on tests
                 run: bin/phpcs --standard=tests/phpcs-ruleset.xml tests/
 
+    php-stan:
+        name: Run PHP-Stan
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    coverage: "none"
+                    extensions: "json,amqp"
+                    ini-values: "memory_limit=-1"
+                    php-version: "7.4"
+                    tools: "composer"
+
+            -   name: Install vendors
+                run: composer install --prefer-dist
+
+            -   name: Run php stan
+                run: bin/phpstan
+
     tests:
         name: Run tests
         runs-on: ubuntu-latest
