@@ -124,21 +124,6 @@ class DefinitionCollectionBuilderTest extends TestCase
     }
 
     /**
-     * @test
-     */
-    public function shouldThrowExceptionIfGroupIsInvalid(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Groups must be a string or array, but "object" given.');
-
-        $check = $this->createUniqueCheck();
-
-        $builder = new DefinitionCollectionBuilder();
-
-        $builder->addCheck('check', $check, new \stdClass());
-    }
-
-    /**
      * Create unique check
      *
      * @return CheckInterface
