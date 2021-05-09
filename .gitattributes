@@ -1,0 +1,14 @@
+# Git
+/.gitattributes export-ignore
+/.gitignore export-ignore
+
+# Tests
+/phpunit.xml.dist export-ignore
+/tests export-ignore
+
+# Docker
+/Dockerfile export-ignore
+/docker-compose.yml export-ignore
+
+# Common
+/phpstan.neon export-ignore
