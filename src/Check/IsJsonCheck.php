@@ -77,6 +77,7 @@ class IsJsonCheck implements CheckInterface
         if ($this->expectedType) {
             $extraTypeMessage = \sprintf(' and "%s"', $this->expectedType);
 
+            // @phpstan-ignore-next-line
             if (!$expectedFunction($json)) {
                 return new Failure(\sprintf(
                     'The parsed JSON is not "%s".',

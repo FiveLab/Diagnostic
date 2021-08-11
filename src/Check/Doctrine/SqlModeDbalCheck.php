@@ -41,7 +41,7 @@ class SqlModeDbalCheck implements CheckInterface
     private array $excludedSqlModes;
 
     /**
-     * @var array<string>|null
+     * @var array<int, mixed>|null
      */
     private ?array $actualSqlModes = null;
 
