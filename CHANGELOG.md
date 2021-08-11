@@ -1,6 +1,19 @@
 CHANGELOG
 =========
 
+v1.2.2
+------
+
+Add next checks:
+
+* `\FiveLab\Component\Diagnostic\Check\Doctrine\SqlModeDbalCheck` - chek SQL modes in your database via Doctrine DBAL connection.
+* `\FiveLab\Component\Diagnostic\Check\IsJsonCheck` - check the input data for correct JSON.
+
+v1.2.1
+------
+
+No changes in logic.
+
 v1.2.0
 ------
 
