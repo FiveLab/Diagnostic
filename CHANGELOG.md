@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+v1.3.1
+------
+
+Add next checks:
+
+* `\FiveLab\Component\Diagnostic\Check\RabbitMq\AmqpLib\RabbitMqSocketConnectionCheck` - check connect to RabbitMQ via socket with `AmqpLib`.
+* `\FiveLab\Component\Diagnostic\Check\RabbitMq\AmqpLib\RabbitMqStreamConnectionCheck` - check connect to RabbitMQ via stream with `AmqpLib`.
+
 v1.3.0
 ------
 
@@ -11,7 +19,7 @@ v1.2.2
 
 Add next checks:
 
-* `\FiveLab\Component\Diagnostic\Check\Doctrine\SqlModeDbalCheck` - chek SQL modes in your database via Doctrine DBAL connection.
+* `\FiveLab\Component\Diagnostic\Check\Doctrine\SqlModeDbalCheck` - check SQL modes in your database via Doctrine DBAL connection.
 * `\FiveLab\Component\Diagnostic\Check\IsJsonCheck` - check the input data for correct JSON.
 
 v1.2.1

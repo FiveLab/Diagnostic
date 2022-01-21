@@ -1,5 +1,4 @@
 <?php /** @noinspection ALL */
-/** @noinspection ALL */
 
 /*
  * This file is part of the FiveLab Diagnostic package.
