@@ -18,6 +18,7 @@ use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 class RabbitMqSocketConnectionCheckTest extends AbstractRabbitMqTestCase
 {
@@ -30,8 +31,12 @@ class RabbitMqSocketConnectionCheckTest extends AbstractRabbitMqTestCase
             self::markTestSkipped('The RabbitMQ is not configured.');
         }
 
-        if (!\class_exists(\AMQPConnection::class)) {
-            self::markTestSkipped('The ext-amqp not installed.');
+        if (!\extension_loaded('sockets')) {
+            self::markTestSkipped('ext-sockets is not installed.');
+        }
+
+        if (!\class_exists(AMQPStreamConnection::class)) {
+            self::markTestSkipped('php-amqplib/php-amqplib is not installed.');
         }
     }
 
