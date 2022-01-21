@@ -105,9 +105,7 @@ class RabbitMqSocketConnectionCheckTest extends AbstractRabbitMqTestCase
 
         $result = $check->check();
 
-        self::assertEquals(
-            new Failure('Error Connecting to server (-10001): Unknown host'),
-            $result
-        );
+        self::assertInstanceOf(Failure::class, $result);
+        self::assertStringContainsString('Error Connecting to server', $result->getMessage());
     }
 }
