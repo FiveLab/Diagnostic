@@ -29,6 +29,7 @@
         "ext-redis": "*",
         "ext-curl": "*",
         "ext-pdo": "*",
+        "ext-sockets": "*",
         "phpunit/phpunit": "~9.0",
         "phpmetrics/phpmetrics": "^2.0",
         "phpstan/phpstan": "~0.12.85",
@@ -52,7 +53,8 @@
         "elasticsearch/elasticsearch": "~7.0",
         "react/promise": "~2.3",
         "illuminate/database": "~6.20.12 | ~7.30.4 | ~8.22.1 | ~9.0",
-        "aws/aws-sdk-php": "~3.0"
+        "aws/aws-sdk-php": "~3.0",
+        "php-amqplib/php-amqplib": "^3.0"
     },
 
     "minimum-stability": "dev",
