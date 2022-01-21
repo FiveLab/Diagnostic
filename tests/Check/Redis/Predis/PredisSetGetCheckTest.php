@@ -81,9 +81,6 @@ class PredisSetGetCheckTest extends AbstractRedisTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith(
-            'Cannot connect to Redis: php_network_getaddresses: getaddrinfo failed: Name or service not known',
-            $result->getMessage()
-        );
+        self::assertStringStartsWith('Cannot connect to Redis: php_network_getaddresses:', $result->getMessage());
     }
 }

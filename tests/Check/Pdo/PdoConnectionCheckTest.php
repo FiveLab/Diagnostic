@@ -85,10 +85,8 @@ class PdoConnectionCheckTest extends AbstractDatabaseTestCase
 
         $result = $check->check();
 
-        self::assertEquals(
-            new Failure('Fail connect to database. Error: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: Name or service not known'),
-            $result
-        );
+        self::assertInstanceOf(Failure::class, $result);
+        self::assertStringStartsWith('Fail connect to database. Error: SQLSTATE[HY000] [2002] php_network_getaddresses:', $result->getMessage());
     }
 
     /**

@@ -18,7 +18,7 @@ RUN \
     apt-get install -y --no-install-recommends \
         librabbitmq-dev && \
     docker-php-ext-install pdo pdo_mysql && \
-    printf '\n' | pecl install amqp-1.11.0beta && \
+    printf '\n' | pecl install amqp-1.11.0 && \
     printf "\n" | pecl install redis && \
     yes | pecl install xdebug && \
     docker-php-ext-enable amqp xdebug redis

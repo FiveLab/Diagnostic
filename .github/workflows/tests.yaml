@@ -60,7 +60,18 @@ jobs:
 
         strategy:
             matrix:
-                php: [ '7.4', '8.0' ]
+                include:
+                    -   php: 7.4
+                        symfony: '~4.4'
+
+                    -   php: 7.4
+                        symfony: '~5.4'
+
+                    -   php: 8.0
+                        symfony: '~6.0'
+
+                    -   php: 8.1
+                        symfony: '~6.0'
 
         services:
             rabbitmq:
@@ -134,6 +145,10 @@ jobs:
                     path: ${{ steps.composer-cache.outputs.dir }}
                     key: ${{ runner.os }}-composer-${{ matrix.php }}
                     restore-keys: ${{ runner.os }}-composer-${{ matrix.php }}
+
+            -   name: Configure Symfony version
+                run: |
+                    php .github/replace-version.php "symfony/" "${{ matrix.symfony }}"
 
             -   name: Install vendors
                 run: composer install --prefer-dist

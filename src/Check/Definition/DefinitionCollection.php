@@ -40,7 +40,7 @@ class DefinitionCollection implements \IteratorAggregate, \Countable
      *
      * @return \ArrayIterator<int, CheckDefinitionInterface>
      */
-    public function getIterator(): iterable
+    public function getIterator(): \Iterator
     {
         return new \ArrayIterator($this->definitions);
     }

@@ -21,7 +21,7 @@
     "require": {
         "php": "^7.4 | ^8.0",
         "ext-json": "*",
-        "symfony/event-dispatcher": "~4.0|~5.0|~6.0"
+        "symfony/event-dispatcher": "~4.0 | ~5.0 | ~6.0"
     },
 
     "require-dev": {
@@ -48,11 +48,15 @@
         "composer/semver": "~1.0",
         "predis/predis": "~1.1",
         "doctrine/orm": "~2.6",
+        "doctrine/annotations": "~1.13",
         "elasticsearch/elasticsearch": "~7.0",
         "react/promise": "~2.3",
-        "illuminate/database": "^7.0",
+        "illuminate/database": "~6.20.12 | ~7.30.4 | ~8.22.1 | ~9.0",
         "aws/aws-sdk-php": "~3.0"
     },
+
+    "minimum-stability": "dev",
+    "prefer-stable": true,
 
     "suggest": {
         "ext-pdo": "For check connection via PDO.",
@@ -81,7 +85,10 @@
     },
 
     "config": {
-        "bin-dir": "bin"
+        "bin-dir": "bin",
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
     },
 
     "extra": {
