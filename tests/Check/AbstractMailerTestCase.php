@@ -38,6 +38,16 @@ abstract class AbstractMailerTestCase extends TestCase
     }
 
     /**
+     * Get dsn
+     *
+     * @return string
+     */
+    public function getDsn(): string
+    {
+        return \sprintf('smtp://%s:%d', $this->getMailerHost(), $this->getMailerPort());
+    }
+
+    /**
      * Is can testing with mailer?
      *
      * @return bool
