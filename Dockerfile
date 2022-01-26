@@ -1,4 +1,4 @@
-FROM php:8.1-cli
+FROM php:8.0-cli
 
 MAINTAINER Vitaliy Zhuk <zhuk2205@gmail.com>
 
@@ -17,11 +17,11 @@ RUN \
 RUN \
     apt-get install -y --no-install-recommends \
         librabbitmq-dev && \
-    docker-php-ext-install pdo pdo_mysql sockets && \
-    printf '\n' | pecl install amqp-1.11.0 && \
+    docker-php-ext-install pdo pdo_mysql && \
+    printf '\n' | pecl install amqp && \
     printf "\n" | pecl install redis && \
     yes | pecl install xdebug && \
-    docker-php-ext-enable amqp xdebug redis sockets
+    docker-php-ext-enable amqp xdebug redis
 
 # Configure XDebug
 RUN \
