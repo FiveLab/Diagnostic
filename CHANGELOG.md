@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+v1.3.2
+------
+
+Add next checks:
+
+* `\FiveLab\Component\Diagnostic\Check\Mailer\SymfonyMailerSmtpConnectionCheck` - check connect to SMTP via Symfony Mailer Transport.
+
 v1.3.1
 ------
 
