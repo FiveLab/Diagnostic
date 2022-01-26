@@ -20,6 +20,9 @@ use FiveLab\Component\Diagnostic\Result\Success;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\Transport;
 
+/**
+ * Check connect to mailer via Symfony/Mailer transports.
+ */
 class SymfonyMailerSmtpConnectionCheck implements CheckInterface
 {
     /**
