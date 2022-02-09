@@ -15,7 +15,6 @@ namespace FiveLab\Component\Diagnostic\Check\Doctrine;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Connection as DriverConnection;
-use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
@@ -23,13 +22,8 @@ use FiveLab\Component\Diagnostic\Result\Success;
 /**
  * Check the SQL_MODE via doctrine dbal (use dbal connection).
  */
-class SqlModeDbalCheck implements CheckInterface
+class SqlModeDbalCheck extends AbstractDbalCheck
 {
-    /**
-     * @var DriverConnection
-     */
-    private DriverConnection $connection;
-
     /**
      * @var array<string>
      */
@@ -48,12 +42,14 @@ class SqlModeDbalCheck implements CheckInterface
     /**
      * Constructor.
      *
-     * @param DriverConnection $connection
-     * @param string[]         $expectedSqlModes
-     * @param string[]         $excludedSqlModes
+     * @param DriverConnection|Connection $connection
+     * @param string[]                    $expectedSqlModes
+     * @param string[]                    $excludedSqlModes
      */
-    public function __construct(DriverConnection $connection, array $expectedSqlModes = [], array $excludedSqlModes = [])
+    public function __construct($connection, array $expectedSqlModes = [], array $excludedSqlModes = [])
     {
+        parent::__construct($connection);
+
         $this->connection = $connection;
         $this->expectedSqlModes = $expectedSqlModes;
         $this->excludedSqlModes = $excludedSqlModes;
@@ -65,8 +61,7 @@ class SqlModeDbalCheck implements CheckInterface
     public function check(): ResultInterface
     {
         try {
-            $stmt = $this->connection->prepare('SELECT @@GLOBAL.sql_mode');
-            $stmt->execute();
+            $stmt = $this->connection->executeQuery('SELECT @@GLOBAL.sql_mode');
         } catch (\Throwable $e) {
             return new Failure(\sprintf(
                 'Fail connect to database. Throw exception: %s.',
@@ -74,7 +69,7 @@ class SqlModeDbalCheck implements CheckInterface
             ));
         }
 
-        $sqlMode = $stmt->fetchColumn();
+        [$sqlMode] = $stmt->fetchNumeric();
 
         $sqlModes = \explode(',', $sqlMode);
         $sqlModes = \array_map('\trim', $sqlModes);
@@ -121,17 +116,7 @@ class SqlModeDbalCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        $parameters = [];
-
-        if ($this->connection instanceof Connection) {
-            $parameters = [
-                'host'   => $this->connection->getHost(),
-                'port'   => $this->connection->getPort(),
-                'user'   => $this->connection->getUsername(),
-                'pass'   => '***',
-                'dbname' => $this->connection->getDatabase(),
-            ];
-        }
+        $parameters = parent::getExtraParameters();
 
         if (null !== $this->actualSqlModes) {
             $parameters['actual sql modes'] = $this->actualSqlModes;

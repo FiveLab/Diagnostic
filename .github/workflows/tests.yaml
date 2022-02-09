@@ -150,7 +150,7 @@ jobs:
                 run: |
                     php .github/replace-version.php "symfony/" "${{ matrix.symfony }}"
 
-            -   name: Install vendors
+            -   name: Install stable vendors
                 run: composer install --prefer-dist
 
             -   name: Run tests

@@ -39,7 +39,7 @@
         "symfony/cache": "~4.0 | ~5.0 | ~6.0",
         "symfony/mailer": "~4.0 | ~5.0 | ~6.0",
         "swiftmailer/swiftmailer": "~6.0",
-        "doctrine/dbal": "~2.2",
+        "doctrine/dbal": "~2.2 | ~3.0",
         "guzzlehttp/guzzle": "~6.3",
         "php-http/httplug": "~2.0",
         "php-http/guzzle6-adapter": "~2.0",

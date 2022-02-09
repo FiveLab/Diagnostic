@@ -13,10 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Doctrine;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Connection as DriverConnection;
 use Doctrine\DBAL\Driver\Exception;
-use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
@@ -24,23 +21,8 @@ use FiveLab\Component\Diagnostic\Result\Success;
 /**
  * Check the connect to database.
  */
-class DbalConnectionCheck implements CheckInterface
+class DbalConnectionCheck extends AbstractDbalCheck
 {
-    /**
-     * @var DriverConnection
-     */
-    private DriverConnection $connection;
-
-    /**
-     * Constructor.
-     *
-     * @param DriverConnection $connection
-     */
-    public function __construct(DriverConnection $connection)
-    {
-        $this->connection = $connection;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -61,25 +43,5 @@ class DbalConnectionCheck implements CheckInterface
         }
 
         return new Success('Success connect to database.');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtraParameters(): array
-    {
-        $parameters = [];
-
-        if ($this->connection instanceof Connection) {
-            $parameters = [
-                'host'   => $this->connection->getHost(),
-                'port'   => $this->connection->getPort(),
-                'user'   => $this->connection->getUsername(),
-                'pass'   => '***',
-                'dbname' => $this->connection->getDatabase(),
-            ];
-        }
-
-        return $parameters;
     }
 }

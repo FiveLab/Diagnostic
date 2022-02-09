@@ -31,13 +31,20 @@ class SymfonyMailerSmtpConnectionCheck implements CheckInterface
     private string $dsn;
 
     /**
+     * @var array
+     */
+    private array $codes;
+
+    /**
      * Constructor.
      *
      * @param string $dsn
+     * @param array $codes
      */
-    public function __construct(string $dsn)
+    public function __construct(string $dsn, array $codes = [220, 250])
     {
         $this->dsn = $dsn;
+        $this->codes = $codes;
     }
 
     /**
@@ -62,7 +69,7 @@ class SymfonyMailerSmtpConnectionCheck implements CheckInterface
 
         try {
             $transport->getStream()->initialize();
-            $transport->executeCommand($command, [250]);
+            $transport->executeCommand($command, $this->codes);
         } catch (TransportException $e) {
             return new Failure(\sprintf(
                 'Fail connect or send HELO command to mailer. Error: %s.',

@@ -15,35 +15,21 @@ namespace FiveLab\Component\Diagnostic\Tests\Check\Doctrine;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Driver\PDOMySql\Driver;
 use FiveLab\Component\Diagnostic\Check\Doctrine\DbalMysqlVersionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
-use FiveLab\Component\Diagnostic\Tests\Check\AbstractDatabaseTestCase;
 
-class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
+class DbalMysqlVersionCheckTest extends AbstractDoctrineCheckTestCase
 {
     private const RIGHT_MYSQL_VERSION = '~5.7.0';
     private const WRONG_MYSQL_VERSION = '~1.0.0';
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp(): void
-    {
-        if (!$this->canTestingWithDatabase()) {
-            self::markTestSkipped('The database not configured.');
-        }
-    }
 
     /**
      * @test
      */
     public function shouldPassCheckForProperVersion(): void
     {
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
-
-        $check = new DbalMysqlVersionCheck($connection, self::RIGHT_MYSQL_VERSION);
+        $check = new DbalMysqlVersionCheck($this->makeDbalConnection(), self::RIGHT_MYSQL_VERSION);
         $result = $check->check();
 
         self::assertEquals(new Success('MySQL version matches an expected one.'), $result);
@@ -54,9 +40,7 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldFailCheckForImproperVersion(): void
     {
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
-
-        $check = new DbalMysqlVersionCheck($connection, self::WRONG_MYSQL_VERSION);
+        $check = new DbalMysqlVersionCheck($this->makeDbalConnection(), self::WRONG_MYSQL_VERSION);
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
@@ -71,13 +55,14 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldUnveilAllProperExtraParametersAfterCheck(): void
     {
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
+        $connection = $this->makeDbalConnection();
 
         $check = new DbalMysqlVersionCheck($connection, self::RIGHT_MYSQL_VERSION);
         $check->check();
 
         $actualBuildVersion = $this->getMysqlServerBuildVersion($connection);
         $actualDistribVersion = $this->extractMysqlServerDistribVersion($actualBuildVersion);
+
         self::assertEquals([
             'host'            => $this->getDatabaseHost(),
             'port'            => $this->getDatabasePort(),
@@ -94,9 +79,7 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldUnveilUnknownActualVersionBeforeSuccessfulCheck(): void
     {
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
-
-        $check = new DbalMysqlVersionCheck($connection, self::RIGHT_MYSQL_VERSION);
+        $check = new DbalMysqlVersionCheck($this->makeDbalConnection(), self::RIGHT_MYSQL_VERSION);
         $parameters = $check->getExtraParameters();
 
         self::assertArrayHasKey('actualVersion', $parameters);
@@ -108,10 +91,10 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldUnveilUnknownActualVersionOnConnectionError(): void
     {
-        $options = $this->getConnectionOptions();
-        $options['password'] = \uniqid();
+        $connection = $this->makeDbalConnection([
+            'password' => \uniqid(),
+        ]);
 
-        $connection = new Connection($options, new Driver());
         $check = new DbalMysqlVersionCheck($connection, self::RIGHT_MYSQL_VERSION);
 
         $parameters = $check->getExtraParameters();
@@ -124,7 +107,7 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldUnveilActualVersionOnVersionMismatch(): void
     {
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
+        $connection = $this->makeDbalConnection();
 
         $check = new DbalMysqlVersionCheck($connection, self::WRONG_MYSQL_VERSION);
         $check->check();
@@ -142,10 +125,10 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldFailCheckForWrongCredentials(): void
     {
-        $options = $this->getConnectionOptions();
-        $options['password'] = \uniqid();
+        $connection = $this->makeDbalConnection([
+            'password' => \uniqid(),
+        ]);
 
-        $connection = new Connection($options, new Driver());
         $check = new DbalMysqlVersionCheck($connection, self::RIGHT_MYSQL_VERSION);
 
         $result = $check->check();
@@ -162,10 +145,10 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldFailIfHostIsInvalid(): void
     {
-        $options = $this->getConnectionOptions();
-        $options['host'] = \uniqid();
+        $connection = $this->makeDbalConnection([
+            'host' => \uniqid(),
+        ]);
 
-        $connection = new Connection($options, new Driver());
         $check = new DbalMysqlVersionCheck($connection, self::RIGHT_MYSQL_VERSION);
 
         $result = $check->check();
@@ -187,7 +170,8 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
     public function mysqlVersionRegexShouldExtractValidVersions(string $buildVersion, string $expected): void
     {
         $matches = [];
-        preg_match(DbalMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
+        \preg_match(DbalMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
+
         self::assertArrayHasKey(0, $matches);
         self::assertEquals($expected, $matches[0]);
     }
@@ -202,7 +186,8 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
     public function mysqlVersionRegexShouldNotExtractInvalidVersions(string $version): void
     {
         $matches = [];
-        preg_match(DbalMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $version, $matches);
+        \preg_match(DbalMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $version, $matches);
+
         self::assertEmpty($matches);
     }
 
@@ -219,6 +204,7 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
             '5.0.91-community-nt-log' => '5.0.91',
             '10.1.29-MariaDB'         => '10.1.29',
         ];
+
         foreach ($versions as $buildVersion => $expected) {
             yield [$buildVersion, $expected];
         }
@@ -234,25 +220,10 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
         $versions = [
             'abc.5.7.25-0ubuntu0.18.04.2',
         ];
+
         foreach ($versions as $version) {
             yield [$version];
         }
-    }
-
-    /**
-     * Get connection options
-     *
-     * @return array
-     */
-    private function getConnectionOptions(): array
-    {
-        return [
-            'host'     => $this->getDatabaseHost(),
-            'port'     => $this->getDatabasePort(),
-            'dbname'   => $this->getDatabaseName(),
-            'user'     => $this->getDatabaseUser(),
-            'password' => $this->getDatabasePassword(),
-        ];
     }
 
     /**
@@ -262,12 +233,14 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
      *
      * @throws DBALException
      */
-    private function getMysqlServerBuildVersion(Connection $connection): string
+    private function getMysqlServerBuildVersion(object $connection): string
     {
         $query = "SHOW VARIABLES WHERE Variable_name = 'version'";
         $statement = $connection->executeQuery($query);
 
-        return (string) $statement->fetchColumn(1);
+        [, $version] = $statement->fetchNumeric() ;
+
+        return $version;
     }
 
     /**
@@ -278,7 +251,7 @@ class DbalMysqlVersionCheckTest extends AbstractDatabaseTestCase
     private function extractMysqlServerDistribVersion(string $buildVersion): string
     {
         $matches = [];
-        preg_match(DbalMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
+        \preg_match(DbalMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
 
         return \rtrim($matches[0], '.');
     }
