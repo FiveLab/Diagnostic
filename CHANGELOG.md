@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+v1.3.3
+------
+
+* Add `codes` argument for Symfony Mailer SMTP check. By default, 220 and 250.
+* Add possible work with new Doctrine DBAL ~3.0 versions.
+
 v1.3.2
 ------
 

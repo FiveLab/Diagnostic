@@ -13,33 +13,18 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Doctrine;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\PDOMySql\Driver;
 use FiveLab\Component\Diagnostic\Check\Doctrine\DbalConnectionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
-use FiveLab\Component\Diagnostic\Tests\Check\AbstractDatabaseTestCase;
 
-class DbalConnectionCheckTest extends AbstractDatabaseTestCase
+class DbalConnectionCheckTest extends AbstractDoctrineCheckTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp(): void
-    {
-        if (!$this->canTestingWithDatabase()) {
-            self::markTestSkipped('The database not configured.');
-        }
-    }
-
     /**
      * @test
      */
     public function shouldSuccessCheck(): void
     {
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
-
-        $check = new DbalConnectionCheck($connection);
+        $check = new DbalConnectionCheck($this->makeDbalConnection());
 
         $result = $check->check();
 
@@ -51,9 +36,7 @@ class DbalConnectionCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldSuccessGetExtraParameters(): void
     {
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
-
-        $check = new DbalConnectionCheck($connection);
+        $check = new DbalConnectionCheck($this->makeDbalConnection());
 
         self::assertEquals([
             'host'   => $this->getDatabaseHost(),
@@ -69,10 +52,9 @@ class DbalConnectionCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldFailIfCredentialsIsWrong(): void
     {
-        $options = $this->getConnectionOptions();
-        $options['password'] = \uniqid();
-
-        $connection = new Connection($options, new Driver());
+        $connection = $this->makeDbalConnection([
+            'password' => \uniqid(),
+        ]);
 
         $check = new DbalConnectionCheck($connection);
 
@@ -90,10 +72,9 @@ class DbalConnectionCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldFailIfHostIsInvalid(): void
     {
-        $options = $this->getConnectionOptions();
-        $options['host'] = \uniqid();
-
-        $connection = new Connection($options, new Driver());
+        $connection = $this->makeDbalConnection([
+            'host' => \uniqid(),
+        ]);
 
         $check = new DbalConnectionCheck($connection);
 
@@ -104,21 +85,5 @@ class DbalConnectionCheckTest extends AbstractDatabaseTestCase
             'SQLSTATE[HY000] [2002]',
             $result->getMessage()
         );
-    }
-
-    /**
-     * Get connection options
-     *
-     * @return array
-     */
-    private function getConnectionOptions(): array
-    {
-        return [
-            'host'     => $this->getDatabaseHost(),
-            'port'     => $this->getDatabasePort(),
-            'dbname'   => $this->getDatabaseName(),
-            'user'     => $this->getDatabaseUser(),
-            'password' => $this->getDatabasePassword(),
-        ];
     }
 }

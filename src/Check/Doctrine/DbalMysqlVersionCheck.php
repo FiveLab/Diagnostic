@@ -13,6 +13,7 @@ namespace FiveLab\Component\Diagnostic\Check\Doctrine;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Connection as DriverConnection;
+use Doctrine\DBAL\Result;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
@@ -23,14 +24,9 @@ use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterfa
 /**
  * Check MySQL version.
  */
-class DbalMysqlVersionCheck implements CheckInterface
+class DbalMysqlVersionCheck extends AbstractDbalCheck
 {
     public const MYSQL_EXTRACT_VERSION_REGEX = '/^([\d\.]+)/';
-
-    /**
-     * @var DriverConnection
-     */
-    private DriverConnection $connection;
 
     /**
      * @var string
@@ -50,14 +46,16 @@ class DbalMysqlVersionCheck implements CheckInterface
     /**
      * Constructor.
      *
-     * @param DriverConnection                $connection
+     * @param DriverConnection|Connection     $connection
      * @param string                          $expectedVersion
      * @param VersionComparatorInterface|null $versionComparator
      *
      * @see https://getcomposer.org/doc/articles/versions.md
      */
-    public function __construct(DriverConnection $connection, string $expectedVersion, VersionComparatorInterface $versionComparator = null)
+    public function __construct(object $connection, string $expectedVersion, VersionComparatorInterface $versionComparator = null)
     {
+        parent::__construct($connection);
+
         $this->connection = $connection;
         $this->expectedVersion = $expectedVersion;
         $this->versionComparator = $versionComparator ?: new SemverVersionComparator();
@@ -71,7 +69,8 @@ class DbalMysqlVersionCheck implements CheckInterface
         try {
             $query = "SHOW VARIABLES WHERE Variable_name = 'version'";
             $statement = $this->connection->executeQuery($query);
-            $mysqlVersionVariableContent = $statement->fetchColumn(1);
+
+            [, $mysqlVersionVariableContent] = $statement->fetchNumeric();
         } catch (\Throwable $e) {
             return new Failure(\sprintf(
                 'Failed checking MySQL version: %s.',
@@ -97,17 +96,7 @@ class DbalMysqlVersionCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        $parameters = [];
-
-        if ($this->connection instanceof Connection) {
-            $parameters = [
-                'host'   => $this->connection->getHost(),
-                'port'   => $this->connection->getPort(),
-                'user'   => $this->connection->getUsername(),
-                'pass'   => '***',
-                'dbname' => $this->connection->getDatabase(),
-            ];
-        }
+        $parameters = parent::getExtraParameters();
 
         $parameters['actualVersion'] = $this->actualVersion;
         $parameters['expectedVersion'] = $this->expectedVersion;

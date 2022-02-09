@@ -13,5 +13,9 @@
             path: src/
 
         -
-            message: '#Call to an undefined method Doctrine\\DBAL\\Driver\\Connection::executeQuery\(\)#'
+            message: '#Call to an undefined method (.+)::executeQuery\(\)#'
+            path: src/
+
+        -
+            message: '#Call to an undefined method (.+)\\Connection::get(Host|Port|Username)\(\)#'
             path: src/

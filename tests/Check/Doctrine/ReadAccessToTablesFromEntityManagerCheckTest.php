@@ -13,8 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Doctrine;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\PDOMySql\Driver;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
@@ -22,10 +20,9 @@ use Doctrine\Persistence\Mapping\ClassMetadata;
 use FiveLab\Component\Diagnostic\Check\Doctrine\ReadAccessToTablesFromEntityManagerCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
-use FiveLab\Component\Diagnostic\Tests\Check\AbstractDatabaseTestCase;
 use FiveLab\Component\Diagnostic\Tests\Check\Doctrine\Entity\User;
 
-class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDatabaseTestCase
+class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheckTestCase
 {
     /**
      * @var EntityManager
@@ -115,7 +112,7 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDatabaseTestC
      */
     private function setUpDatabase(): void
     {
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
+        $connection = $this->makeDbalConnection();
         $isDevMode = true;  // Creates doctrine cache as a php array
 
         $config = Setup::createAnnotationMetadataConfiguration([__DIR__."/Entity"], $isDevMode);
@@ -152,26 +149,10 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDatabaseTestC
     }
 
     /**
-     * @return ClassMetadata[]
+     * @return ClassMetadata[]|\Doctrine\Common\Persistence\Mapping\ClassMetadata[]
      */
     private function getEntityMetadata(): array
     {
         return $this->entityManager->getMetadataFactory()->getAllMetadata();
-    }
-
-    /**
-     * Get connection options
-     *
-     * @return array
-     */
-    private function getConnectionOptions(): array
-    {
-        return [
-            'host'     => $this->getDatabaseHost(),
-            'port'     => $this->getDatabasePort(),
-            'dbname'   => $this->getDatabaseName(),
-            'user'     => $this->getDatabaseUser(),
-            'password' => $this->getDatabasePassword(),
-        ];
     }
 }

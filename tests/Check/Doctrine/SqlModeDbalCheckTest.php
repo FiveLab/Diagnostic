@@ -14,13 +14,11 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\Doctrine;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\PDOMySql\Driver;
 use FiveLab\Component\Diagnostic\Check\Doctrine\SqlModeDbalCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
-use FiveLab\Component\Diagnostic\Tests\Check\AbstractDatabaseTestCase;
 
-class SqlModeDbalCheckTest extends AbstractDatabaseTestCase
+class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
 {
     /**
      * @var Connection
@@ -41,7 +39,7 @@ class SqlModeDbalCheckTest extends AbstractDatabaseTestCase
             self::markTestSkipped('The database not configured.');
         }
 
-        $this->connection = new Connection($this->getConnectionOptions(), new Driver());
+        $this->connection = $this->makeDbalConnection();
 
         $stmt = $this->connection->executeQuery('SELECT @@GLOBAL.sql_mode');
 
@@ -63,7 +61,7 @@ class SqlModeDbalCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldSuccessGetExtraParams(): void
     {
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
+        $connection = $this->makeDbalConnection();
 
         $check = new SqlModeDbalCheck($connection, ['STRICT_TRANS_TABLES', 'NO_ENGINE_SUBSTITUTION'], ['ONLY_FULL_GROUP_BY']);
         $check->check();
@@ -87,7 +85,7 @@ class SqlModeDbalCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldSuccessGetExtraParamsWithoutCheck(): void
     {
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
+        $connection = $this->makeDbalConnection();
 
         $check = new SqlModeDbalCheck($connection, ['STRICT_TRANS_TABLES', 'NO_ENGINE_SUBSTITUTION'], ['ONLY_FULL_GROUP_BY']);
 
@@ -111,7 +109,7 @@ class SqlModeDbalCheckTest extends AbstractDatabaseTestCase
     {
         $this->connection->executeStatement('SET @@GLOBAL.sql_mode = \'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\'');
 
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
+        $connection = $this->makeDbalConnection();
 
         $check = new SqlModeDbalCheck($connection, ['STRICT_TRANS_TABLES', 'NO_ENGINE_SUBSTITUTION'], []);
         $result = $check->check();
@@ -126,7 +124,7 @@ class SqlModeDbalCheckTest extends AbstractDatabaseTestCase
     {
         $this->connection->executeStatement('SET @@GLOBAL.sql_mode = \'NO_ENGINE_SUBSTITUTION\'');
 
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
+        $connection = $this->makeDbalConnection();
 
         $check = new SqlModeDbalCheck($connection, ['NO_ENGINE_SUBSTITUTION'], ['STRICT_TRANS_TABLES']);
         $result = $check->check();
@@ -141,7 +139,7 @@ class SqlModeDbalCheckTest extends AbstractDatabaseTestCase
     {
         $this->connection->executeStatement('SET @@GLOBAL.sql_mode = \'NO_ENGINE_SUBSTITUTION\'');
 
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
+        $connection = $this->makeDbalConnection();
 
         $check = new SqlModeDbalCheck($connection, ['ONLY_FULL_GROUP_BY', 'STRICT_TRANS_TABLES']);
         $result = $check->check();
@@ -156,7 +154,7 @@ class SqlModeDbalCheckTest extends AbstractDatabaseTestCase
     {
         $this->connection->executeStatement('SET @@GLOBAL.sql_mode = \'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\'');
 
-        $connection = new Connection($this->getConnectionOptions(), new Driver());
+        $connection = $this->makeDbalConnection();
 
         $check = new SqlModeDbalCheck($connection, [], ['STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'ONLY_FULL_GROUP_BY']);
         $result = $check->check();
@@ -169,31 +167,14 @@ class SqlModeDbalCheckTest extends AbstractDatabaseTestCase
      */
     public function shouldFailIfConnectionFail(): void
     {
-        $options = $this->getConnectionOptions();
-        $options['host'] = \uniqid();
-
-        $connection = new Connection($options, new Driver());
+        $connection = $this->makeDbalConnection([
+            'host' => \uniqid(),
+        ]);
 
         $check = new SqlModeDbalCheck($connection, ['STRICT_TRANS_TABLES']);
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
         self::assertStringContainsString('SQLSTATE[HY000] [2002]', $result->getMessage());
-    }
-
-    /**
-     * Get connection options
-     *
-     * @return array
-     */
-    private function getConnectionOptions(): array
-    {
-        return [
-            'host'     => $this->getDatabaseHost(),
-            'port'     => $this->getDatabasePort(),
-            'dbname'   => $this->getDatabaseName(),
-            'user'     => $this->getDatabaseUser(),
-            'password' => $this->getDatabasePassword(),
-        ];
     }
 }
