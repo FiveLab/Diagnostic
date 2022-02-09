@@ -31,15 +31,15 @@ class SymfonyMailerSmtpConnectionCheck implements CheckInterface
     private string $dsn;
 
     /**
-     * @var array
+     * @var array<int>
      */
     private array $codes;
 
     /**
      * Constructor.
      *
-     * @param string $dsn
-     * @param array $codes
+     * @param string     $dsn
+     * @param array<int> $codes
      */
     public function __construct(string $dsn, array $codes = [220, 250])
     {

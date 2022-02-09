@@ -13,10 +13,13 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Doctrine;
 
-use Doctrine\DBAL\Driver\Connection as DriverConnection;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Connection as DriverConnection;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 
+/**
+ * Abstract check for Doctrine DBAL
+ */
 abstract class AbstractDbalCheck implements CheckInterface
 {
     /**
@@ -27,7 +30,7 @@ abstract class AbstractDbalCheck implements CheckInterface
     /**
      * Constructor.
      *
-     * @param DriverConnection|Connection $connection
+     * @param DriverConnection|Connection|object $connection
      */
     public function __construct(object $connection)
     {
@@ -53,7 +56,7 @@ abstract class AbstractDbalCheck implements CheckInterface
         if ($this->connection instanceof Connection) {
             if (\method_exists($this->connection, 'getParams')) {
                 $parameters = $this->connection->getParams();
-                unset ($parameters['password']);
+                unset($parameters['password']);
             } else {
                 $parameters = [
                     'host'   => $this->connection->getHost(),
