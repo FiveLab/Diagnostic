@@ -21,15 +21,18 @@ use MongoDB\Driver\Exception\Exception;
 use MongoDB\Driver\Manager;
 use MongoDB\Driver\Command;
 
+/**
+ * Check MongoDB collection json-schema.
+ */
 class MongoSchemaCheck implements CheckInterface
 {
     /**
+     * @param MongoExtendedConnectionParameters $extendedConnectionParameters
+     * @param string                            $expectedSchema
+     *
      * @throws \InvalidArgumentException
      */
-    public function __construct(
-        private MongoExtendedConnectionParameters $extendedConnectionParameters,
-        private string                            $expectedSchema
-    )
+    public function __construct(private MongoExtendedConnectionParameters $extendedConnectionParameters, private string $expectedSchema)
     {
         if (\json_decode($this->expectedSchema) === null) {
             throw new \InvalidArgumentException('invalid json-schema given.');

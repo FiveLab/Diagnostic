@@ -22,13 +22,15 @@ use MongoDB\Driver\Manager;
 use MongoDB\Driver\Command;
 
 /**
- * Check success connect to MongoDB.
+ * Check MongoDB connection.
  */
 class MongoConnectionCheck implements CheckInterface
 {
-    public function __construct(
-        private MongoConnectionParameters $connectionParameters
-    ) {
+    /**
+     * @param MongoConnectionParameters $connectionParameters
+     */
+    public function __construct(private MongoConnectionParameters $connectionParameters)
+    {
     }
 
     /**

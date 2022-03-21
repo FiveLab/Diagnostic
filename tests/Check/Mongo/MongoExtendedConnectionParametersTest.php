@@ -21,6 +21,9 @@ use PHPUnit\Framework\TestCase;
 
 class MongoExtendedConnectionParametersTest extends TestCase
 {
+    /**
+     * @test
+     */
     public function testGetDsn(): void
     {
         $extendedConnectionParameters = new MongoExtendedConnectionParameters(

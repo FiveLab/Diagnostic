@@ -20,7 +20,17 @@ use PHPUnit\Framework\TestCase;
 
 class MongoConnectionParametersTest extends TestCase
 {
-    /** @dataProvider provideConnectionParameters */
+    /**
+     * @test
+     *
+     * @param string      $host
+     * @param int         $port
+     * @param bool        $ssl
+     * @param string|null $expectedDsn
+     * @return void
+     *
+     * @dataProvider provideConnectionParameters
+     */
     public function testGetDsn(string $host, int $port, bool $ssl = false, string $expectedDsn = null): void
     {
         $connectionParameters = new MongoConnectionParameters(

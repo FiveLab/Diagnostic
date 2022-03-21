@@ -22,6 +22,9 @@ use FiveLab\Component\Diagnostic\Tests\Check\AbstractMongoTestCase;
 
 class MongoSchemaCheckTest extends AbstractMongoTestCase
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp(): void
     {
         if (!$this->connectionParametersProvided()) {
@@ -29,6 +32,9 @@ class MongoSchemaCheckTest extends AbstractMongoTestCase
         }
     }
 
+    /**
+     * @test
+     */
     public function testSuccessfulCheck(): void
     {
         $check = new MongoSchemaCheck(
@@ -41,9 +47,12 @@ class MongoSchemaCheckTest extends AbstractMongoTestCase
         self::assertEquals(new Success('Successful MongoDB collection schema check.'), $result);
     }
 
+    /**
+     * @test
+     */
     public function testFailedCheckConnectionFailed(): void
     {
-        $invalidHost = $this->getHost() . '_some';
+        $invalidHost = $this->getHost().'_some';
 
         $connectionParameters = new MongoExtendedConnectionParameters(
             $this->getUsername(),
@@ -69,13 +78,16 @@ class MongoSchemaCheckTest extends AbstractMongoTestCase
         self::assertEquals(new Failure($msg), $result);
     }
 
+    /**
+     * @test
+     */
     public function testFailedCheckExpectedSchemaDoesNotEqual(): void
     {
         $schema = [
             'a' => [
                 'b',
-                'c'
-            ]
+                'c',
+            ],
         ];
 
         $check = new MongoSchemaCheck(
@@ -88,6 +100,9 @@ class MongoSchemaCheckTest extends AbstractMongoTestCase
         self::assertEquals(new Failure('MongoDB collection schema check failed: expected json-schema does not equal the actual one.'), $result);
     }
 
+    /**
+     * @test
+     */
     public function testInvalidJsonSchema(): void
     {
         $invalidJsonSchema = '{"a":{"b","c"}}';
@@ -101,7 +116,9 @@ class MongoSchemaCheckTest extends AbstractMongoTestCase
         );
     }
 
-
+    /**
+     * @test
+     */
     public function testGetExtraParameters(): void
     {
         $extendedConnectionParameters = new MongoExtendedConnectionParameters(
@@ -130,7 +147,7 @@ class MongoSchemaCheckTest extends AbstractMongoTestCase
             'user' => 'user',
             'pass' => '***',
             'db' => 'db',
-            'collection' => 'collection'
+            'collection' => 'collection',
         ], $parameters);
     }
 }

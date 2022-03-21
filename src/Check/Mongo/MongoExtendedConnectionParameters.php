@@ -18,13 +18,15 @@ namespace FiveLab\Component\Diagnostic\Check\Mongo;
  */
 class MongoExtendedConnectionParameters
 {
-    public function __construct(
-        private string $username,
-        private string $password,
-        private string $db,
-        private string $collection,
-        public MongoConnectionParameters $connectionParameters
-    ) {
+    /**
+     * @param string                    $username
+     * @param string                    $password
+     * @param string                    $db
+     * @param string                    $collection
+     * @param MongoConnectionParameters $connectionParameters
+     */
+    public function __construct(private string $username, private string $password, private string $db, private string $collection, public MongoConnectionParameters $connectionParameters)
+    {
     }
 
     /**
@@ -36,7 +38,7 @@ class MongoExtendedConnectionParameters
 
         return \sprintf(
             '%s/%s',
-            \str_replace('://', '://' . $userPass, $this->connectionParameters->getDsn()),
+            \str_replace('://', '://'.$userPass, $this->connectionParameters->getDsn()),
             $this->getDb()
         );
     }

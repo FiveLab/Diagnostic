@@ -19,46 +19,73 @@ use PHPUnit\Framework\TestCase;
 
 abstract class AbstractMongoTestCase extends TestCase
 {
+    /**
+     * @return string|null
+     */
     protected function getHost(): ?string
     {
         return \getenv('MONGO_HOST') ?: null;
     }
 
+    /**
+     * @return int
+     */
     protected function getPort(): int
     {
         return \getenv('MONGO_PORT') ? (int) \getenv('MONGO_PORT') : 27017;
     }
 
+    /**
+     * @return bool
+     */
     protected function isSsl(): bool
     {
-        return (bool)\getenv('MONGO_SSL');
+        return (bool) \getenv('MONGO_SSL');
     }
 
+    /**
+     * @return string|null
+     */
     protected function getUsername(): ?string
     {
         return \getenv('MONGO_USER') ?: null;
     }
 
+    /**
+     * @return string|null
+     */
     protected function getPassword(): ?string
     {
         return \getenv('MONGO_PASSWORD') ?: null;
     }
 
+    /**
+     * @return string
+     */
     protected function getDb(): string
     {
         return \getenv('MONGO_DB');
     }
 
+    /**
+     * @return string
+     */
     protected function getCollection(): string
     {
         return \getenv('MONGO_COLLECTION');
     }
 
+    /**
+     * @return bool
+     */
     protected function connectionParametersProvided(): bool
     {
         return $this->getHost() && $this->getPort() && $this->getDb();
     }
 
+    /**
+     * @return MongoConnectionParameters
+     */
     protected function getConnectionParameters(): MongoConnectionParameters
     {
         return new MongoConnectionParameters(
@@ -68,6 +95,9 @@ abstract class AbstractMongoTestCase extends TestCase
         );
     }
 
+    /**
+     * @return MongoExtendedConnectionParameters
+     */
     protected function getExtendedConnectionParameters(): MongoExtendedConnectionParameters
     {
         return new MongoExtendedConnectionParameters(
@@ -79,6 +109,9 @@ abstract class AbstractMongoTestCase extends TestCase
         );
     }
 
+    /**
+     * @return string
+     */
     protected function getSchema(): string
     {
         return \json_encode(
@@ -86,19 +119,19 @@ abstract class AbstractMongoTestCase extends TestCase
                 "required" => [
                     "a",
                     "b",
-                    "c"
+                    "c",
                 ],
                 "properties" => [
                     "a" => [
-                        "bsonType" => "string"
+                        "bsonType" => "string",
                     ],
                     "b" => [
-                        "bsonType" => "string"
+                        "bsonType" => "string",
                     ],
                     "c" => [
-                        "bsonType" => "string"
-                    ]
-                ]
+                        "bsonType" => "string",
+                    ],
+                ],
             ]
         );
     }

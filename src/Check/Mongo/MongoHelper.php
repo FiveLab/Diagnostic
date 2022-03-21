@@ -45,7 +45,7 @@ class MongoHelper
                 'user' => $parameters->getUsername(),
                 'pass' => '***',
                 'db' => $parameters->getDb(),
-                'collection' => $parameters->getCollection()
+                'collection' => $parameters->getCollection(),
             ]
         );
     }

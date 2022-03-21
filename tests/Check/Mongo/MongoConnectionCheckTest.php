@@ -24,6 +24,9 @@ use FiveLab\Component\Diagnostic\Tests\Check\AbstractMongoTestCase;
 
 class MongoConnectionCheckTest extends AbstractMongoTestCase
 {
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp(): void
     {
         if (!$this->connectionParametersProvided()) {
@@ -31,6 +34,9 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
         }
     }
 
+    /**
+     * @test
+     */
     public function testSuccessfulCheck(): void
     {
         $check = new MongoConnectionCheck($this->getConnectionParameters());
@@ -40,9 +46,12 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
         self::assertEquals(new Success('Successful MongoDB connection.'), $result);
     }
 
+    /**
+     * @test
+     */
     public function testFailedCheck(): void
     {
-        $invalidHost = $this->getHost() . '_some';
+        $invalidHost = $this->getHost().'_some';
 
         $connectionParameters = new MongoConnectionParameters(
             $invalidHost,
@@ -59,6 +68,9 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
         self::assertEquals(new Failure($msg), $result);
     }
 
+    /**
+     * @test
+     */
     public function testGetExtraParameters(): void
     {
         $connectionParameters = new MongoConnectionParameters(
