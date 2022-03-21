@@ -11,6 +11,11 @@ services:
             REDIS_HOST: 'diagnostic-redis'
             MAILER_HOST: 'diagnostic-mailcatcher'
             ELASTICSEARCH_HOST: 'elasticsearch'
+            MONGO_HOST: 'diagnostic-mongo'
+            MONGO_USER: 'user'
+            MONGO_PASSWORD: 'pass'
+            MONGO_DB: 'diagnostic'
+            MONGO_COLLECTION: 'test'
             AWS_DYNAMODB_ENDPOINT: 'http://dynamodb:8000'
         volumes:
             - './:/code'
@@ -64,6 +69,19 @@ services:
         command: ['-jar', 'DynamoDBLocal.jar', '-sharedDb']
         networks:
             - diagnostic
+
+    mongo:
+        image: mongo
+        container_name: 'diagnostic-mongo'
+        restart: always
+        environment:
+            MONGO_INITDB_DATABASE: admin
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root
+        networks:
+            - diagnostic
+        volumes:
+            - ./util/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
 networks:
     diagnostic:
