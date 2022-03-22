@@ -30,7 +30,6 @@ class MongoExtendedConnectionParametersTest extends TestCase
             'user',
             'pass',
             'db',
-            'collection',
             new MongoConnectionParameters(
                 'mongo'
             )

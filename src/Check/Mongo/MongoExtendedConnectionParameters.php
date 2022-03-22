@@ -47,15 +47,13 @@ class MongoExtendedConnectionParameters
      * @param string                    $username
      * @param string                    $password
      * @param string                    $db
-     * @param string                    $collection
      * @param MongoConnectionParameters $connectionParameters
      */
-    public function __construct(string $username, string $password, string $db, string $collection, MongoConnectionParameters $connectionParameters)
+    public function __construct(string $username, string $password, string $db, MongoConnectionParameters $connectionParameters)
     {
         $this->username = $username;
         $this->password = $password;
         $this->db = $db;
-        $this->collection = $collection;
         $this->connectionParameters = $connectionParameters;
     }
 
@@ -95,13 +93,5 @@ class MongoExtendedConnectionParameters
     public function getPassword(): string
     {
         return $this->password;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCollection(): string
-    {
-        return $this->collection;
     }
 }

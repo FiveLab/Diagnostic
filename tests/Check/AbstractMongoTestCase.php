@@ -104,35 +104,34 @@ abstract class AbstractMongoTestCase extends TestCase
             $this->getUsername(),
             $this->getPassword(),
             $this->getDb(),
-            $this->getCollection(),
             $this->getConnectionParameters()
         );
     }
 
     /**
-     * @return string
+     * @return array<string,mixed>
      */
-    protected function getSchema(): string
+    protected function getExpectedSettings(): array
     {
-        return \json_encode(
-            [
-                "required" => [
-                    "a",
-                    "b",
-                    "c",
+        return [
+            'options.validator.$jsonSchema' => [
+                'required' => [
+                    'a',
+                    'b',
+                    'c',
                 ],
-                "properties" => [
-                    "a" => [
-                        "bsonType" => "string",
+                'properties' => [
+                    'a' => [
+                        'bsonType' => 'string',
                     ],
-                    "b" => [
-                        "bsonType" => "string",
+                    'b' => [
+                        'bsonType' => 'string',
                     ],
-                    "c" => [
-                        "bsonType" => "string",
+                    'c' => [
+                        'bsonType' => 'string',
                     ],
                 ],
-            ]
-        );
+            ],
+        ];
     }
 }
