@@ -19,14 +19,44 @@ namespace FiveLab\Component\Diagnostic\Check\Mongo;
 class MongoExtendedConnectionParameters
 {
     /**
+     * @var string
+     */
+    private string $username;
+
+    /**
+     * @var string
+     */
+    private string $password;
+
+    /**
+     * @var string
+     */
+    private string $db;
+
+    /**
+     * @var string
+     */
+    private string $collection;
+
+    /**
+     * @var MongoConnectionParameters
+     */
+    public MongoConnectionParameters $connectionParameters;
+
+    /**
      * @param string                    $username
      * @param string                    $password
      * @param string                    $db
      * @param string                    $collection
      * @param MongoConnectionParameters $connectionParameters
      */
-    public function __construct(private string $username, private string $password, private string $db, private string $collection, public MongoConnectionParameters $connectionParameters)
+    public function __construct(string $username, string $password, string $db, string $collection, MongoConnectionParameters $connectionParameters)
     {
+        $this->username = $username;
+        $this->password = $password;
+        $this->db = $db;
+        $this->collection = $collection;
+        $this->connectionParameters = $connectionParameters;
     }
 
     /**

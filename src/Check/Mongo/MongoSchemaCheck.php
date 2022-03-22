@@ -27,16 +27,29 @@ use MongoDB\Driver\Command;
 class MongoSchemaCheck implements CheckInterface
 {
     /**
+     * @var MongoExtendedConnectionParameters
+     */
+    private MongoExtendedConnectionParameters $extendedConnectionParameters;
+
+    /**
+     * @var string
+     */
+    private string $expectedSchema;
+
+    /**
      * @param MongoExtendedConnectionParameters $extendedConnectionParameters
      * @param string                            $expectedSchema
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(private MongoExtendedConnectionParameters $extendedConnectionParameters, private string $expectedSchema)
+    public function __construct(MongoExtendedConnectionParameters $extendedConnectionParameters, string $expectedSchema)
     {
-        if (\json_decode($this->expectedSchema) === null) {
+        if (\json_decode($expectedSchema) === null) {
             throw new \InvalidArgumentException('invalid json-schema given.');
         }
+
+        $this->extendedConnectionParameters = $extendedConnectionParameters;
+        $this->expectedSchema = $expectedSchema;
     }
 
     /**

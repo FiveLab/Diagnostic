@@ -27,10 +27,16 @@ use MongoDB\Driver\Command;
 class MongoConnectionCheck implements CheckInterface
 {
     /**
+     * @var MongoConnectionParameters
+     */
+    private MongoConnectionParameters $connectionParameters;
+
+    /**
      * @param MongoConnectionParameters $connectionParameters
      */
-    public function __construct(private MongoConnectionParameters $connectionParameters)
+    public function __construct(MongoConnectionParameters $connectionParameters)
     {
+        $this->connectionParameters = $connectionParameters;
     }
 
     /**

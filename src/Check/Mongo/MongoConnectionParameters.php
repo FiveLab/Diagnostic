@@ -19,12 +19,30 @@ namespace FiveLab\Component\Diagnostic\Check\Mongo;
 class MongoConnectionParameters
 {
     /**
+     * @var string
+     */
+    private string $host;
+
+    /**
+     * @var int
+     */
+    private int $port = 27017;
+
+    /**
+     * @var bool
+     */
+    private bool $ssl = false;
+
+    /**
      * @param string $host
      * @param int    $port
      * @param bool   $ssl
      */
-    public function __construct(private string $host, private int $port = 27017, private bool $ssl = false)
+    public function __construct(string $host, int $port = 27017, bool $ssl = false)
     {
+        $this->host = $host;
+        $this->port = $port;
+        $this->ssl = $ssl;
     }
 
     /**
