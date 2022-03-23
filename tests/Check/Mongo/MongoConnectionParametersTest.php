@@ -31,11 +31,14 @@ class MongoConnectionParametersTest extends TestCase
      *
      * @dataProvider provideConnectionParameters
      */
-    public function testGetDsn(string $host, int $port, bool $ssl = false, string $expectedDsn = null): void
+    public function testGetDsn(string $host, int $port, string $username, string $password, string $db, bool $ssl = false, string $expectedDsn = null): void
     {
         $connectionParameters = new MongoConnectionParameters(
             $host,
             $port,
+            $username,
+            $password,
+            $db,
             $ssl
         );
 
@@ -49,15 +52,21 @@ class MongoConnectionParametersTest extends TestCase
             'ssl' => [
                 'some',
                 27017,
+                'user',
+                'pass',
+                'db',
                 false,
-                'mongodb://some:27017',
+                'mongodb://user:pass@some:27017/db',
             ],
 
             'no ssl' => [
                 'foo-bar',
                 27017,
+                'user',
+                'pass',
+                'db',
                 true,
-                'mongodb+srv://foo-bar:27017',
+                'mongodb+srv://user:pass@foo-bar:27017/db',
             ],
         ];
     }

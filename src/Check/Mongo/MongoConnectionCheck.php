@@ -52,7 +52,7 @@ class MongoConnectionCheck implements CheckInterface
         $ping = new Command(['ping' => 1]);
 
         try {
-            $manager->executeCommand('test', $ping);
+            $manager->executeCommand($this->connectionParameters->getDb(), $ping);
         } catch (Exception $e) {
             return new Failure(\sprintf(
                 'MongoDB connection failed: %s.',

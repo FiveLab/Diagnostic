@@ -28,9 +28,9 @@ use FiveLab\Component\Diagnostic\Util\ArrayUtils;
 class MongoCollectionCheck implements CheckInterface
 {
     /**
-     * @var MongoExtendedConnectionParameters
+     * @var MongoConnectionParameters
      */
-    private MongoExtendedConnectionParameters $extendedConnectionParameters;
+    private MongoConnectionParameters $connectionParameters;
 
     /**
      * @var string
@@ -54,9 +54,9 @@ class MongoCollectionCheck implements CheckInterface
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(MongoExtendedConnectionParameters $extendedConnectionParameters, string $collection, array $expectedSettings)
+    public function __construct(MongoConnectionParameters $connectionParameters, string $collection, array $expectedSettings)
     {
-        $this->extendedConnectionParameters = $extendedConnectionParameters;
+        $this->connectionParameters = $connectionParameters;
         $this->collection = $collection;
         $this->expectedSettings = $expectedSettings;
     }
@@ -70,7 +70,7 @@ class MongoCollectionCheck implements CheckInterface
             return new Failure('MongoDB driver is not installed.');
         }
 
-        $manager = new Manager($this->extendedConnectionParameters->getDsn());
+        $manager = new Manager($this->connectionParameters->getDsn());
         $listCollections = new Command(
             [
                 'listCollections' => 1,
@@ -87,7 +87,7 @@ class MongoCollectionCheck implements CheckInterface
         }
 
         try {
-            $cursor = $manager->executeCommand($this->extendedConnectionParameters->getDb(), $listCollections);
+            $cursor = $manager->executeCommand($this->connectionParameters->getDb(), $listCollections);
             $cursor->setTypeMap(['root' => 'array', 'document' => 'array', 'array' => 'array']);
         } catch (Exception $e) {
             return new Failure(\sprintf(
@@ -102,7 +102,7 @@ class MongoCollectionCheck implements CheckInterface
             $msg = \sprintf(
                 'collection \'%s\' not found in db \'%s\'.',
                 $this->collection,
-                $this->extendedConnectionParameters->getDb()
+                $this->connectionParameters->getDb()
             );
 
             return new Failure(\sprintf('MongoDB collection check failed: %s', $msg));
@@ -141,7 +141,7 @@ class MongoCollectionCheck implements CheckInterface
         unset($actualSettings['idIndex']);
 
         return \array_merge(
-            MongoHelper::convertExtendedConnectionParametersToArray($this->extendedConnectionParameters),
+            MongoHelper::convertConnectionParametersToArray($this->connectionParameters),
             [
                 'collection' => $this->collection,
                 'expected settings' => \count($this->expectedSettings) ? $this->expectedSettings : '(none)',

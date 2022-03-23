@@ -14,7 +14,6 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\Mongo;
 
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionParameters;
-use FiveLab\Component\Diagnostic\Check\Mongo\MongoExtendedConnectionParameters;
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoCollectionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
@@ -38,7 +37,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     public function testSuccessfulCheck(): void
     {
         $check = new MongoCollectionCheck(
-            $this->getExtendedConnectionParameters(),
+            $this->getConnectionParameters(),
             $this->getCollection(),
             $this->getExpectedSettings()
         );
@@ -55,15 +54,13 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     {
         $invalidHost = $this->getHost().'_some';
 
-        $connectionParameters = new MongoExtendedConnectionParameters(
+        $connectionParameters = new MongoConnectionParameters(
+            $invalidHost,
+            $this->getPort(),
             $this->getUsername(),
             $this->getPassword(),
             $this->getDb(),
-            new MongoConnectionParameters(
-                $invalidHost,
-                $this->getPort(),
-                false
-            )
+            false
         );
 
         $check = new MongoCollectionCheck(
@@ -84,21 +81,10 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
      */
     public function testFailedCheckCollectionNotFound(): void
     {
-        $connectionParameters = new MongoExtendedConnectionParameters(
-            $this->getUsername(),
-            $this->getPassword(),
-            $this->getDb(),
-            new MongoConnectionParameters(
-                $this->getHost(),
-                $this->getPort(),
-                false
-            )
-        );
-
         $wrongCollection = 'wrong_collection';
 
         $check = new MongoCollectionCheck(
-            $connectionParameters,
+            $this->getConnectionParameters(),
             $wrongCollection,
             $this->getExpectedSettings()
         );
@@ -129,7 +115,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         ];
 
         $check = new MongoCollectionCheck(
-            $this->getExtendedConnectionParameters(),
+            $this->getConnectionParameters(),
             $this->getCollection(),
             $expectedSettings
         );
@@ -145,7 +131,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     public function testGetExtraParameters(): void
     {
         $check = new MongoCollectionCheck(
-            $this->getExtendedConnectionParameters(),
+            $this->getConnectionParameters(),
             'test',
             $this->getExpectedSettings()
         );

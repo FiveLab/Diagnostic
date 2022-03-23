@@ -30,24 +30,10 @@ class MongoHelper
         return [
             'host' => $parameters->getHost(),
             'port' => $parameters->getPort(),
+            'user' => $parameters->getUsername(),
+            'pass' => '***',
+            'db' => $parameters->getDb(),
             'ssl'  => $parameters->isSsl() ? 'yes' : 'no',
         ];
-    }
-
-    /**
-     * @param MongoExtendedConnectionParameters $parameters
-     *
-     * @return array<string, string|int>
-     */
-    public static function convertExtendedConnectionParametersToArray(MongoExtendedConnectionParameters $parameters): array
-    {
-        return \array_merge(
-            self::convertConnectionParametersToArray($parameters->connectionParameters),
-            [
-                'user' => $parameters->getUsername(),
-                'pass' => '***',
-                'db' => $parameters->getDb(),
-            ]
-        );
     }
 }

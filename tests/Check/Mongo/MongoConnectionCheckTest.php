@@ -56,6 +56,9 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
         $connectionParameters = new MongoConnectionParameters(
             $invalidHost,
             $this->getPort(),
+            $this->getUsername(),
+            $this->getPassword(),
+            $this->getDb(),
             false
         );
 
@@ -73,20 +76,17 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
      */
     public function testGetExtraParameters(): void
     {
-        $connectionParameters = new MongoConnectionParameters(
-            'foo',
-            27017,
-            true
-        );
-
-        $check = new MongoConnectionCheck($connectionParameters);
+        $check = new MongoConnectionCheck($this->getConnectionParameters());
 
         $parameters = $check->getExtraParameters();
 
         self::assertEquals([
-            'host' => 'foo',
+            'host' => 'diagnostic-mongo',
             'port' => 27017,
-            'ssl'  => 'yes',
+            'user' => 'user',
+            'pass' => '***',
+            'db' => 'diagnostic',
+            'ssl'  => 'no',
         ], $parameters);
     }
 }

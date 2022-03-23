@@ -14,7 +14,6 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check;
 
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionParameters;
-use FiveLab\Component\Diagnostic\Check\Mongo\MongoExtendedConnectionParameters;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractMongoTestCase extends TestCase
@@ -91,20 +90,10 @@ abstract class AbstractMongoTestCase extends TestCase
         return new MongoConnectionParameters(
             $this->getHost(),
             $this->getPort(),
-            $this->isSsl()
-        );
-    }
-
-    /**
-     * @return MongoExtendedConnectionParameters
-     */
-    protected function getExtendedConnectionParameters(): MongoExtendedConnectionParameters
-    {
-        return new MongoExtendedConnectionParameters(
             $this->getUsername(),
             $this->getPassword(),
             $this->getDb(),
-            $this->getConnectionParameters()
+            $this->isSsl()
         );
     }
 
