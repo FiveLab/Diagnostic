@@ -20,6 +20,7 @@ use FiveLab\Component\Diagnostic\Result\Success;
 use MongoDB\Driver\Exception\Exception;
 use MongoDB\Driver\Manager;
 use MongoDB\Driver\Command;
+use FiveLab\Component\Diagnostic\Util\ArrayUtils;
 
 /**
  * Check MongoDB collection json-schema.
@@ -111,7 +112,7 @@ class MongoCollectionCheck implements CheckInterface
 
         if (\count($this->expectedSettings)) {
             foreach ($this->expectedSettings as $settingName => $expectedValue) {
-                $actualValue = MongoHelper::tryGetSpecificSettingFromSettings($settingName, $this->actualSettings);
+                $actualValue = ArrayUtils::tryGetSpecificSettingFromSettings($settingName, $this->actualSettings);
 
                 if ($actualValue instanceof Failure) {
                     return $actualValue;

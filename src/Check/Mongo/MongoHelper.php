@@ -50,40 +50,4 @@ class MongoHelper
             ]
         );
     }
-
-    /**
-     * Try to get specific setting from settings
-     *
-     * @param string $path
-     * @param array  $settings
-     *
-     * @return Failure|string
-     */
-    public static function tryGetSpecificSettingFromSettings(string $path, array $settings)
-    {
-        $pathParts = \explode('.', $path);
-
-        $processedPath = '';
-
-        while ($pathPart = \array_shift($pathParts)) {
-            $processedPath .= $pathPart.'.';
-
-            if (!\array_key_exists($pathPart, $settings)) {
-                return new Failure(\sprintf(
-                    'The setting "%s" is missed.',
-                    \rtrim($processedPath, '.')
-                ));
-            }
-
-            if (\count($pathParts)) {
-                // Not last element. Get inner array.
-                $settings = $settings[$pathPart];
-            } else {
-                // Last element. Get value.
-                return $settings[$pathPart];
-            }
-        }
-
-        return new Failure(\sprintf('Cannot get setting by path: "%s".', $path));
-    }
 }

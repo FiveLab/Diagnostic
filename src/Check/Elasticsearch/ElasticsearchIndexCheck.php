@@ -20,6 +20,7 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\ArrayUtils;
 
 /**
  * Check the elasticsearch index.
@@ -98,7 +99,7 @@ class ElasticsearchIndexCheck implements CheckInterface
 
         if (\count($this->expectedSettings)) {
             foreach ($this->expectedSettings as $settingName => $expectedValue) {
-                $actualValue = ElasticsearchHelper::tryGetSpecificSettingFromSettings($settingName, $this->actualSettings);
+                $actualValue = ArrayUtils::tryGetSpecificSettingFromSettings($settingName, $this->actualSettings);
 
                 if ($actualValue instanceof Failure) {
                     return $actualValue;
