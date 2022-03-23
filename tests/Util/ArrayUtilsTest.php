@@ -22,8 +22,8 @@ class ArrayUtilsTest extends TestCase
     /**
      * @test
      *
-     * @param string $path
-     * @param array $settings
+     * @param string         $path
+     * @param array          $settings
      * @param Failure|string $expected
      * @return void
      *
@@ -51,7 +51,7 @@ class ArrayUtilsTest extends TestCase
                       ],
                   ],
                 ],
-                'd'
+                'd',
             ],
             [
                 'a.b.c.d.e.f.g.h',

@@ -25,6 +25,9 @@ class MongoConnectionParametersTest extends TestCase
      *
      * @param string      $host
      * @param int         $port
+     * @param string      $username
+     * @param string      $password
+     * @param string      $db
      * @param bool        $ssl
      * @param string|null $expectedDsn
      * @return void

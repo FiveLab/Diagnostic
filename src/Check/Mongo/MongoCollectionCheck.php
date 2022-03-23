@@ -48,9 +48,9 @@ class MongoCollectionCheck implements CheckInterface
     private array $actualSettings = [];
 
     /**
-     * @param MongoExtendedConnectionParameters $extendedConnectionParameters
-     * @param string                            $collection
-     * @param array<string, mixed>              $expectedSettings
+     * @param MongoConnectionParameters $connectionParameters
+     * @param string                    $collection
+     * @param array<string, mixed>      $expectedSettings
      *
      * @throws \InvalidArgumentException
      */

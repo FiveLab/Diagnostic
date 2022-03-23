@@ -50,11 +50,11 @@ class MongoConnectionParameters
 
     /**
      * @param string $host
-     * @param int $port
+     * @param int    $port
      * @param string $username
      * @param string $password
      * @param string $db
-     * @param bool $ssl
+     * @param bool   $ssl
      */
     public function __construct(string $host, int $port, string $username, string $password, string $db, bool $ssl = false)
     {

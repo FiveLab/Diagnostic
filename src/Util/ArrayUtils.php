@@ -24,7 +24,7 @@ class ArrayUtils
      * Try to get specific setting from settings
      *
      * @param string $path
-     * @param array $settings
+     * @param array  $settings
      *
      * @return Failure|string
      */
@@ -35,7 +35,7 @@ class ArrayUtils
         $processedPath = '';
 
         while ($pathPart = \array_shift($pathParts)) {
-            $processedPath .= $pathPart . '.';
+            $processedPath .= $pathPart.'.';
 
             if (!\array_key_exists($pathPart, $settings)) {
                 return new Failure(\sprintf(
@@ -51,7 +51,7 @@ class ArrayUtils
                 } else {
                     return new Failure(\sprintf(
                         'The setting "%s" is missed.',
-                        \rtrim($processedPath . $pathParts[0], '.')
+                        \rtrim($processedPath.$pathParts[0], '.')
                     ));
                 }
             } else {
