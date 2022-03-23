@@ -80,12 +80,6 @@ class MongoCollectionCheck implements CheckInterface
             ],
         );
 
-        $connectionCheckResult = $this->checkConnection($manager);
-
-        if ($connectionCheckResult instanceof Failure) {
-            return $connectionCheckResult;
-        }
-
         try {
             $cursor = $manager->executeCommand($this->connectionParameters->getDb(), $listCollections);
             $cursor->setTypeMap(['root' => 'array', 'document' => 'array', 'array' => 'array']);
@@ -148,26 +142,5 @@ class MongoCollectionCheck implements CheckInterface
                 'actual settings' => $actualSettings,
             ],
         );
-    }
-
-    /**
-     * @param Manager $manager
-     *
-     * @return ResultInterface
-     */
-    private function checkConnection(Manager $manager): ResultInterface
-    {
-        $ping = new Command(['ping' => 1]);
-
-        try {
-            $manager->executeCommand('test', $ping);
-        } catch (Exception $e) {
-            return new Failure(\sprintf(
-                'MongoDB connection failed: %s.',
-                \rtrim($e->getMessage(), '.')
-            ));
-        }
-
-        return new Success('Successful MongoDB connection.');
     }
 }

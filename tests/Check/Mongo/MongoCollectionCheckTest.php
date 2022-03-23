@@ -71,7 +71,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
 
         $result = $check->check();
 
-        $msg = \sprintf('MongoDB connection failed: No suitable servers found (`serverSelectionTryOnce` set): [Failed to resolve \'%s\'].', $invalidHost);
+        $msg = \sprintf('MongoDB collection check failed: No suitable servers found (`serverSelectionTryOnce` set): [Failed to resolve \'%s\'].', $invalidHost);
 
         self::assertEquals(new Failure($msg), $result);
     }
