@@ -21,6 +21,11 @@ class MongoConnectionParameters
     /**
      * @var string
      */
+    private string $protocol;
+
+    /**
+     * @var string
+     */
     private string $host;
 
     /**
@@ -44,26 +49,28 @@ class MongoConnectionParameters
     private string $db;
 
     /**
-     * @var bool
+     * @var array<string,int|bool|string>
      */
-    private bool $ssl = false;
+    private array $options;
 
     /**
+     * @param string $protocol
      * @param string $host
-     * @param int    $port
+     * @param int $port
      * @param string $username
      * @param string $password
      * @param string $db
-     * @param bool   $ssl
+     * @param array<string,int|bool|string> $options
      */
-    public function __construct(string $host, int $port, string $username, string $password, string $db, bool $ssl = false)
+    public function __construct(string $protocol, string $host, int $port, string $username, string $password, string $db, array $options = [])
     {
+        $this->protocol = $protocol;
         $this->host = $host;
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
         $this->db = $db;
-        $this->ssl = $ssl;
+        $this->options = $options;
     }
 
     /**
@@ -74,12 +81,21 @@ class MongoConnectionParameters
         $userPass = \sprintf('%s:%s@', $this->username, $this->password);
 
         return \sprintf(
-            '%s://%s%s:%s',
-            $this->ssl ? 'mongodb+srv' : 'mongodb',
+            '%s://%s%s:%s%s',
+            $this->protocol,
             $userPass,
             $this->host,
-            $this->port
+            $this->port,
+            $this->parseOptions(),
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function getProtocol(): string
+    {
+        return $this->protocol;
     }
 
     /**
@@ -123,10 +139,34 @@ class MongoConnectionParameters
     }
 
     /**
-     * @return bool
+     * @return array<string,int|bool|string>
      */
-    public function isSsl(): bool
+    public function getOptions(): array
     {
-        return $this->ssl;
+        return $this->options;
+    }
+
+    /**
+     * @return string
+     */
+    private function parseOptions(): string
+    {
+        if (!\count($this->options)) {
+            return '';
+        }
+
+        $result = '/?';
+
+        foreach ($this->options as $k => $v) {
+            if (\is_bool($v)) {
+                $v = $v ? 'true' : 'false';
+            } else if (\is_int($v)) {
+                $v = \strval($v);
+            }
+
+            $result .= \sprintf('%s=%s', $k, $v) . '&';
+        }
+
+        return \substr($result, 0, -1);
     }
 }

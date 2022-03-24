@@ -21,6 +21,14 @@ abstract class AbstractMongoTestCase extends TestCase
     /**
      * @return string|null
      */
+    protected function getProtocol(): ?string
+    {
+        return \getenv('MONGO_PROTOCOL') ?: null;
+    }
+
+    /**
+     * @return string|null
+     */
     protected function getHost(): ?string
     {
         return \getenv('MONGO_HOST') ?: null;
@@ -32,14 +40,6 @@ abstract class AbstractMongoTestCase extends TestCase
     protected function getPort(): int
     {
         return \getenv('MONGO_PORT') ? (int) \getenv('MONGO_PORT') : 27017;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isSsl(): bool
-    {
-        return (bool) \getenv('MONGO_SSL');
     }
 
     /**
@@ -88,12 +88,12 @@ abstract class AbstractMongoTestCase extends TestCase
     protected function getConnectionParameters(): MongoConnectionParameters
     {
         return new MongoConnectionParameters(
+            $this->getProtocol(),
             $this->getHost(),
             $this->getPort(),
             $this->getUsername(),
             $this->getPassword(),
             $this->getDb(),
-            $this->isSsl()
         );
     }
 

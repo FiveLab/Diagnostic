@@ -13,8 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Mongo;
 
-use FiveLab\Component\Diagnostic\Result\Failure;
-
 /**
  * A simple helper for add additional functionality.
  */
@@ -28,12 +26,13 @@ class MongoHelper
     public static function convertConnectionParametersToArray(MongoConnectionParameters $parameters): array
     {
         return [
+            'protocol' => $parameters->getProtocol(),
             'host' => $parameters->getHost(),
             'port' => $parameters->getPort(),
             'user' => $parameters->getUsername(),
             'pass' => '***',
             'db' => $parameters->getDb(),
-            'ssl'  => $parameters->isSsl() ? 'yes' : 'no',
+            'options' => $parameters->getOptions(),
         ];
     }
 }

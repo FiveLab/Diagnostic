@@ -13,6 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Mongo;
 
+use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionCheck;
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionParameters;
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoCollectionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
@@ -55,12 +56,12 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         $invalidHost = $this->getHost().'_some';
 
         $connectionParameters = new MongoConnectionParameters(
+            $this->getProtocol(),
             $invalidHost,
             $this->getPort(),
             $this->getUsername(),
             $this->getPassword(),
             $this->getDb(),
-            false
         );
 
         $check = new MongoCollectionCheck(
@@ -141,12 +142,13 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         $parameters = $check->getExtraParameters();
 
         self::assertEquals([
+            'protocol' => 'mongodb',
             'host' => 'diagnostic-mongo',
             'port' => 27017,
-            'ssl'  => 'no',
             'user' => 'root',
             'pass' => '***',
             'db' => 'diagnostic',
+            'options' => [],
             'collection' => 'test',
             'expected settings' => [
                 'options.validator.$jsonSchema' => [

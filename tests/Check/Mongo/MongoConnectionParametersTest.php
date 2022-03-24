@@ -23,26 +23,28 @@ class MongoConnectionParametersTest extends TestCase
     /**
      * @test
      *
-     * @param string      $host
-     * @param int         $port
-     * @param string      $username
-     * @param string      $password
-     * @param string      $db
-     * @param bool        $ssl
+     * @param string $protocol
+     * @param string $host
+     * @param int $port
+     * @param string $username
+     * @param string $password
+     * @param string $db
+     * @param array $options
      * @param string|null $expectedDsn
      * @return void
      *
      * @dataProvider provideConnectionParameters
      */
-    public function testGetDsn(string $host, int $port, string $username, string $password, string $db, bool $ssl = false, string $expectedDsn = null): void
+    public function testGetDsn(string $protocol, string $host, int $port, string $username, string $password, string $db, array $options, string $expectedDsn = null): void
     {
         $connectionParameters = new MongoConnectionParameters(
+            $protocol,
             $host,
             $port,
             $username,
             $password,
             $db,
-            $ssl
+            $options
         );
 
         self::assertEquals($expectedDsn, $connectionParameters->getDsn());
@@ -52,24 +54,29 @@ class MongoConnectionParametersTest extends TestCase
     public function provideConnectionParameters(): array
     {
         return [
-            'ssl' => [
+            'with options' => [
+                'mongodb',
                 'some',
                 27017,
                 'user',
                 'pass',
                 'db',
-                false,
-                'mongodb://user:pass@some:27017',
+                [
+                    'tls' => true,
+                    'w' => 'majority',
+                    'wtimeOutMS' => 0,
+                ],
+                'mongodb://user:pass@some:27017/?tls=true&w=majority&wtimeOutMS=0',
             ],
-
-            'no ssl' => [
+            'without options' => [
+                'mongodb',
                 'foo-bar',
                 27017,
                 'user',
                 'pass',
                 'db',
-                true,
-                'mongodb+srv://user:pass@foo-bar:27017',
+                [],
+                'mongodb://user:pass@foo-bar:27017',
             ],
         ];
     }
