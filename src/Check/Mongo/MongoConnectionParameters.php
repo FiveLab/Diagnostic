@@ -54,12 +54,12 @@ class MongoConnectionParameters
     private array $options;
 
     /**
-     * @param string $protocol
-     * @param string $host
-     * @param int $port
-     * @param string $username
-     * @param string $password
-     * @param string $db
+     * @param string                        $protocol
+     * @param string                        $host
+     * @param int                           $port
+     * @param string                        $username
+     * @param string                        $password
+     * @param string                        $db
      * @param array<string,int|bool|string> $options
      */
     public function __construct(string $protocol, string $host, int $port, string $username, string $password, string $db, array $options = [])
@@ -164,7 +164,7 @@ class MongoConnectionParameters
                 $v = \strval($v);
             }
 
-            $result .= \sprintf('%s=%s', $k, $v) . '&';
+            $result .= \sprintf('%s=%s', $k, $v).'&';
         }
 
         return \substr($result, 0, -1);
