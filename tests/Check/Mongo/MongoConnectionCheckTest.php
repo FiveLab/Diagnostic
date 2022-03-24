@@ -83,10 +83,10 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
         self::assertEquals([
             'host' => 'diagnostic-mongo',
             'port' => 27017,
-            'user' => 'user',
+            'ssl'  => 'no',
+            'user' => 'root',
             'pass' => '***',
             'db' => 'diagnostic',
-            'ssl'  => 'no',
         ], $parameters);
     }
 }

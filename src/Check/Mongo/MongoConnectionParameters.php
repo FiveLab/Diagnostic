@@ -74,12 +74,11 @@ class MongoConnectionParameters
         $userPass = \sprintf('%s:%s@', $this->username, $this->password);
 
         return \sprintf(
-            '%s://%s%s:%s/%s',
+            '%s://%s%s:%s',
             $this->ssl ? 'mongodb+srv' : 'mongodb',
             $userPass,
             $this->host,
-            $this->port,
-            $this->db
+            $this->port
         );
     }
 

@@ -59,7 +59,7 @@ class MongoConnectionParametersTest extends TestCase
                 'pass',
                 'db',
                 false,
-                'mongodb://user:pass@some:27017/db',
+                'mongodb://user:pass@some:27017',
             ],
 
             'no ssl' => [
@@ -69,7 +69,7 @@ class MongoConnectionParametersTest extends TestCase
                 'pass',
                 'db',
                 true,
-                'mongodb+srv://user:pass@foo-bar:27017/db',
+                'mongodb+srv://user:pass@foo-bar:27017',
             ],
         ];
     }

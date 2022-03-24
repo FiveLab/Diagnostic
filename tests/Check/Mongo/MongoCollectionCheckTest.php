@@ -144,7 +144,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
             'host' => 'diagnostic-mongo',
             'port' => 27017,
             'ssl'  => 'no',
-            'user' => 'user',
+            'user' => 'root',
             'pass' => '***',
             'db' => 'diagnostic',
             'collection' => 'test',

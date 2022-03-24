@@ -1,13 +1,5 @@
 db = db.getSiblingDB('diagnostic');
 
-db.createUser(
-    {
-        user: 'user',
-        pwd: 'pass',
-        roles: [{ role: 'readWrite', db: 'diagnostic' }],
-    },
-);
-
 db.createCollection('test');
 
 db.runCommand(
