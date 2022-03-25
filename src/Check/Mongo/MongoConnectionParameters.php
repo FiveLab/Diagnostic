@@ -86,7 +86,7 @@ class MongoConnectionParameters
             $userPass,
             $this->host,
             $this->port,
-            $this->parseOptions(),
+            $this->formatOptions(),
         );
     }
 
@@ -149,24 +149,21 @@ class MongoConnectionParameters
     /**
      * @return string
      */
-    private function parseOptions(): string
+    private function formatOptions(): string
     {
         if (!\count($this->options)) {
             return '';
         }
 
-        $result = '/?';
+        return '/?'.\http_build_query(\array_map(
+            function ($v) {
+                if (\is_bool($v)) {
+                    return $v ? 'true' : 'false';
+                }
 
-        foreach ($this->options as $k => $v) {
-            if (\is_bool($v)) {
-                $v = $v ? 'true' : 'false';
-            } else if (\is_int($v)) {
-                $v = \strval($v);
-            }
-
-            $result .= \sprintf('%s=%s', $k, $v).'&';
-        }
-
-        return \substr($result, 0, -1);
+                return $v;
+            },
+            $this->options,
+        ));
     }
 }
