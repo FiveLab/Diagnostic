@@ -26,10 +26,12 @@
 
     "require-dev": {
         "ext-amqp": "*",
+        "ext-grpc": "*",
         "ext-redis": "*",
         "ext-curl": "*",
         "ext-pdo": "*",
         "ext-sockets": "*",
+        "grpc/grpc": "^1.42",
         "phpunit/phpunit": "~9.0",
         "phpmetrics/phpmetrics": "^2.0",
         "phpstan/phpstan": "~0.12.85",

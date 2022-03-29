@@ -11,17 +11,20 @@ RUN \
     apt-get update && \
     apt-get install -y --no-install-recommends \
         git ssh-client \
-        zip unzip
+        zip unzip \
+        libzip-dev \
+        libonig-dev
 
 # Install additional php extensions
 RUN \
     apt-get install -y --no-install-recommends \
         librabbitmq-dev && \
-    docker-php-ext-install pdo pdo_mysql && \
+    docker-php-ext-install pdo pdo_mysql sockets && \
     printf '\n' | pecl install amqp && \
-    printf "\n" | pecl install redis && \
+    printf '\n' | pecl install redis && \
+    printf '\n' | pecl install grpc && \
     yes | pecl install xdebug && \
-    docker-php-ext-enable amqp xdebug redis
+    docker-php-ext-enable amqp xdebug redis grpc
 
 # Configure XDebug
 RUN \
