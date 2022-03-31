@@ -80,7 +80,11 @@
     "autoload": {
         "psr-4": {
             "FiveLab\\Component\\Diagnostic\\": "src/"
-        }
+        },
+        "classmap": [
+            "src/Check/Grpc/Model",
+            "src/Check/Grpc/Service"
+        ]
     },
 
     "autoload-dev": {

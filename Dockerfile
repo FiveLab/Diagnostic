@@ -13,7 +13,7 @@ RUN \
         git ssh-client \
         zip unzip \
         libzip-dev \
-        libonig-dev
+        protobuf-compiler-grpc
 
 # Install additional php extensions
 RUN \

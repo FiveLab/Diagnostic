@@ -14,12 +14,13 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Check\Grpc;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
+use Grpc\Health\V1\HealthCheckRequest;
+use Grpc\Health\V1\HealthCheckResponse\ServingStatus;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
-use Grpc\Call;
-use Grpc\Channel;
-use Grpc\Timeval;
+use Grpc\ChannelCredentials;
+use Grpc\Health\V1\HealthClient;
 
 /**
  *  Performs grpc health-check.
@@ -29,12 +30,7 @@ class GrpcHealthCheck implements CheckInterface
     /**
      * @var string
      */
-    private string $host;
-
-    /**
-     * @var string
-     */
-    private string $port;
+    private string $uri;
 
     /**
      * @var string
@@ -44,14 +40,12 @@ class GrpcHealthCheck implements CheckInterface
     /**
      * Constructor.
      *
-     * @param string $host
-     * @param string $port
+     * @param string $uri
      * @param string $service
      */
-    public function __construct(string $host, string $port, string $service)
+    public function __construct(string $uri, string $service)
     {
-        $this->host = $host;
-        $this->port = $port;
+        $this->uri = $uri;
         $this->service = $service;
     }
 
@@ -60,23 +54,16 @@ class GrpcHealthCheck implements CheckInterface
      */
     public function check(): ResultInterface
     {
-        try {
-            $call = new Call(
-                new Channel($this->host . ':' . $this->port),
-                'grpc.health.v1.Health.Check',
-                new Timeval(10000000)
-            );
+        $client = new HealthClient($this->uri, ['credentials' => ChannelCredentials::createInsecure()]);
+        list($responseData,) = $client->Check((new HealthCheckRequest())->setService($this->service));
 
-            $call->startBatch(
-                [
-                    'service' => $this->service,
-                ]
-            );
-        } catch (\Exception $e) {
-            return new Failure(\sprintf('Grpc health-check failed: %s.', $e->getMessage()));
+        $status = $responseData->getStatus();
+
+        if ($status == ServingStatus::SERVING) {
+            return new Success('Successful grpc health-check.');
+        } else {
+            return new Failure(\sprintf('Grpc health-check failed: requested service status is \'%s\'.', $status));
         }
-
-        return new Success('Successful grpc health-check.');
     }
 
     /**
