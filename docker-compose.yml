@@ -65,6 +65,15 @@ services:
         networks:
             - diagnostic
 
+    grpc-server:
+        build:
+            context: .docker/grpc-server
+        container_name: 'diagnostic-grpc-server'
+        restart: always
+        command: ['/bin/serve']
+        networks:
+            - diagnostic
+
 networks:
     diagnostic:
         driver: bridge
