@@ -172,3 +172,13 @@ $ ./bin/phpcs --standard=vendor/escapestudios/symfony2-coding-standard/Symfony/ 
 $ ./bin/phpcs --standard=tests/phpcs-ruleset.xml tests/
 
 ```
+
+### Generate php grpc health-check client classes
+Inside container:
+```bash
+protoc --php_out=/code/src/Check/Grpc/Model/ \
+       --grpc_out=/code/src/Check/Grpc/Service/ \
+       --plugin=protoc-gen-grpc=/usr/bin/grpc_php_plugin \
+       --proto_path=/code/proto/ \
+       /code/proto/health-check.proto
+```
