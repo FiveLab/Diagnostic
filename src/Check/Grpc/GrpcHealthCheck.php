@@ -30,7 +30,7 @@ class GrpcHealthCheck implements CheckInterface
     /**
      * @var string
      */
-    private string $uri;
+    private string $hostname;
 
     /**
      * @var string
@@ -40,12 +40,12 @@ class GrpcHealthCheck implements CheckInterface
     /**
      * Constructor.
      *
-     * @param string $uri
+     * @param string $hostname
      * @param string $service
      */
-    public function __construct(string $uri, string $service)
+    public function __construct(string $hostname, string $service)
     {
-        $this->uri = $uri;
+        $this->hostname = $hostname;
         $this->service = $service;
     }
 
@@ -54,15 +54,32 @@ class GrpcHealthCheck implements CheckInterface
      */
     public function check(): ResultInterface
     {
-        $client = new HealthClient($this->uri, ['credentials' => ChannelCredentials::createInsecure()]);
-        list($responseData,) = $client->Check((new HealthCheckRequest())->setService($this->service));
+        try {
+            $client = new HealthClient($this->hostname, ['credentials' => ChannelCredentials::createInsecure()]);
+            list($responseData, $status) = $client->Check((new HealthCheckRequest())->setService($this->service))->wait();
+        } catch (\Exception $e) {
+            return new Failure(\sprintf(
+                'Grpc health-check failed: %s.',
+                $e->getMessage()
+            ));
+        }
 
-        $status = $responseData->getStatus();
+        if ($status->code !== 0) {
+            return new Failure(\sprintf(
+                'Grpc health-check failed: %s.',
+                $status->details
+            ));
+        }
 
-        if ($status == ServingStatus::SERVING) {
+        $serviceStatus = $responseData->getStatus();
+        if ($serviceStatus == ServingStatus::SERVING) {
             return new Success('Successful grpc health-check.');
         } else {
-            return new Failure(\sprintf('Grpc health-check failed: requested service status is \'%s\'.', $status));
+            return new Failure(\sprintf(
+                'Grpc health-check failed: \'%s\' status is \'%s\'.',
+                $this->service,
+                ServingStatus::name($serviceStatus)
+            ));
         }
     }
 
@@ -71,6 +88,9 @@ class GrpcHealthCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        return [];
+        return [
+            'hostname' => $this->hostname,
+            'service' => $this->service,
+        ];
     }
 }

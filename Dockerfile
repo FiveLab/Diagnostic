@@ -22,9 +22,10 @@ RUN \
     docker-php-ext-install pdo pdo_mysql sockets && \
     printf '\n' | pecl install amqp && \
     printf '\n' | pecl install redis && \
+    printf '\n' | pecl install protobuf && \
     printf '\n' | pecl install grpc && \
     yes | pecl install xdebug && \
-    docker-php-ext-enable amqp xdebug redis grpc
+    docker-php-ext-enable amqp xdebug redis protobuf grpc
 
 # Configure XDebug
 RUN \
