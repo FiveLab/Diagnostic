@@ -19,9 +19,16 @@ use FiveLab\Component\Diagnostic\Check\Mongo\MongoCollectionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractMongoTestCase;
+use MongoDB\Driver\Command;
+use MongoDB\Driver\Manager;
 
 class MongoCollectionCheckTest extends AbstractMongoTestCase
 {
+    /**
+     * @var Manager
+     */
+    private Manager $mongoManager;
+
     /**
      * {@inheritdoc}
      */
@@ -29,6 +36,45 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     {
         if (!$this->connectionParametersProvided()) {
             self::markTestSkipped('MongoDB is not configured.');
+        }
+
+        $jsonSchema = [
+            'required' => [ 'a', 'b', 'c' ],
+            'properties' => [
+                'a' => [ 'bsonType' => 'string' ],
+                'b' => [ 'bsonType' => 'string' ],
+                'c' => [ 'bsonType' => 'string' ],
+            ],
+        ];
+
+        $createCollection = new Command(
+            [
+                'create' => $this->getCollection(),
+                'validator' => [
+                    '$jsonSchema' => $jsonSchema,
+                ],
+                'validationLevel' => 'strict',
+                'validationAction' => 'error',
+            ],
+        );
+
+        try {
+            $this->mongoManager = new Manager($this->getConnectionParameters()->getDsn());
+            $this->mongoManager->executeCommand($this->getDb(), $createCollection);
+        } catch (\Exception $e) {
+            self::throwException($e);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function tearDown(): void
+    {
+        try {
+            $this->mongoManager->executeCommand($this->getDb(), new Command(['drop' => $this->getCollection()]));
+        } catch (\Exception $e) {
+            self::throwException($e);
         }
     }
 
