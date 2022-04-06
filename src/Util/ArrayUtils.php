@@ -52,8 +52,9 @@ class ArrayUtils
                     $settings = $settings[$pathPart];
                 } else {
                     throw new \UnexpectedValueException(\sprintf(
-                        'The setting "%s" is missed.',
-                        \rtrim($processedPath.$pathParts[0], '.')
+                        'The setting "%s%s" is missed.',
+                        $processedPath,
+                        \rtrim($pathParts[0], '.')
                     ));
                 }
             } else {
