@@ -21,7 +21,7 @@ class MongoHelper
     /**
      * @param MongoConnectionParameters $parameters
      *
-     * @return array<string, string|int>
+     * @return array<string, array|bool|float|int|string|null>
      */
     public static function convertConnectionParametersToArray(MongoConnectionParameters $parameters): array
     {

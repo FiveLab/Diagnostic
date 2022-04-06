@@ -81,8 +81,6 @@ services:
             MONGO_INITDB_ROOT_PASSWORD: root
         networks:
             - diagnostic
-        volumes:
-            - ./.docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
 networks:
     diagnostic:

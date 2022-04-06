@@ -125,7 +125,7 @@ class MongoCollectionCheck implements CheckInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getExtraParameters(): array
     {

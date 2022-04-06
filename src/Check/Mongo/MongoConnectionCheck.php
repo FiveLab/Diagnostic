@@ -64,7 +64,7 @@ class MongoConnectionCheck implements CheckInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getExtraParameters(): array
     {
