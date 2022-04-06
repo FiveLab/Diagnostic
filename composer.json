@@ -28,6 +28,7 @@
         "ext-amqp": "*",
         "ext-redis": "*",
         "ext-curl": "*",
+        "ext-mongodb": "*",
         "ext-pdo": "*",
         "ext-sockets": "*",
         "phpunit/phpunit": "~9.0",
