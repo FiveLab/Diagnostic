@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+v1.3.4
+------
+
+Add next checks:
+
+* `\FiveLab\Component\Diagnostic\Check\Mongo\MongoCollectionCheck` - check collection existence and required parameters.
+* `\FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionCheck` - check connection to MongoDB.
+
 v1.3.3
 ------
 

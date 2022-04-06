@@ -13,7 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Util;
 
-use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Util\ArrayUtils;
 use PHPUnit\Framework\TestCase;
 
@@ -22,21 +21,29 @@ class ArrayUtilsTest extends TestCase
     /**
      * @test
      *
-     * @param string         $path
-     * @param array          $settings
-     * @param Failure|string $expected
+     * @param string            $path
+     * @param array             $settings
+     * @param \Throwable|string $expected
+     *
      * @return void
      *
      * @dataProvider provideSettings
      */
-    public function testTryGetSpecificSettingFromSettings(string $path, array $settings, $expected): void
+    public function shouldSuccessTryGetSpecificSettingFromSettings(string $path, array $settings, $expected): void
     {
+        if ($expected instanceof \Throwable) {
+            $this->expectException(\get_class($expected));
+            $this->expectExceptionMessage($expected->getMessage());
+        }
+
         $actual = ArrayUtils::tryGetSpecificSettingFromSettings($path, $settings);
 
-        $this->assertEquals($actual, $expected);
+        self::assertEquals($actual, $expected);
     }
 
     /**
+     * Provide settings for testing
+     *
      * @return array
      */
     public function provideSettings(): array
@@ -45,11 +52,11 @@ class ArrayUtilsTest extends TestCase
             [
                 'a.b.c',
                 [
-                  'a' => [
-                      'b' => [
-                          'c' => 'd',
-                      ],
-                  ],
+                    'a' => [
+                        'b' => [
+                            'c' => 'd',
+                        ],
+                    ],
                 ],
                 'd',
             ],
@@ -62,7 +69,7 @@ class ArrayUtilsTest extends TestCase
                         ],
                     ],
                 ],
-                new Failure('The setting "a.b.c.d" is missed.'),
+                new \UnexpectedValueException('The setting "a.b.c.d" is missed.'),
             ],
         ];
     }

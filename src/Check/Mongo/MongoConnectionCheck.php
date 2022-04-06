@@ -40,7 +40,7 @@ class MongoConnectionCheck implements CheckInterface
     }
 
     /**
-     * @return ResultInterface
+     * {@inheritdoc}
      */
     public function check(): ResultInterface
     {

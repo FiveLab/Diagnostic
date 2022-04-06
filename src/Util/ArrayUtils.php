@@ -26,7 +26,9 @@ class ArrayUtils
      * @param string                                          $path
      * @param array<string, array|bool|float|int|string|null> $settings
      *
-     * @return Failure|string
+     * @return mixed
+     *
+     * @throws \UnexpectedValueException
      */
     public static function tryGetSpecificSettingFromSettings(string $path, array $settings)
     {
@@ -38,7 +40,7 @@ class ArrayUtils
             $processedPath .= $pathPart.'.';
 
             if (!\array_key_exists($pathPart, $settings)) {
-                return new Failure(\sprintf(
+                throw new \UnexpectedValueException(\sprintf(
                     'The setting "%s" is missed.',
                     \rtrim($processedPath, '.')
                 ));
@@ -49,7 +51,7 @@ class ArrayUtils
                 if (\is_array($settings[$pathPart])) {
                     $settings = $settings[$pathPart];
                 } else {
-                    return new Failure(\sprintf(
+                    throw new \UnexpectedValueException(\sprintf(
                         'The setting "%s" is missed.',
                         \rtrim($processedPath.$pathParts[0], '.')
                     ));
@@ -60,6 +62,9 @@ class ArrayUtils
             }
         }
 
-        return new Failure(\sprintf('Cannot get setting by path: "%s".', $path));
+        throw new \UnexpectedValueException(\sprintf(
+            'Cannot get setting by path: "%s".',
+            $path
+        ));
     }
 }

@@ -51,8 +51,6 @@ class MongoCollectionCheck implements CheckInterface
      * @param MongoConnectionParameters $connectionParameters
      * @param string                    $collection
      * @param array<string, mixed>      $expectedSettings
-     *
-     * @throws \InvalidArgumentException
      */
     public function __construct(MongoConnectionParameters $connectionParameters, string $collection, array $expectedSettings)
     {
@@ -62,7 +60,7 @@ class MongoCollectionCheck implements CheckInterface
     }
 
     /**
-     * @return ResultInterface
+     * {@inheritdoc}
      */
     public function check(): ResultInterface
     {
@@ -71,6 +69,7 @@ class MongoCollectionCheck implements CheckInterface
         }
 
         $manager = new Manager($this->connectionParameters->getDsn());
+
         $listCollections = new Command(
             [
                 'listCollections' => 1,
@@ -106,10 +105,10 @@ class MongoCollectionCheck implements CheckInterface
 
         if (\count($this->expectedSettings)) {
             foreach ($this->expectedSettings as $settingName => $expectedValue) {
-                $actualValue = ArrayUtils::tryGetSpecificSettingFromSettings($settingName, $this->actualSettings);
-
-                if ($actualValue instanceof Failure) {
-                    return $actualValue;
+                try {
+                    $actualValue = ArrayUtils::tryGetSpecificSettingFromSettings($settingName, $this->actualSettings);
+                } catch (\UnexpectedValueException $error) {
+                    return new Failure($error->getMessage());
                 }
 
                 if ($actualValue !== $expectedValue) {
@@ -131,8 +130,7 @@ class MongoCollectionCheck implements CheckInterface
     {
         $actualSettings = $this->actualSettings;
 
-        unset($actualSettings['info']);
-        unset($actualSettings['idIndex']);
+        unset($actualSettings['info'], $actualSettings['idIndex']);
 
         return \array_merge(
             MongoHelper::convertConnectionParametersToArray($this->connectionParameters),

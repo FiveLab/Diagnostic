@@ -121,10 +121,10 @@ class ElasticsearchTemplateCheck implements CheckInterface
 
         if (\count($this->expectedSettings)) {
             foreach ($this->expectedSettings as $settingName => $expectedValue) {
-                $actualValue = ArrayUtils::tryGetSpecificSettingFromSettings($settingName, $this->actualSettings);
-
-                if ($actualValue instanceof Failure) {
-                    return $actualValue;
+                try {
+                    $actualValue = ArrayUtils::tryGetSpecificSettingFromSettings($settingName, $this->actualSettings);
+                } catch (\UnexpectedValueException $error) {
+                    return new Failure($error->getMessage());
                 }
 
                 if ($actualValue !== $expectedValue) {

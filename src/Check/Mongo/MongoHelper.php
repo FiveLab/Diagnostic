@@ -19,6 +19,8 @@ namespace FiveLab\Component\Diagnostic\Check\Mongo;
 class MongoHelper
 {
     /**
+     * Convert connection parameters to array
+     *
      * @param MongoConnectionParameters $parameters
      *
      * @return array<string, mixed>
@@ -27,12 +29,12 @@ class MongoHelper
     {
         return [
             'protocol' => $parameters->getProtocol(),
-            'host' => $parameters->getHost(),
-            'port' => $parameters->getPort(),
-            'user' => $parameters->getUsername(),
-            'pass' => '***',
-            'db' => $parameters->getDb(),
-            'options' => $parameters->getOptions(),
+            'host'     => $parameters->getHost(),
+            'port'     => $parameters->getPort(),
+            'user'     => $parameters->getUsername(),
+            'pass'     => '***',
+            'db'       => $parameters->getDb(),
+            'options'  => $parameters->getOptions(),
         ];
     }
 }

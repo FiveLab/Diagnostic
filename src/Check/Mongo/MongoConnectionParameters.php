@@ -54,13 +54,15 @@ class MongoConnectionParameters
     private array $options;
 
     /**
-     * @param string                        $protocol
-     * @param string                        $host
-     * @param int                           $port
-     * @param string                        $username
-     * @param string                        $password
-     * @param string                        $db
-     * @param array<string,int|bool|string> $options
+     * Constructor.
+     *
+     * @param string               $protocol
+     * @param string               $host
+     * @param int                  $port
+     * @param string               $username
+     * @param string               $password
+     * @param string               $db
+     * @param array<string, mixed> $options
      */
     public function __construct(string $protocol, string $host, int $port, string $username, string $password, string $db, array $options = [])
     {
@@ -74,6 +76,8 @@ class MongoConnectionParameters
     }
 
     /**
+     * Format DSN for connect
+     *
      * @return string
      */
     public function getDsn(): string
@@ -91,6 +95,8 @@ class MongoConnectionParameters
     }
 
     /**
+     * Get protocol
+     *
      * @return string
      */
     public function getProtocol(): string
@@ -99,6 +105,8 @@ class MongoConnectionParameters
     }
 
     /**
+     * Get host
+     *
      * @return string
      */
     public function getHost(): string
@@ -107,6 +115,8 @@ class MongoConnectionParameters
     }
 
     /**
+     * Get port
+     *
      * @return int
      */
     public function getPort(): int
@@ -115,6 +125,8 @@ class MongoConnectionParameters
     }
 
     /**
+     * Get username
+     *
      * @return string
      */
     public function getUsername(): string
@@ -123,6 +135,8 @@ class MongoConnectionParameters
     }
 
     /**
+     * Get password
+     *
      * @return string
      */
     public function getPassword(): string
@@ -131,6 +145,8 @@ class MongoConnectionParameters
     }
 
     /**
+     * Get database name
+     *
      * @return string
      */
     public function getDb(): string
@@ -139,7 +155,9 @@ class MongoConnectionParameters
     }
 
     /**
-     * @return array<string,int|bool|string>
+     * Get options
+     *
+     * @return array<string,mixed>
      */
     public function getOptions(): array
     {
@@ -147,6 +165,8 @@ class MongoConnectionParameters
     }
 
     /**
+     * Format options to string
+     *
      * @return string
      */
     private function formatOptions(): string
@@ -155,15 +175,14 @@ class MongoConnectionParameters
             return '';
         }
 
-        return '/?'.\http_build_query(\array_map(
-            function ($v) {
-                if (\is_bool($v)) {
-                    return $v ? 'true' : 'false';
-                }
+        $options = \array_map(static function ($v) {
+            if (\is_bool($v)) {
+                return $v ? 'true' : 'false';
+            }
 
-                return $v;
-            },
-            $this->options,
-        ));
+            return $v;
+        }, $this->options);
+
+        return '/?'.\http_build_query($options);
     }
 }
