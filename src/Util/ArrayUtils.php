@@ -23,8 +23,8 @@ class ArrayUtils
     /**
      * Try to get specific setting from settings
      *
-     * @param string $path
-     * @param array<string, array|bool|float|int|string|null>  $settings
+     * @param string                                          $path
+     * @param array<string, array|bool|float|int|string|null> $settings
      *
      * @return Failure|string
      */
