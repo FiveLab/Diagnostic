@@ -32,6 +32,18 @@ class DefinitionCollection implements \IteratorAggregate, \Countable
      */
     public function __construct(CheckDefinitionInterface ...$definitions)
     {
+        \array_reduce($definitions, static function (array $definitionKeys, CheckDefinitionInterface $definition): array {
+            if (\in_array($definition->getKey(), $definitionKeys, true)) {
+                throw new \RuntimeException(\sprintf('Duplicate definition with key "%s"', $definition->getKey()));
+            }
+
+            if ($definition->getKey()) {
+                $definitionKeys[] = $definition->getKey();
+            }
+
+            return $definitionKeys;
+        }, []);
+
         $this->definitions = $definitions;
     }
 

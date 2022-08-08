@@ -89,4 +89,21 @@ class DefinitionCollectionTest extends TestCase
             $filtered
         );
     }
+
+    /**
+     * @test
+     */
+    public function shouldThrowRuntimeException(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Duplicate definition with key "definitionKey"');
+
+        /** @var CheckInterface $check */
+        $check = $this->createMock(CheckInterface::class);
+
+        new DefinitionCollection(
+            new CheckDefinition('definitionKey', $check, []),
+            new CheckDefinition('definitionKey', $check, []),
+        );
+    }
 }
