@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+v1.3.5
+------
+
+* Throw error if try to create definition collection with same keys.
+
 v1.3.4
 ------
 
