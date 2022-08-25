@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+v1.3.6
+------
+
+* Force convert application version to string in `PingableHttpCheck` (app can return version in integer/float, `1.0` as an example).
+
 v1.3.5
 ------
 

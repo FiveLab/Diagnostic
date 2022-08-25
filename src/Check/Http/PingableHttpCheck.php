@@ -185,7 +185,7 @@ class PingableHttpCheck implements CheckInterface
             ));
         }
 
-        if ($this->expectedVersion && !$this->versionComparator->satisfies($applicationVersion, $this->expectedVersion)) {
+        if ($this->expectedVersion && !$this->versionComparator->satisfies((string) $applicationVersion, $this->expectedVersion)) {
             return new Failure(\sprintf(
                 'The server return "%s" version, but we expect "%s".',
                 $applicationVersion,
