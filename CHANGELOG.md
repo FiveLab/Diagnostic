@@ -1,6 +1,17 @@
 CHANGELOG
 =========
 
+v1.3.7
+------
+
+Add next checks:
+
+* `\FiveLab\Component\Diagnostic\Check\OpenSearch\OpenSearchConnectionCheck` - check connect to OpenSearch.
+* `\FiveLab\Component\Diagnostic\Check\OpenSearch\OpenSearchClusterStateCheck` - check OS cluster health check.
+* `\FiveLab\Component\Diagnostic\Check\OpenSearch\OpenSearchIndexCheck` - check OS indices settings.
+* `\FiveLab\Component\Diagnostic\Check\OpenSearch\OpenSearchTemplateCheck` - check OpenSearch template.
+* `\FiveLab\Component\Diagnostic\Check\OpenSearch\OpenSearchVersionCheck` - check OpenSearch version.
+
 v1.3.6
 ------
 
@@ -168,4 +179,4 @@ Add next checks:
 * `\FiveLab\Component\Diagnostic\Check\Eloquent\DatabaseConnectionCheck` - check db connection via Eloquent.
 * `\FiveLab\Component\Diagnostic\Check\Eloquent\DatabaseMysqlVersionCheck` - check MySQL version via Eloquent.
 * `\FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchClusterStateCheck` - check ES cluster health check.
-* `\FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchIndicesCheck` - check ES indices settings.
+* `\FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchIndexCheck` - check ES indices settings.
