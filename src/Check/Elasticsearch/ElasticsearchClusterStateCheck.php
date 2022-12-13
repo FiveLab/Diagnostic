@@ -13,47 +13,26 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
-use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
-use FiveLab\Component\Diagnostic\Result\Warning;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Result\Warning;
 
 /**
  *  Checks ES cluster state via _cluster/health endpoint
  */
-class ElasticsearchClusterStateCheck implements CheckInterface
+class ElasticsearchClusterStateCheck extends AbstractElasticsearchCheck implements CheckInterface
 {
-    /**
-     * @var ElasticsearchConnectionParameters
-     */
-    private ElasticsearchConnectionParameters $connectionParameters;
-
-    /**
-     * @var Client|null
-     */
-    private ?Client $client = null;
-
-    /**
-     * Constructor.
-     *
-     * @param ElasticsearchConnectionParameters $connectionParameters
-     */
-    public function __construct(ElasticsearchConnectionParameters $connectionParameters)
-    {
-        $this->connectionParameters = $connectionParameters;
-    }
-
     /**
      * @return ResultInterface
      */
     public function check(): ResultInterface
     {
         try {
-            /** @var Client $client */
-            $client = $this->createClient();
+            $client = $this->clientBuilder
+                ->setHosts([$this->connectionParameters->getDsn()])
+                ->build();
 
             $client->ping();
         } catch (\Throwable $e) {
@@ -82,29 +61,7 @@ class ElasticsearchClusterStateCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        return ElasticsearchHelper::convertConnectionParametersToArray($this->connectionParameters);
-    }
-
-    /**
-     * Create client
-     *
-     * @return Client|Failure
-     */
-    private function createClient()
-    {
-        if (!\class_exists(Client::class)) {
-            return new Failure('The package "elasticsearch/elasticsearch" is not installed.');
-        }
-
-        if ($this->client) {
-            return $this->client;
-        }
-
-        $this->client = ClientBuilder::create()
-            ->setHosts([$this->connectionParameters->getDsn()])
-            ->build();
-
-        return $this->client;
+        return $this->convertConnectionParametersToArray();
     }
 
     /**

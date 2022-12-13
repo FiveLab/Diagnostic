@@ -13,8 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
-use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
@@ -27,50 +25,32 @@ use FiveLab\Component\Diagnostic\Result\Success;
  *           As result if you connect to any services via ssl, check return success result.
  *           For fix this, please use additional check for check version of ElasticSearch (as an example).
  */
-class ElasticsearchConnectionCheck implements CheckInterface
+class ElasticsearchConnectionCheck extends AbstractElasticsearchCheck implements CheckInterface
 {
-    /**
-     * @var ElasticsearchConnectionParameters
-     */
-    private ElasticsearchConnectionParameters $connectionParameters;
-
-    /**
-     * Constructor.
-     *
-     * @param ElasticsearchConnectionParameters $connectionParameters
-     */
-    public function __construct(ElasticsearchConnectionParameters $connectionParameters)
-    {
-        $this->connectionParameters = $connectionParameters;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function check(): ResultInterface
     {
-        if (!\class_exists(Client::class)) {
-            return new Failure('The package "elasticsearch/elasticsearch" is not installed.');
-        }
-
         try {
-            $client = ClientBuilder::create()
+            $client = $this->clientBuilder
                 ->setHosts([$this->connectionParameters->getDsn()])
                 ->build();
 
             $ping = $client->ping();
         } catch (\Throwable $e) {
             return new Failure(\sprintf(
-                'Fail connect to ElasticSearch: %s.',
+                'Fail connect to %s: %s.',
+                $this->getEngineName(),
                 \rtrim($e->getMessage(), '.')
             ));
         }
 
         if ($ping) {
-            return new Success('Success connect to ElasticSearch and send ping request.');
+            return new Success(\sprintf('Success connect to %s and send ping request.', $this->getEngineName()));
         }
 
-        return new Failure('Fail connect to ElasticSearch or send ping request.');
+        return new Failure(\sprintf('Fail connect to %s or send ping request.', $this->getEngineName()));
     }
 
     /**
@@ -78,6 +58,6 @@ class ElasticsearchConnectionCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        return ElasticsearchHelper::convertConnectionParametersToArray($this->connectionParameters);
+        return $this->convertConnectionParametersToArray();
     }
 }

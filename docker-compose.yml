@@ -18,6 +18,7 @@ services:
             MONGO_DB: 'diagnostic'
             MONGO_COLLECTION: 'test'
             AWS_DYNAMODB_ENDPOINT: 'http://dynamodb:8000'
+            OPENSEARCH_HOST: 'opensearch'
         volumes:
             - './:/code'
         networks:
@@ -79,6 +80,20 @@ services:
             MONGO_INITDB_DATABASE: admin
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: root
+        networks:
+            - diagnostic
+
+    opensearch:
+        image: opensearchproject/opensearch:2.4.0
+        container_name: 'diagnostic-opensearch'
+        environment:
+            - 'discovery.type=single-node'
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+            - "DISABLE_SECURITY_PLUGIN=true"
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
         networks:
             - diagnostic
 

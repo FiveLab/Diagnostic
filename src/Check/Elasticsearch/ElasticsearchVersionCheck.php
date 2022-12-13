@@ -13,25 +13,20 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
-use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
+use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterface;
+use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 
 /**
  * Check elasticsearch and lucene version.
  */
-class ElasticsearchVersionCheck implements CheckInterface
+class ElasticsearchVersionCheck extends AbstractElasticsearchCheck implements CheckInterface
 {
-    /**
-     * @var ElasticsearchConnectionParameters
-     */
-    private ElasticsearchConnectionParameters $connectionParameters;
-
     /**
      * @var string|null
      */
@@ -60,14 +55,16 @@ class ElasticsearchVersionCheck implements CheckInterface
     /**
      * Constructor.
      *
-     * @param ElasticsearchConnectionParameters $connectionParameters
-     * @param string|null                       $expectedVersion
-     * @param string|null                       $expectedLuceneVersion
-     * @param VersionComparatorInterface|null   $versionComparator
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
+     * @param string|null                                        $expectedVersion
+     * @param string|null                                        $expectedLuceneVersion
+     * @param VersionComparatorInterface|null                    $versionComparator
      */
-    public function __construct(ElasticsearchConnectionParameters $connectionParameters, string $expectedVersion = null, string $expectedLuceneVersion = null, VersionComparatorInterface $versionComparator = null)
+    public function __construct($clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string $expectedVersion = null, string $expectedLuceneVersion = null, VersionComparatorInterface $versionComparator = null)
     {
-        $this->connectionParameters = $connectionParameters;
+        parent::__construct($clientBuilder, $connectionParameters);
+
         $this->expectedVersion = $expectedVersion;
         $this->expectedLuceneVersion = $expectedLuceneVersion;
         $this->versionComparator = $versionComparator ?: new SemverVersionComparator();
@@ -78,19 +75,16 @@ class ElasticsearchVersionCheck implements CheckInterface
      */
     public function check(): ResultInterface
     {
-        if (!\class_exists(Client::class)) {
-            return new Failure('The package "elasticsearch/elasticsearch" is not installed.');
-        }
-
         try {
-            $client = ClientBuilder::create()
+            $client = $this->clientBuilder
                 ->setHosts([$this->connectionParameters->getDsn()])
                 ->build();
 
             $info = $client->info();
         } catch (\Throwable $e) {
             return new Failure(\sprintf(
-                'Fail connect to ElasticSearch: %s.',
+                'Fail connect to %s: %s.',
+                $this->getEngineName(),
                 \rtrim($e->getMessage(), '.')
             ));
         }
@@ -103,14 +97,14 @@ class ElasticsearchVersionCheck implements CheckInterface
         $this->actualLuceneVersion = $info['version']['lucene_version'];
 
         if ($this->expectedVersion && !$this->versionComparator->satisfies($this->actualVersion, $this->expectedVersion)) {
-            return new Failure('Fail check Elasticsearch version.');
+            return new Failure(\sprintf('Fail check %s version.', $this->getEngineName()));
         }
 
         if ($this->expectedLuceneVersion && !$this->versionComparator->satisfies($this->actualLuceneVersion, $this->expectedLuceneVersion)) {
             return new Failure('Fail check Lucene version.');
         }
 
-        return new Success('Success check Elasticsearch version.');
+        return new Success(\sprintf('Success check %s version.', $this->getEngineName()));
     }
 
     /**
@@ -118,7 +112,7 @@ class ElasticsearchVersionCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
-        $params = ElasticsearchHelper::convertConnectionParametersToArray($this->connectionParameters);
+        $params = $this->convertConnectionParametersToArray();
 
         return \array_merge($params, [
             'actual version'          => $this->actualVersion ?: '(null)',

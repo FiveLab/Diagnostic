@@ -122,6 +122,8 @@ jobs:
             MAILER_HOST: '127.0.0.1'
             ELASTICSEARCH_HOST: '127.0.0.1'
             AWS_DYNAMODB_ENDPOINT: 'http://127.0.0.1:8000'
+            OPENSEARCH_HOST: '127.0.0.1'
+            OPENSEARCH_PORT: 9201
 
         steps:
             -   name: Configure sysctl limits
@@ -135,6 +137,13 @@ jobs:
                 uses: elastic/elastic-github-actions/elasticsearch@master
                 with:
                     stack-version: 7.12.0
+
+            -   name: Runs OpenSearch
+                uses: ankane/setup-opensearch@v1
+                with:
+                    opensearch-version: 2.4.0
+                    config: |
+                        http.port: 9201
 
             -   name: Checkout
                 uses: actions/checkout@v2
