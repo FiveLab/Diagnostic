@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-v1.4.0
+v2.0.0
 ------
 
 * Add opensearch support providing ClientBuilder to all elasticsearch checks

@@ -57,7 +57,7 @@
         "illuminate/database": "~6.20.12 | ~7.30.4 | ~8.22.1 | ~9.0",
         "aws/aws-sdk-php": "~3.0",
         "php-amqplib/php-amqplib": "^3.0",
-        "opensearch-project/opensearch-php": "^2.0.3"
+        "opensearch-project/opensearch-php": "^2.0"
     },
 
     "minimum-stability": "dev",

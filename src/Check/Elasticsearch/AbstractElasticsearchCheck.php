@@ -41,7 +41,7 @@ abstract class AbstractElasticsearchCheck
      */
     public function __construct($clientBuilder, ElasticsearchConnectionParameters $connectionParameters)
     {
-        if (!($clientBuilder instanceof ElasticsearchClientBuilder || $clientBuilder instanceof OpenSearchClientBuilder)) {
+        if (!$clientBuilder instanceof ElasticsearchClientBuilder && !$clientBuilder instanceof OpenSearchClientBuilder) {
             throw new \RuntimeException(\sprintf(
                 'ClientBuilder must be one of: %s',
                 \implode(' or ', [ElasticsearchClientBuilder::class, OpenSearchClientBuilder::class])
@@ -87,5 +87,12 @@ abstract class AbstractElasticsearchCheck
         if ($this->clientBuilder instanceof OpenSearchClientBuilder) {
             return 'OpenSearch';
         }
+
+        // @phpstan-ignore-next-line
+        throw new \RuntimeException(\sprintf(
+            'ClientBuilder %s is not supported. Supports only %s',
+            (new \ReflectionClass($this->clientBuilder))->getName(),
+            \implode(' or ', [ElasticsearchClientBuilder::class, OpenSearchClientBuilder::class])
+        ));
     }
 }
