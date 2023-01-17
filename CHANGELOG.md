@@ -1,10 +1,10 @@
 CHANGELOG
 =========
 
-next release
+v1.3.7
 ------
 
-* Add opensearch support providing ClientBuilder to all elasticsearch checks
+* Add [OpenSearch](https://opensearch.org/) support providing ClientBuilder to all elasticsearch checks.
 
 v1.3.6
 ------
