@@ -56,7 +56,8 @@
         "react/promise": "~2.3",
         "illuminate/database": "~6.20.12 | ~7.30.4 | ~8.22.1 | ~9.0",
         "aws/aws-sdk-php": "~3.0",
-        "php-amqplib/php-amqplib": "^3.0"
+        "php-amqplib/php-amqplib": "^3.0",
+        "opensearch-project/opensearch-php": "^2.0"
     },
 
     "minimum-stability": "dev",
@@ -73,7 +74,8 @@
         "composer/semver": "For compare versions.",
         "elasticsearch/elasticsearch": "For check connect and existence some indices/templates/etc... in elasticsearch.",
         "illuminate/database": "For check connect to database via illuminate components.",
-        "aws/aws-sdk-php": "For check AWS services."
+        "aws/aws-sdk-php": "For check AWS services.",
+        "opensearch-project/opensearch-php": "For check connect and existence some indices/templates/etc... in opensearch."
     },
 
     "autoload": {

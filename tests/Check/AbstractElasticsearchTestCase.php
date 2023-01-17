@@ -13,9 +13,11 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check;
 
-use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
+use Elasticsearch\Client as ElasticsearchClient;
+use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
 use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
+use OpenSearch\Client as OpenSearchClient;
+use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractElasticsearchTestCase extends TestCase
@@ -85,7 +87,7 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return ElasticsearchConnectionParameters
      */
-    protected function getConnectionParameters(): ElasticsearchConnectionParameters
+    protected function getElasticsearchConnectionParameters(): ElasticsearchConnectionParameters
     {
         return new ElasticsearchConnectionParameters(
             $this->getElasticsearchHost(),
@@ -97,16 +99,135 @@ abstract class AbstractElasticsearchTestCase extends TestCase
     }
 
     /**
-     * Create a client
+     * Create an elasticsearch client
      *
-     * @return Client
+     * @return ElasticsearchClient
      */
-    protected function createClient(): Client
+    protected function createElasticsearchClient(): ElasticsearchClient
     {
-        $connectionParameters = $this->getConnectionParameters();
+        $connectionParameters = $this->getElasticsearchConnectionParameters();
 
-        return ClientBuilder::create()
+        return ElasticsearchClientBuilder::create()
             ->setHosts([$connectionParameters->getDsn()])
             ->build();
+    }
+
+    /**
+     * Get the opensearch host
+     *
+     * @return string|null
+     */
+    protected function getOpenSearchHost(): ?string
+    {
+        return \getenv('OPENSEARCH_HOST') ?: null;
+    }
+
+    /**
+     * Get opensearch port
+     *
+     * @return int|null
+     */
+    protected function getOpenSearchPort(): int
+    {
+        return \getenv('OPENSEARCH_PORT') ? (int) \getenv('OPENSEARCH_PORT') : 9200;
+    }
+
+    /**
+     * Get the user for connect to openSearch
+     *
+     * @return string
+     */
+    protected function getOpenSearchUser(): ?string
+    {
+        return \getenv('OPENSEARCH_USER') ? \getenv('OPENSEARCH_USER') : null;
+    }
+
+    /**
+     * Get the password for connect to openSearch
+     *
+     * @return string
+     */
+    protected function getOpenSearchPassword(): ?string
+    {
+        return \getenv('OPENSEARCH_PASSWORD') ? \getenv('OPENSEARCH_PASSWORD') : null;
+    }
+
+    /**
+     * Is use SSL for connect to opensearch?
+     *
+     * @return bool
+     */
+    protected function isOpenSearchSsl(): bool
+    {
+        return \getenv('OPENSEARCH_SSL') ? true : false;
+    }
+
+    /**
+     * Can testing with opensearch?
+     *
+     * @return bool
+     */
+    protected function canTestingWithOpenSearch(): bool
+    {
+        return $this->getOpenSearchHost() && $this->getOpenSearchPort();
+    }
+
+    /**
+     * Get connection parameters to opensearch
+     *
+     * @return ElasticsearchConnectionParameters
+     */
+    protected function getOpenSearchConnectionParameters(): ElasticsearchConnectionParameters
+    {
+        return new ElasticsearchConnectionParameters(
+            $this->getOpenSearchHost(),
+            $this->getOpenSearchPort(),
+            $this->getOpenSearchUser(),
+            $this->getOpenSearchPassword(),
+            $this->isOpenSearchSsl()
+        );
+    }
+
+    /**
+     * Create an opensearch client
+     *
+     * @return OpenSearchClient
+     */
+    protected function createOpenSearchClient(): OpenSearchClient
+    {
+        $connectionParameters = $this->getOpenSearchConnectionParameters();
+
+        return OpenSearchClientBuilder::create()
+            ->setHosts([$connectionParameters->getDsn()])
+            ->build();
+    }
+
+    /**
+     * Mark test skipped if not configured
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     */
+    protected function markTestSkippedIfNotConfigured($clientBuilder): void
+    {
+        if ($clientBuilder instanceof ElasticsearchClientBuilder && !$this->canTestingWithElasticsearch()) {
+            self::markTestSkipped('The Elasticsearch is not configured.');
+        }
+
+        if ($clientBuilder instanceof OpenSearchClientBuilder && !$this->canTestingWithOpenSearch()) {
+            self::markTestSkipped('The OpenSearch is not configured.');
+        }
+    }
+
+    /**
+     * Client builders provider
+     *
+     * @return array
+     */
+    public function clientBuildersProvider(): array
+    {
+        return [
+            [ElasticsearchClientBuilder::create(), $this->getElasticsearchConnectionParameters()],
+            [OpenSearchClientBuilder::create(), $this->getElasticsearchConnectionParameters()],
+        ];
     }
 }

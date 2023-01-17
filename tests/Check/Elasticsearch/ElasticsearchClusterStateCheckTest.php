@@ -13,144 +13,242 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Elasticsearch;
 
-use Elasticsearch\Client;
-use Elasticsearch\Namespaces\ClusterNamespace;
+use Elasticsearch\Client as ElasticsearchClient;
+use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
+use Elasticsearch\Namespaces\ClusterNamespace as ElasticsearchClusterNamespace;
 use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchClusterStateCheck;
+use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractElasticsearchTestCase;
-use PHPUnit\Framework\MockObject\MockObject;
+use OpenSearch\Client as OpenSearchClient;
+use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
+use OpenSearch\Namespaces\ClusterNamespace as OpenSearchClusterNamespace;
 
 class ElasticsearchClusterStateCheckTest extends AbstractElasticsearchTestCase
 {
     /**
-     * @var MockObject|Client
-     */
-    private $client;
-
-    /**
-     * @var ElasticsearchClusterStateCheck
-     */
-    private $check;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp(): void
-    {
-        if (!$this->canTestingWithElasticsearch()) {
-            self::markTestSkipped('The ElasticSearch is not configured.');
-        }
-
-        $this->client = $this->createMock(Client::class);
-
-        $ref = new \ReflectionClass(ElasticsearchClusterStateCheck::class);
-        $this->check = $ref->newInstanceWithoutConstructor();
-
-        $refClientProperty = $ref->getProperty('client');
-        $refClientProperty->setAccessible(true);
-        $refClientProperty->setValue($this->check, $this->client);
-    }
-
-    /**
      * @test
+     * @dataProvider clusterStateCheckProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
+     * @param string                                             $clientClass
+     * @param string                                             $clusterNamespaceClass
      */
-    public function shouldSuccessCheckGreen(): void
+    public function shouldSuccessCheckGreen($clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string $clientClass, string $clusterNamespaceClass): void
     {
-        $clusterHealthMock = $this->createMock(ClusterNamespace::class);
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
+        $clusterHealthMock = $this->createMock($clusterNamespaceClass);
 
         $clusterHealthMock->expects(self::any())
             ->method('health')
             ->willReturn($this->getHealthParamsWithStatus('green'));
 
-        $this->client->expects(self::any())
+        $client = $this->createMock($clientClass);
+
+        $client->expects(self::any())
             ->method('cluster')
             ->willReturn($clusterHealthMock);
 
-        $result = $this->check->check();
+        $mockedBuilder = $this->createMock((new \ReflectionClass($clientBuilder))->getName());
+
+        $mockedBuilder->expects(self::any())
+            ->method('setHosts')
+            ->willReturn($mockedBuilder);
+
+        $mockedBuilder->expects(self::any())
+            ->method('build')
+            ->willReturn($client);
+
+        $check = new ElasticsearchClusterStateCheck($connectionParameters, $mockedBuilder);
+
+        $result = $check->check();
 
         self::assertEquals(new Success('Cluster status is GREEN.'), $result);
     }
 
     /**
      * @test
+     * @dataProvider clusterStateCheckProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
+     * @param string                                             $clientClass
+     * @param string                                             $clusterNamespaceClass
      */
-    public function shouldSuccessCheckRed(): void
+    public function shouldSuccessCheckRed($clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string$clientClass, string $clusterNamespaceClass): void
     {
-        $clusterHealthMock = $this->createMock(ClusterNamespace::class);
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
+        $clusterHealthMock = $this->createMock($clusterNamespaceClass);
 
         $clusterHealthMock->expects(self::any())
             ->method('health')
             ->willReturn($this->getHealthParamsWithStatus('red'));
 
-        $this->client->expects(self::any())
+        $client = $this->createMock($clientClass);
+
+        $client->expects(self::any())
             ->method('cluster')
             ->willReturn($clusterHealthMock);
 
-        $result = $this->check->check();
+        $mockedBuilder = $this->createMock((new \ReflectionClass($clientBuilder))->getName());
+
+        $mockedBuilder->expects(self::any())
+            ->method('setHosts')
+            ->willReturn($mockedBuilder);
+
+        $mockedBuilder->expects(self::any())
+            ->method('build')
+            ->willReturn($client);
+
+        $check = new ElasticsearchClusterStateCheck($connectionParameters, $mockedBuilder);
+
+        $result = $check->check();
 
         self::assertEquals(new Failure('Cluster status is RED. Please check the logs.'), $result);
     }
 
     /**
      * @test
+     * @dataProvider clusterStateCheckProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
+     * @param string                                             $clientClass
+     * @param string                                             $clusterNamespaceClass
      */
-    public function shouldSuccessCheckYellow(): void
+    public function shouldSuccessCheckYellow($clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string$clientClass, string $clusterNamespaceClass): void
     {
-        $clusterHealthMock = $this->createMock(ClusterNamespace::class);
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
+        $clusterHealthMock = $this->createMock($clusterNamespaceClass);
 
         $clusterHealthMock->expects(self::any())
             ->method('health')
             ->willReturn($this->getHealthParamsWithStatus('yellow'));
 
-        $this->client->expects(self::any())
+        $client = $this->createMock($clientClass);
+
+        $client->expects(self::any())
             ->method('cluster')
             ->willReturn($clusterHealthMock);
 
-        $result = $this->check->check();
+        $mockedBuilder = $this->createMock((new \ReflectionClass($clientBuilder))->getName());
+
+        $mockedBuilder->expects(self::any())
+            ->method('setHosts')
+            ->willReturn($mockedBuilder);
+
+        $mockedBuilder->expects(self::any())
+            ->method('build')
+            ->willReturn($client);
+
+        $check = new ElasticsearchClusterStateCheck($connectionParameters, $mockedBuilder);
+
+        $result = $check->check();
 
         self::assertEquals(new Warning('Cluster status is YELLOW. Please check the logs.'), $result);
     }
 
     /**
      * @test
+     * @dataProvider clusterStateCheckProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
+     * @param string                                             $clientClass
+     * @param string                                             $clusterNamespaceClass
      */
-    public function shouldFailCheckIfStatusIsUnknown(): void
+    public function shouldFailCheckIfStatusIsUnknown($clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string$clientClass, string $clusterNamespaceClass): void
     {
-        $clusterHealthMock = $this->createMock(ClusterNamespace::class);
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
+        $clusterHealthMock = $this->createMock($clusterNamespaceClass);
 
         $clusterHealthMock->expects(self::any())
             ->method('health')
             ->willReturn($this->getHealthParamsWithStatus('some'));
 
-        $this->client->expects(self::any())
+        $client = $this->createMock($clientClass);
+
+        $client->expects(self::any())
             ->method('cluster')
             ->willReturn($clusterHealthMock);
 
-        $result = $this->check->check();
+        $mockedBuilder = $this->createMock((new \ReflectionClass($clientBuilder))->getName());
+
+        $mockedBuilder->expects(self::any())
+            ->method('setHosts')
+            ->willReturn($mockedBuilder);
+
+        $mockedBuilder->expects(self::any())
+            ->method('build')
+            ->willReturn($client);
+
+        $check = new ElasticsearchClusterStateCheck($connectionParameters, $mockedBuilder);
+
+        $result = $check->check();
 
         self::assertEquals(new Failure('Cluster status is undefined. Please check the logs.'), $result);
     }
 
     /**
      * @test
+     * @dataProvider clusterStateCheckProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
+     * @param string                                             $clientClass
+     * @param string                                             $clusterNamespaceClass
      */
-    public function shouldFailCheckIfStatusIsMissed(): void
+    public function shouldFailCheckIfStatusIsMissed($clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string$clientClass, string $clusterNamespaceClass): void
     {
-        $clusterHealthMock = $this->createMock(ClusterNamespace::class);
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
+        $clusterHealthMock = $this->createMock($clusterNamespaceClass);
 
         $clusterHealthMock->expects(self::any())
             ->method('health')
             ->willReturn([]);
 
-        $this->client->expects(self::any())
+        $client = $this->createMock($clientClass);
+
+        $client->expects(self::any())
             ->method('cluster')
             ->willReturn($clusterHealthMock);
 
-        $result = $this->check->check();
+        $mockedBuilder = $this->createMock((new \ReflectionClass($clientBuilder))->getName());
+
+        $mockedBuilder->expects(self::any())
+            ->method('setHosts')
+            ->willReturn($mockedBuilder);
+
+        $mockedBuilder->expects(self::any())
+            ->method('build')
+            ->willReturn($client);
+
+        $check = new ElasticsearchClusterStateCheck($connectionParameters, $mockedBuilder);
+
+        $result = $check->check();
 
         self::assertEquals(new Failure('Cluster status is undefined. Please check the logs.'), $result);
+    }
+
+    /**
+     * Cluster state check provider
+     *
+     * @return array
+     */
+    public function clusterStateCheckProvider(): array
+    {
+        return [
+            [ElasticsearchClientBuilder::create(), $this->getElasticsearchConnectionParameters(), ElasticsearchClient::class, ElasticsearchClusterNamespace::class],
+            [OpenSearchClientBuilder::create(), $this->getOpenSearchConnectionParameters(), OpenSearchClient::class, OpenSearchClusterNamespace::class],
+        ];
     }
 
     /**

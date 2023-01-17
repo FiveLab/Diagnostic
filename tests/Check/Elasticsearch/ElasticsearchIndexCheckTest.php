@@ -13,11 +13,13 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Elasticsearch;
 
+use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
 use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
 use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchIndexCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractElasticsearchTestCase;
+use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 
 class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
 {
@@ -26,12 +28,6 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
      */
     protected function setUp(): void
     {
-        if (!$this->canTestingWithElasticsearch()) {
-            self::markTestSkipped('The ElasticSearch is not configured.');
-        }
-
-        $client = $this->createClient();
-
         $settings = [
             'settings' => [
                 'number_of_shards'         => 3,
@@ -48,10 +44,22 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
             ],
         ];
 
-        $client->indices()->create([
-            'index' => 'test-index',
-            'body'  => $settings,
-        ]);
+        if ($this->canTestingWithElasticsearch()) {
+            $client = $this->createElasticsearchClient();
+            $client->indices()->create([
+                'index' => 'test-index',
+                'body'  => $settings,
+            ]);
+        }
+
+        if ($this->canTestingWithOpenSearch()) {
+            $client = $this->createOpenSearchClient();
+
+            $client->indices()->create([
+                'index' => 'test-index',
+                'body'  => $settings,
+            ]);
+        }
     }
 
     /**
@@ -59,78 +67,110 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
      */
     protected function tearDown(): void
     {
-        if (!$this->canTestingWithElasticsearch()) {
-            return;
+        if ($this->canTestingWithElasticsearch()) {
+            $client = $this->createElasticsearchClient();
+            $client->indices()->delete(['index' => 'test-index']);
         }
 
-        $client = $this->createClient();
-
-        $client->indices()->delete(['index' => 'test-index']);
+        if ($this->canTestingWithOpenSearch()) {
+            $client = $this->createOpenSearchClient();
+            $client->indices()->delete(['index' => 'test-index']);
+        }
     }
 
     /**
      * @test
+     * @dataProvider clientBuildersProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
      */
-    public function shouldSuccessCheckWithoutParameters(): void
+    public function shouldSuccessCheckWithoutParameters($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
-        $check = new ElasticsearchIndexCheck($this->getConnectionParameters(), 'test-index');
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
+        $check = new ElasticsearchIndexCheck($connectionParameters, 'test-index', [], $clientBuilder);
 
         $result = $check->check();
 
-        self::assertEquals(new Success('Success check Elasticsearch index.'), $result);
+        self::assertEquals(new Success(\sprintf('Success check %s index.', $check->getEngineName())), $result);
     }
 
     /**
      * @test
+     * @dataProvider clientBuildersProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
      */
-    public function shouldSuccessCheckWithSettings(): void
+    public function shouldSuccessCheckWithSettings($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
         $check = new ElasticsearchIndexCheck(
-            $this->getConnectionParameters(),
+            $connectionParameters,
             'test-index',
             [
                 'index.number_of_shards' => '3',
                 'index.refresh_interval' => '5s',
-            ]
+            ],
+            $clientBuilder
         );
 
         $result = $check->check();
 
-        self::assertEquals(new Success('Success check Elasticsearch index.'), $result);
+        self::assertEquals(new Success(\sprintf('Success check %s index.', $check->getEngineName())), $result);
     }
 
     /**
      * @test
+     * @dataProvider clientBuildersProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
      */
-    public function shouldFailIfCannotConnect(): void
+    public function shouldFailIfCannotConnect($clientBuilder): void
     {
-        $check = new ElasticsearchIndexCheck(new ElasticsearchConnectionParameters('some', 9201), 'some');
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
+        $check = new ElasticsearchIndexCheck(new ElasticsearchConnectionParameters('some', 9201), 'some', [], $clientBuilder);
 
         $result = $check->check();
 
-        self::assertEquals(new Failure('Fail connect to ElasticSearch: No alive nodes found in your cluster.'), $result);
+        self::assertEquals(new Failure(\sprintf('Fail connect to %s: No alive nodes found in your cluster.', $check->getEngineName())), $result);
     }
 
     /**
      * @test
+     * @dataProvider clientBuildersProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
      */
-    public function shouldFailIfIndexNotFound(): void
+    public function shouldFailIfIndexNotFound($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
-        $check = new ElasticsearchIndexCheck($this->getConnectionParameters(), 'some-foo');
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
+        $check = new ElasticsearchIndexCheck($connectionParameters, 'some-foo', [], $clientBuilder);
 
         $result = $check->check();
 
-        self::assertEquals(new Failure('The index was not found in Elasticsearch.'), $result);
+        self::assertEquals(new Failure(\sprintf('The index was not found in %s.', $check->getEngineName())), $result);
     }
 
     /**
      * @test
+     * @dataProvider clientBuildersProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
      */
-    public function shouldFailIfSettingIsMissed(): void
+    public function shouldFailIfSettingIsMissed($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
-        $check = new ElasticsearchIndexCheck($this->getConnectionParameters(), 'test-index', [
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
+        $check = new ElasticsearchIndexCheck($connectionParameters, 'test-index', [
             'index.number_of_replica' => 1,
-        ]);
+        ], $clientBuilder);
 
         $result = $check->check();
 
@@ -139,12 +179,18 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
 
     /**
      * @test
+     * @dataProvider clientBuildersProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
      */
-    public function shouldFailIfPartOfPathSettingIsMissed(): void
+    public function shouldFailIfPartOfPathSettingIsMissed($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
-        $check = new ElasticsearchIndexCheck($this->getConnectionParameters(), 'test-index', [
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
+        $check = new ElasticsearchIndexCheck($connectionParameters, 'test-index', [
             'some.foo.bar' => 1,
-        ]);
+        ], $clientBuilder);
 
         $result = $check->check();
 
@@ -153,12 +199,18 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
 
     /**
      * @test
+     * @dataProvider clientBuildersProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
      */
-    public function shouldFailIfSettingIsDifferent(): void
+    public function shouldFailIfSettingIsDifferent($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
-        $check = new ElasticsearchIndexCheck($this->getConnectionParameters(), 'test-index', [
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
+        $check = new ElasticsearchIndexCheck($connectionParameters, 'test-index', [
             'index.number_of_shards' => '5',
-        ]);
+        ], $clientBuilder);
 
         $result = $check->check();
 
@@ -167,17 +219,24 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
 
     /**
      * @test
+     * @dataProvider clientBuildersProvider
+     *
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                  $connectionParameters
      */
-    public function shouldSuccessGetParameters(): void
+    public function shouldSuccessGetParameters($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
+        $this->markTestSkippedIfNotConfigured($clientBuilder);
+
         $check = new ElasticsearchIndexCheck(
-            $this->getConnectionParameters(),
+            $connectionParameters,
             'test-index',
             [
                 'index.number_of_shards'   => '3',
                 'index.refresh_interval'   => '5s',
                 'index.number_of_replicas' => '1',
-            ]
+            ],
+            $clientBuilder
         );
 
         $check->check();
