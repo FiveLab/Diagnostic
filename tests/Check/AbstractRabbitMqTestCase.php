@@ -35,6 +35,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         $parameters = $this->getRabbitMqManagementConnectionParameters();
 
         $dsn = $parameters->getDsn(true, false);
+
         $url = \sprintf(
             '%s/api/exchanges/%s/%s',
             $dsn,
@@ -103,6 +104,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         $parameters = $this->getRabbitMqManagementConnectionParameters();
 
         $dsn = $parameters->getDsn(true, false);
+
         $url = \sprintf(
             '%s/api/queues/%s/%s',
             $dsn,

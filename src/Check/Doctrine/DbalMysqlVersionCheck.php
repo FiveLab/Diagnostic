@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 /*
  * This file is part of the FiveLab Diagnostic package.
  *
@@ -13,8 +15,6 @@ namespace FiveLab\Component\Diagnostic\Check\Doctrine;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Connection as DriverConnection;
-use Doctrine\DBAL\Result;
-use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
@@ -67,7 +67,7 @@ class DbalMysqlVersionCheck extends AbstractDbalCheck
     public function check(): ResultInterface
     {
         try {
-            $query = "SHOW VARIABLES WHERE Variable_name = 'version'";
+            $query = 'SHOW VARIABLES WHERE Variable_name = \'version\'';
             $statement = $this->connection->executeQuery($query);
 
             [, $mysqlVersionVariableContent] = $statement->fetchNumeric();
@@ -105,6 +105,8 @@ class DbalMysqlVersionCheck extends AbstractDbalCheck
     }
 
     /**
+     * Get MySQL server version.
+     *
      * @param string $buildVersion
      *
      * @return string

@@ -163,7 +163,6 @@ class RunDiagnosticCommandTest extends TestCase
             ->method('getGroups')
             ->willReturn(['foo', 'bar', 'some']);
 
-
         $this->runner->expects(self::never())
             ->method('run');
 

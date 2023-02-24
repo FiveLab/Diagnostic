@@ -13,19 +13,16 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Mongo;
 
-use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionCheck;
-use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionCheck;
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
-use FiveLab\Component\Diagnostic\Tests\Check\AbstractElasticsearchTestCase;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractMongoTestCase;
 
 class MongoConnectionCheckTest extends AbstractMongoTestCase
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {
@@ -37,7 +34,7 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
     /**
      * @test
      */
-    public function testSuccessfulCheck(): void
+    public function shouldSuccessfulCheck(): void
     {
         $check = new MongoConnectionCheck($this->getConnectionParameters());
 
@@ -49,7 +46,7 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
     /**
      * @test
      */
-    public function testFailedCheck(): void
+    public function shouldFailedCheck(): void
     {
         $invalidHost = $this->getHost().'_some';
 
@@ -74,7 +71,7 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
     /**
      * @test
      */
-    public function testGetExtraParameters(): void
+    public function shouldGetExtraParameters(): void
     {
         $check = new MongoConnectionCheck(
             new MongoConnectionParameters(
@@ -91,12 +88,12 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
 
         self::assertEquals([
             'protocol' => 'mongodb',
-            'host' => 'mongo',
-            'port' => 27017,
-            'user' => 'user',
-            'pass' => '***',
-            'db' => 'db',
-            'options' => [],
+            'host'     => 'mongo',
+            'port'     => 27017,
+            'user'     => 'user',
+            'pass'     => '***',
+            'db'       => 'db',
+            'options'  => [],
         ], $parameters);
     }
 }

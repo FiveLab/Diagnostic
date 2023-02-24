@@ -13,7 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Mongo;
 
-use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionCheck;
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionParameters;
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoCollectionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
@@ -81,7 +80,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     /**
      * @test
      */
-    public function testSuccessfulCheck(): void
+    public function shouldSuccessfulCheck(): void
     {
         $check = new MongoCollectionCheck(
             $this->getConnectionParameters(),
@@ -97,7 +96,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     /**
      * @test
      */
-    public function testFailedCheckConnectionFailed(): void
+    public function shouldFailedCheckConnectionFailed(): void
     {
         $invalidHost = $this->getHost().'_some';
 
@@ -126,7 +125,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     /**
      * @test
      */
-    public function testFailedCheckCollectionNotFound(): void
+    public function shouldFailedCheckCollectionNotFound(): void
     {
         $wrongCollection = 'wrong_collection';
 
@@ -150,9 +149,10 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     /**
      * @test
      */
-    public function testFailedCheckSettingsDoNotEqual(): void
+    public function shouldFailedCheckSettingsDoNotEqual(): void
     {
         $setting = 'options.validator.$jsonSchema';
+
         $expectedSettings = [
             $setting => [
                 'a',
@@ -175,7 +175,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     /**
      * @test
      */
-    public function testGetExtraParameters(): void
+    public function shouldGetExtraParameters(): void
     {
         $check = new MongoCollectionCheck(
             $this->getConnectionParameters(),

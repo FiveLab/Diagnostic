@@ -73,7 +73,6 @@ class PredisSetGetCheck implements CheckInterface
             $parameters['password'] = $this->password;
         }
 
-
         try {
             $client = new Client($parameters);
 

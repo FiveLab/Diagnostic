@@ -26,7 +26,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
     private const WRONG_MYSQL_VERSION = '~1.0.0';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {
@@ -190,7 +190,8 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
     public function mysqlVersionRegexShouldExtractValidVersions(string $buildVersion, string $expected)
     {
         $matches = [];
-        preg_match(DatabaseMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
+        \preg_match(DatabaseMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
+
         self::assertArrayHasKey(0, $matches);
         self::assertEquals($expected, $matches[0]);
     }
@@ -204,7 +205,8 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
     public function mysqlVersionRegexShouldNotExtractInvalidVersions(string $version)
     {
         $matches = [];
-        preg_match(DatabaseMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $version, $matches);
+        \preg_match(DatabaseMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $version, $matches);
+
         self::assertEmpty($matches);
     }
 
@@ -221,6 +223,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
             '5.0.91-community-nt-log' => '5.0.91',
             '10.1.29-MariaDB'         => '10.1.29',
         ];
+
         foreach ($versions as $buildVersion => $expected) {
             yield [$buildVersion, $expected];
         }
@@ -236,6 +239,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         $versions = [
             'abc.5.7.25-0ubuntu0.18.04.2',
         ];
+
         foreach ($versions as $version) {
             yield [$version];
         }
@@ -278,7 +282,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
      */
     private function getMysqlServerBuildVersion(ConnectionInterface $connection): string
     {
-        $query = "SHOW VARIABLES WHERE Variable_name = 'version'";
+        $query = 'SHOW VARIABLES WHERE Variable_name = \'version\'';
         $result = $connection->select($connection->raw($query));
 
         return $result[0]->Value;
@@ -292,7 +296,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
     private function extractMysqlServerDistribVersion(string $buildVersion): string
     {
         $matches = [];
-        preg_match(DatabaseMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
+        \preg_match(DatabaseMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
 
         return \rtrim($matches[0], '.');
     }

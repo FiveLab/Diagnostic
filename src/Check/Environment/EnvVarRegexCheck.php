@@ -54,7 +54,7 @@ class EnvVarRegexCheck implements CheckInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function check(): ResultInterface
     {
@@ -70,7 +70,7 @@ class EnvVarRegexCheck implements CheckInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getExtraParameters(): array
     {
@@ -89,6 +89,8 @@ class EnvVarRegexCheck implements CheckInterface
     }
 
     /**
+     * Check pattern is regular expression.
+     *
      * @param string $pattern
      *
      * @return bool
@@ -100,7 +102,7 @@ class EnvVarRegexCheck implements CheckInterface
 
         $isRegularExpression = \preg_match($pattern, '') !== false;
 
-        restore_error_handler();
+        \restore_error_handler();
 
         return $isRegularExpression;
     }

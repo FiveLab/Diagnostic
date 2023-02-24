@@ -46,7 +46,7 @@ class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function check(): ResultInterface
     {
@@ -72,7 +72,7 @@ class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getExtraParameters(): array
     {

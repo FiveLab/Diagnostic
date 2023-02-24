@@ -32,6 +32,8 @@ class MongoConnectionCheck implements CheckInterface
     private MongoConnectionParameters $connectionParameters;
 
     /**
+     * Constructor.
+     *
      * @param MongoConnectionParameters $connectionParameters
      */
     public function __construct(MongoConnectionParameters $connectionParameters)
