@@ -305,7 +305,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         self::assertEquals(LazyContainerCheck::class, $lazyDefinition->getClass());
         self::assertEquals([
             new Reference('service_container'),
-            'check'
+            'check',
         ], $lazyDefinition->getArguments());
     }
 
