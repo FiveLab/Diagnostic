@@ -24,6 +24,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ListGroupsCommand extends Command
 {
     /**
+     * @var string
+     */
+    protected static $defaultName = 'diagnostic:groups';
+
+    /**
+     * @var string
+     */
+    protected static $defaultDescription = 'List available groups.';
+
+    /**
      * @var DefinitionCollection
      */
     private DefinitionCollection $definitions;
@@ -46,8 +56,7 @@ class ListGroupsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('diagnostic:groups')
-            ->setDescription('List available groups.');
+            ->setDescription(self::$defaultDescription);
     }
 
     /**

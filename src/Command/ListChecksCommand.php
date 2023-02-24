@@ -27,6 +27,16 @@ class ListChecksCommand extends Command
     use FilterDefinitionsTrait;
 
     /**
+     * @var string
+     */
+    protected static $defaultName = 'diagnostic:checks';
+
+    /**
+     * @var string
+     */
+    protected static $defaultDescription = 'List available checks.';
+
+    /**
      * @var DefinitionCollection
      */
     private DefinitionCollection $definitions;
@@ -49,8 +59,7 @@ class ListChecksCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('diagnostic:checks')
-            ->setDescription('List available checks.')
+            ->setDescription(self::$defaultDescription)
             ->addOption('group', 'g', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The list of groups.', []);
     }
 

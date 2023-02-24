@@ -29,6 +29,16 @@ class RunDiagnosticCommand extends Command
     use FilterDefinitionsTrait;
 
     /**
+     * @var string
+     */
+    protected static $defaultName = 'diagnostic:run';
+
+    /**
+     * @var string
+     */
+    protected static $defaultDescription = 'Run diagnostics.';
+
+    /**
      * @var RunnerInterface
      */
     private RunnerInterface $runner;
@@ -58,8 +68,7 @@ class RunDiagnosticCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('diagnostic:run')
-            ->setDescription('Run diagnostics.')
+            ->setDescription(self::$defaultDescription)
             ->addOption('group', 'g', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The list of groups.', []);
     }
 

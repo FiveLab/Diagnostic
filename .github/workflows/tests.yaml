@@ -85,6 +85,14 @@ jobs:
                         symfony: '~6.0'
                         doctrine_dbal: '~3.0'
 
+                    -   php: 8.2
+                        symfony: '~6.0'
+                        doctrine_dbal: '~2.0'
+
+                    -   php: 8.2
+                        symfony: '~6.0'
+                        doctrine_dbal: '~3.0'
+
         services:
             rabbitmq:
                 image: rabbitmq:3-management
