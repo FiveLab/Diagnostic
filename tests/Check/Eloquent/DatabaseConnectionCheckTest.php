@@ -23,7 +23,7 @@ use FiveLab\Component\Diagnostic\Tests\Check\AbstractDatabaseTestCase;
 class DatabaseConnectionCheckTest extends AbstractDatabaseTestCase
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function setUp(): void
     {

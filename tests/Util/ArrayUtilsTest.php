@@ -25,8 +25,6 @@ class ArrayUtilsTest extends TestCase
      * @param array             $settings
      * @param \Throwable|string $expected
      *
-     * @return void
-     *
      * @dataProvider provideSettings
      */
     public function shouldSuccessTryGetSpecificSettingFromSettings(string $path, array $settings, $expected): void

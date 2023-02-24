@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<ruleset name="FiveLab code standard">
+    <rule ref="../vendor/escapestudios/symfony2-coding-standard/Symfony/"/>
+    <rule ref="../vendor/fivelab/ci-rules/src/PhpCs/FiveLab"/>
+</ruleset>

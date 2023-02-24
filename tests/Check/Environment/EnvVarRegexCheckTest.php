@@ -30,7 +30,7 @@ class EnvVarRegexCheckTest extends TestCase
     {
         parent::setUp();
 
-        if (getenv(self::ENV_VAR_NAME)) {
+        if (\getenv(self::ENV_VAR_NAME)) {
             self::fail('Environment variable which name is used for testing shouldn\'t exist before test');
         }
     }
@@ -42,7 +42,7 @@ class EnvVarRegexCheckTest extends TestCase
     {
         parent::tearDown();
 
-        putenv(self::ENV_VAR_NAME);
+        \putenv(self::ENV_VAR_NAME);
     }
 
     /**
@@ -56,7 +56,7 @@ class EnvVarRegexCheckTest extends TestCase
      */
     public function shouldSuccessCheck(string $variableValue, string $pattern, ResultInterface $expectedResult, array $expectedExtra): void
     {
-        putenv(sprintf('%s=%s', self::ENV_VAR_NAME, $variableValue));
+        \putenv(\sprintf('%s=%s', self::ENV_VAR_NAME, $variableValue));
         $check = new EnvVarRegexCheck(self::ENV_VAR_NAME, $pattern);
 
         $actualResult = $check->check();
@@ -121,6 +121,7 @@ class EnvVarRegexCheckTest extends TestCase
                     'variableValue' => 'BAR',
                 ],
             ],
+
             'envvar matches in_array pattern'     => [
                 'BAR',
                 '/^\b(BAR|BAZ)\b$/',
@@ -131,6 +132,7 @@ class EnvVarRegexCheckTest extends TestCase
                     'variableValue' => 'BAR',
                 ],
             ],
+
             'envvar not matches in_array pattern' => [
                 'BAR',
                 '/^\b(EVIL|GOOD)\b$/',

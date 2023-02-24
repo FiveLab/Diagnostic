@@ -235,7 +235,7 @@ class DbalMysqlVersionCheckTest extends AbstractDoctrineCheckTestCase
      */
     private function getMysqlServerBuildVersion(object $connection): string
     {
-        $query = "SHOW VARIABLES WHERE Variable_name = 'version'";
+        $query = 'SHOW VARIABLES WHERE Variable_name = \'version\'';
         $statement = $connection->executeQuery($query);
 
         [, $version] = $statement->fetchNumeric() ;

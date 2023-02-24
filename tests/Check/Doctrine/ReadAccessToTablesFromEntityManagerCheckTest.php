@@ -108,21 +108,21 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheck
     }
 
     /**
-     * @return void
+     * Setup database
      */
     private function setUpDatabase(): void
     {
         $connection = $this->makeDbalConnection();
         $isDevMode = true;  // Creates doctrine cache as a php array
 
-        $config = Setup::createAnnotationMetadataConfiguration([__DIR__."/Entity"], $isDevMode);
+        $config = Setup::createAnnotationMetadataConfiguration([__DIR__.'/Entity'], $isDevMode);
 
         $this->entityManager = EntityManager::create($connection, $config);
         $this->schemaTool = new SchemaTool($this->entityManager);
     }
 
     /**
-     * return @void
+     * Create schema
      */
     private function createSchema(): void
     {
@@ -130,7 +130,7 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheck
     }
 
     /**
-     * return @void
+     * Drop schema
      */
     private function dropSchema(): void
     {
@@ -138,9 +138,9 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheck
     }
 
     /**
-     * @param string $entityClass
+     * Drop table by entity class.
      *
-     * return @void
+     * @param string $entityClass
      */
     private function dropEntityClassTable(string $entityClass): void
     {
@@ -149,6 +149,8 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheck
     }
 
     /**
+     * Get doctrine metadata.
+     *
      * @return ClassMetadata[]|\Doctrine\Common\Persistence\Mapping\ClassMetadata[]
      */
     private function getEntityMetadata(): array

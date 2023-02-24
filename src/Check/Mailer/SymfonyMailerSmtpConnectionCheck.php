@@ -65,7 +65,8 @@ class SymfonyMailerSmtpConnectionCheck implements CheckInterface
             ));
         }
 
-        $command = sprintf("HELO %s\r\n", $transport->getLocalDomain());
+        // phpcs:ignore FiveLab.Strings.String.DoubleQuotes
+        $command = \sprintf("HELO %s\r\n", $transport->getLocalDomain());
 
         try {
             $transport->getStream()->initialize();
@@ -77,6 +78,7 @@ class SymfonyMailerSmtpConnectionCheck implements CheckInterface
             ));
         } finally {
             try {
+                // phpcs:ignore FiveLab.Strings.String.DoubleQuotes
                 $transport->executeCommand("QUIT\r\n", []);
             } catch (\Throwable $error) {
                 // Nothing action.

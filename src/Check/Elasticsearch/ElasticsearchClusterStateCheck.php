@@ -27,7 +27,7 @@ use OpenSearch\Client as OpenSearchClient;
 class ElasticsearchClusterStateCheck extends AbstractElasticsearchCheck implements CheckInterface
 {
     /**
-     * @return ResultInterface
+     * {@inheritdoc}
      */
     public function check(): ResultInterface
     {

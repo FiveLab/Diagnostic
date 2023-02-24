@@ -13,9 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Mongo;
 
-use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionParameters;
-use JetBrains\PhpStorm\ArrayShape;
 use PHPUnit\Framework\TestCase;
 
 class MongoConnectionParametersTest extends TestCase
@@ -31,11 +29,10 @@ class MongoConnectionParametersTest extends TestCase
      * @param string      $db
      * @param array       $options
      * @param string|null $expectedDsn
-     * @return void
      *
      * @dataProvider provideConnectionParameters
      */
-    public function testGetDsn(string $protocol, string $host, int $port, string $username, string $password, string $db, array $options, string $expectedDsn = null): void
+    public function shouldGetDsn(string $protocol, string $host, int $port, string $username, string $password, string $db, array $options, string $expectedDsn = null): void
     {
         $connectionParameters = new MongoConnectionParameters(
             $protocol,
@@ -50,7 +47,11 @@ class MongoConnectionParametersTest extends TestCase
         self::assertEquals($expectedDsn, $connectionParameters->getDsn());
     }
 
-    /** @return array<string,array>> */
+    /**
+     * Provide data for teest connection.
+     *
+     * @return array[]
+     */
     public function provideConnectionParameters(): array
     {
         return [

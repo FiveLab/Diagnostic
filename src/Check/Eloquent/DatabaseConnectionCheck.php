@@ -41,7 +41,7 @@ class DatabaseConnectionCheck implements CheckInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function check(): ResultInterface
     {
@@ -63,7 +63,7 @@ class DatabaseConnectionCheck implements CheckInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getExtraParameters(): array
     {

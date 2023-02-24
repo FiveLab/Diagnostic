@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
-<ruleset name="Resource Tests code standard">
-    <!-- Include Symfony2 Standard -->
-    <rule ref="../vendor/escapestudios/symfony2-coding-standard/Symfony/">
+<ruleset name="FiveLab Tests code standard">
+    <rule ref="../src/phpcs-ruleset.xml">
         <exclude name="Symfony.Commenting.ClassComment.Missing"/>
         <exclude name="Symfony.Commenting.Annotations"/>
         <exclude name="Symfony.Functions.ScopeOrder"/>
         <exclude name="Symfony.NamingConventions.ValidClassName"/>
+
+        <exclude name="FiveLab.Commenting.Comment.MissingFunctionComment"/>
     </rule>
 </ruleset>

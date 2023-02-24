@@ -14,6 +14,7 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\DependencyInjection;
 
 use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollectionBuilder;
+use FiveLab\Component\Diagnostic\Check\LazyContainerCheck;
 use FiveLab\Component\Diagnostic\DependencyInjection\AddDiagnosticToBuilderCheckPass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -266,6 +267,46 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
                 ],
             ],
         ], $definitionsBuilder->getMethodCalls());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSuccessProcessWithUseLazyDecorator(): void
+    {
+        $containerBuilder = $this->createContainerBuilderWithDefinitionsBuilder();
+
+        $checkContainerDefinition = new Definition(StubCheck::class);
+        $checkContainerDefinition->addTag('diagnostic.check');
+
+        $containerBuilder->setDefinition('check', $checkContainerDefinition);
+
+        $compiler = new AddDiagnosticToBuilderCheckPass('diagnostic.definitions.builder', 'diagnostic.check', true);
+
+        $compiler->process($containerBuilder);
+
+        // Check builder
+        $definitionsBuilder = $containerBuilder->getDefinition('diagnostic.definitions.builder');
+
+        self::assertEquals([
+            [
+                'addCheck',
+                [
+                    'check',
+                    new Reference('check.lazy'),
+                    '',
+                ],
+            ],
+        ], $definitionsBuilder->getMethodCalls());
+
+        // Check lazy
+        $lazyDefinition = $containerBuilder->getDefinition('check.lazy');
+
+        self::assertEquals(LazyContainerCheck::class, $lazyDefinition->getClass());
+        self::assertEquals([
+            new Reference('service_container'),
+            'check',
+        ], $lazyDefinition->getArguments());
     }
 
     /**

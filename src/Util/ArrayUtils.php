@@ -13,8 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Util;
 
-use FiveLab\Component\Diagnostic\Result\Failure;
-
 /**
  * Array utils helper.
  */

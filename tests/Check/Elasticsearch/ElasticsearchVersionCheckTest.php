@@ -25,6 +25,7 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
 {
     /**
      * @test
+     *
      * @dataProvider successCheckVersionsProvider
      *
      * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
@@ -45,6 +46,7 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
 
     /**
      * @test
+     *
      * @dataProvider failCheckElasticsearchVersionsProvider
      *
      * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
@@ -62,6 +64,7 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
 
     /**
      * @test
+     *
      * @dataProvider failCheckLuceneVersionsProvider
      *
      * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
@@ -79,11 +82,10 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
 
     /**
      * @test
+     *
      * @dataProvider clientBuildersProvider
      *
      * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     *
-     * @return void
      */
     public function shouldFailIfCannotConnect($clientBuilder): void
     {
@@ -96,14 +98,13 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
 
     /**
      * @test
+     *
      * @dataProvider successGetParametersProvider
      *
      * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
      * @param ElasticsearchConnectionParameters                  $connectionParameters
      * @param string                                             $version
      * @param string                                             $luceneVersion
-     *
-     * @return void
      */
     public function shouldSuccessGetParameters($clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string $version, string $luceneVersion): void
     {

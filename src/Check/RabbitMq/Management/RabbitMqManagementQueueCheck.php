@@ -148,6 +148,8 @@ class RabbitMqManagementQueueCheck implements CheckInterface
     }
 
     /**
+     * Check limits
+     *
      * @param ResponseInterface $response
      *
      * @return ResultInterface|null
@@ -178,6 +180,8 @@ class RabbitMqManagementQueueCheck implements CheckInterface
     }
 
     /**
+     * Check limits by max messages.
+     *
      * @param int $queuedMessages
      *
      * @return ResultInterface|null
@@ -210,6 +214,8 @@ class RabbitMqManagementQueueCheck implements CheckInterface
     }
 
     /**
+     * Check limits by min messages.
+     *
      * @param int $queuedMessages
      *
      * @return ResultInterface|null

@@ -48,6 +48,8 @@ class MongoCollectionCheck implements CheckInterface
     private array $actualSettings = [];
 
     /**
+     * Constructor.
+     *
      * @param MongoConnectionParameters $connectionParameters
      * @param string                    $collection
      * @param array<string, mixed>      $expectedSettings
