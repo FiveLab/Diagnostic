@@ -1,8 +1,8 @@
 CHANGELOG
 =========
 
-next release
-------------
+v1.3.8
+------
 
 * Add `useLazyDecorator` to compiler for make lazy loader for get original check from `Psr Container`.
 
