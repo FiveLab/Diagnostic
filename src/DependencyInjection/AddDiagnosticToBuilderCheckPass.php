@@ -14,8 +14,10 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\DependencyInjection;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
+use FiveLab\Component\Diagnostic\Check\LazyContainerCheck;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -35,15 +37,22 @@ class AddDiagnosticToBuilderCheckPass implements CompilerPassInterface
     private string $checkTagName;
 
     /**
+     * @var bool
+     */
+    private bool $useLazyDecorator;
+
+    /**
      * Constructor.
      *
      * @param string $builderServiceName
      * @param string $checkTagName
+     * @param bool   $useLazyDecorator
      */
-    public function __construct(string $builderServiceName = 'diagnostic.definitions.builder', string $checkTagName = 'diagnostic.check')
+    public function __construct(string $builderServiceName = 'diagnostic.definitions.builder', string $checkTagName = 'diagnostic.check', bool $useLazyDecorator = false)
     {
         $this->builderServiceName = $builderServiceName;
         $this->checkTagName = $checkTagName;
+        $this->useLazyDecorator = $useLazyDecorator;
     }
 
     /**
@@ -86,9 +95,28 @@ class AddDiagnosticToBuilderCheckPass implements CompilerPassInterface
             }
 
             foreach ($tags as $attributes) {
+                $checkServiceId = $serviceId;
+
+                if ($this->useLazyDecorator) {
+                    // Must use "lazy decorator" for check instances.
+                    // Set public flag for get check from container.
+                    $serviceDefinition->setPublic(true);
+
+                    $lazyServiceId = \sprintf('%s.lazy', $serviceId);
+                    $lazyServiceDef = (new Definition(LazyContainerCheck::class))
+                        ->setArguments([
+                            new Reference('service_container'),
+                            $serviceId,
+                        ]);
+
+                    $container->setDefinition($lazyServiceId, $lazyServiceDef);
+
+                    $checkServiceId = $lazyServiceId;
+                }
+
                 $builderDefinition->addMethodCall('addCheck', [
                     $attributes['key'] ?? $serviceId,
-                    new Reference($serviceId),
+                    new Reference($checkServiceId),
                     $attributes['group'] ?? '',
                 ]);
             }
