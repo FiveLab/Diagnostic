@@ -228,7 +228,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
     private function getMysqlServerBuildVersion(ConnectionInterface $connection): string
     {
         $query = 'SHOW VARIABLES WHERE Variable_name = \'version\'';
-        $result = $connection->select($connection->raw($query));
+        $result = $connection->select($query);
 
         return $result[0]->Value;
     }

@@ -56,8 +56,7 @@ class DatabaseMysqlVersionCheck implements CheckInterface
     public function check(): Result
     {
         try {
-            $query = 'SHOW VARIABLES WHERE Variable_name = \'version\'';
-            $result = $this->connection->select((string) $this->connection->raw($query));
+            $result = $this->connection->select('SHOW VARIABLES WHERE Variable_name = \'version\'');
             $mysqlVersionVariableContent = $result[0]->Value;
         } catch (\Throwable $e) {
             return new Failure(\sprintf(
