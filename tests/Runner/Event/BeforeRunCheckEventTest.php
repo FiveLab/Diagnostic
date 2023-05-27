@@ -16,13 +16,12 @@ namespace FiveLab\Component\Diagnostic\Tests\Runner\Event;
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Runner\Event\BeforeRunCheckEvent;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class BeforeRunCheckEventTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCreate(): void
     {
         $definition = $this->createMock(CheckDefinitionInterface::class);
@@ -33,9 +32,7 @@ class BeforeRunCheckEventTest extends TestCase
         self::assertNull($event->getResult());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldStopPropagationIfResultIsSet(): void
     {
         /** @var CheckDefinitionInterface $definition */

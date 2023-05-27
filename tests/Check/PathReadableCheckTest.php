@@ -17,13 +17,12 @@ use FiveLab\Component\Diagnostic\Check\PathReadableCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class PathReadableCheckTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParameters(): void
     {
         $check = new PathReadableCheck('/var/some.log');
@@ -33,9 +32,7 @@ class PathReadableCheckTest extends TestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessIfFileIsReadable(): void
     {
         $path = \sys_get_temp_dir().'/'.\md5(\uniqid());
@@ -51,9 +48,7 @@ class PathReadableCheckTest extends TestCase
         \unlink($path);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessIfDirectoryIsReadable(): void
     {
         $path = \sys_get_temp_dir().'/'.\md5(\uniqid());
@@ -69,9 +64,7 @@ class PathReadableCheckTest extends TestCase
         \rmdir($path);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfPathNotExist(): void
     {
         $path = \sys_get_temp_dir().'/'.\md5(\uniqid());
@@ -83,9 +76,7 @@ class PathReadableCheckTest extends TestCase
         self::assertEquals(new Failure('The path not exist.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldWarningIfPathNotExistAndDisableStrictMode(): void
     {
         $path = \sys_get_temp_dir().'/'.\md5(\uniqid());

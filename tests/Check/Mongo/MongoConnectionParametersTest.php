@@ -14,24 +14,14 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\Mongo;
 
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionParameters;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class MongoConnectionParametersTest extends TestCase
 {
-    /**
-     * @test
-     *
-     * @param string      $protocol
-     * @param string      $host
-     * @param int         $port
-     * @param string      $username
-     * @param string      $password
-     * @param string      $db
-     * @param array       $options
-     * @param string|null $expectedDsn
-     *
-     * @dataProvider provideConnectionParameters
-     */
+    #[Test]
+    #[DataProvider('provideConnectionParameters')]
     public function shouldGetDsn(string $protocol, string $host, int $port, string $username, string $password, string $db, array $options, string $expectedDsn = null): void
     {
         $connectionParameters = new MongoConnectionParameters(
@@ -52,7 +42,7 @@ class MongoConnectionParametersTest extends TestCase
      *
      * @return array[]
      */
-    public function provideConnectionParameters(): array
+    public static function provideConnectionParameters(): array
     {
         return [
             'with options' => [

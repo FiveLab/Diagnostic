@@ -16,13 +16,12 @@ namespace FiveLab\Component\Diagnostic\Tests\Runner\Event;
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Runner\Event\CompleteRunCheckEvent;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class CompleteRunCheckEventTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCreate(): void
     {
         /** @var CheckDefinitionInterface $definition */

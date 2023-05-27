@@ -14,19 +14,14 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check;
 
 use FiveLab\Component\Diagnostic\Check\DiskUsageCheck;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class DiskUsageCheckTest extends TestCase
 {
-    /**
-     * @param int    $criticalThreshold
-     * @param int    $warningThreshold
-     * @param string $message
-     *
-     * @test
-     *
-     * @dataProvider provideInvalidThresholds
-     */
+    #[Test]
+    #[DataProvider('provideInvalidThresholds')]
     public function shouldThrowExceptionForInvalidThreshold(int $criticalThreshold, int $warningThreshold, string $message): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -40,7 +35,7 @@ class DiskUsageCheckTest extends TestCase
      *
      * @return array
      */
-    public function provideInvalidThresholds(): array
+    public static function provideInvalidThresholds(): array
     {
         return [
             'warning less than 0'   => [0, -1, 'Invalid warning threshold "-1". Should be between 0 and 100.'],

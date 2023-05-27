@@ -16,13 +16,12 @@ namespace FiveLab\Component\Diagnostic\Tests\Check\Definition\Filter;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
 use FiveLab\Component\Diagnostic\Check\Definition\Filter\CheckDefinitionsInGroupFilter;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class CheckDefinitionsInGroupFilterTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFilter(): void
     {
         /** @var CheckInterface $check */
@@ -35,9 +34,7 @@ class CheckDefinitionsInGroupFilterTest extends TestCase
         self::assertTrue($filter->__invoke($definition));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldNoFilter(): void
     {
         /** @var CheckInterface $check */

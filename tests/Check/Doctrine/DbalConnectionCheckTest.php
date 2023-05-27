@@ -16,12 +16,11 @@ namespace FiveLab\Component\Diagnostic\Tests\Check\Doctrine;
 use FiveLab\Component\Diagnostic\Check\Doctrine\DbalConnectionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
+use PHPUnit\Framework\Attributes\Test;
 
 class DbalConnectionCheckTest extends AbstractDoctrineCheckTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $check = new DbalConnectionCheck($this->makeDbalConnection());
@@ -31,9 +30,7 @@ class DbalConnectionCheckTest extends AbstractDoctrineCheckTestCase
         self::assertEquals(new Success('Success connect to database.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParameters(): void
     {
         $check = new DbalConnectionCheck($this->makeDbalConnection());
@@ -47,9 +44,7 @@ class DbalConnectionCheckTest extends AbstractDoctrineCheckTestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfCredentialsIsWrong(): void
     {
         $connection = $this->makeDbalConnection([
@@ -67,9 +62,7 @@ class DbalConnectionCheckTest extends AbstractDoctrineCheckTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfHostIsInvalid(): void
     {
         $connection = $this->makeDbalConnection([

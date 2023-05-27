@@ -13,12 +13,14 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Eloquent;
 
-use Illuminate\Database\Capsule\Manager as Capsule;
-use Illuminate\Database\ConnectionInterface;
 use FiveLab\Component\Diagnostic\Check\Eloquent\DatabaseMysqlVersionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractDatabaseTestCase;
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Database\ConnectionInterface;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 
 class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
 {
@@ -35,9 +37,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldPassCheckForProperVersion(): void
     {
         $connection = $this->getConnection($this->getConnectionOptions());
@@ -48,9 +48,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         self::assertEquals(new Success('MySQL version matches an expected one.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckForImproperVersion(): void
     {
         $connection = $this->getConnection($this->getConnectionOptions());
@@ -65,9 +63,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldUnveilAllProperExtraParametersAfterCheck(): void
     {
         $connection = $this->getConnection($this->getConnectionOptions());
@@ -92,9 +88,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldUnveilUnknownActualVersionBeforeSuccessfulCheck(): void
     {
         $connection = $this->getConnection($this->getConnectionOptions());
@@ -106,9 +100,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         self::assertEquals('unknown', $parameters['actualVersion']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldUnveilUnknownActualVersionOnConnectionError(): void
     {
         $options = $this->getConnectionOptions();
@@ -122,9 +114,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         self::assertEquals('unknown', $parameters['actualVersion']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldUnveilActualVersionOnVersionMismatch(): void
     {
         $connection = $this->getConnection($this->getConnectionOptions());
@@ -140,9 +130,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         self::assertEquals($actualDistribVersion, $parameters['actualVersion']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckForWrongCredentials(): void
     {
         $options = $this->getConnectionOptions();
@@ -160,9 +148,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfHostIsInvalid(): void
     {
         $options = $this->getConnectionOptions();
@@ -180,13 +166,11 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         );
     }
 
-    /**
-     * @test
-     * @dataProvider validBuildVersionProvider
-     *
-     * @param string $buildVersion
-     * @param string $expected
-     */
+    #[Test]
+    #[TestWith(['5.7.25-0ubuntu0.18.04.2', '5.7.25'])]
+    #[TestWith(['5.0.27-standard', '5.0.27'])]
+    #[TestWith(['5.0.91-community-nt-log', '5.0.91'])]
+    #[TestWith(['10.1.29-MariaDB', '10.1.29'])]
     public function mysqlVersionRegexShouldExtractValidVersions(string $buildVersion, string $expected)
     {
         $matches = [];
@@ -196,53 +180,14 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         self::assertEquals($expected, $matches[0]);
     }
 
-    /**
-     * @test
-     * @dataProvider invalidBuildVersionProvider
-     *
-     * @param string $version
-     */
+    #[Test]
+    #[TestWith(['abc.5.7.25-0ubuntu0.18.04.2'])]
     public function mysqlVersionRegexShouldNotExtractInvalidVersions(string $version)
     {
         $matches = [];
         \preg_match(DatabaseMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $version, $matches);
 
         self::assertEmpty($matches);
-    }
-
-    /**
-     * Data provider. Provides MySQL "build => distrib" versions.
-     *
-     * @return \Generator
-     */
-    public function validBuildVersionProvider(): \Generator
-    {
-        $versions = [
-            '5.7.25-0ubuntu0.18.04.2' => '5.7.25',
-            '5.0.27-standard'         => '5.0.27',
-            '5.0.91-community-nt-log' => '5.0.91',
-            '10.1.29-MariaDB'         => '10.1.29',
-        ];
-
-        foreach ($versions as $buildVersion => $expected) {
-            yield [$buildVersion, $expected];
-        }
-    }
-
-    /**
-     * Data provider. Provides invalid MySQL build versions.
-     *
-     * @return \Generator
-     */
-    public function invalidBuildVersionProvider(): \Generator
-    {
-        $versions = [
-            'abc.5.7.25-0ubuntu0.18.04.2',
-        ];
-
-        foreach ($versions as $version) {
-            yield [$version];
-        }
     }
 
     /**

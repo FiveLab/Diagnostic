@@ -17,6 +17,8 @@ use FiveLab\Component\Diagnostic\Check\Environment\EnvVarRegexCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\ResultInterface;
 use FiveLab\Component\Diagnostic\Result\Success;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class EnvVarRegexCheckTest extends TestCase
@@ -45,15 +47,8 @@ class EnvVarRegexCheckTest extends TestCase
         \putenv(self::ENV_VAR_NAME);
     }
 
-    /**
-     * @test
-     * @dataProvider provideParameters
-     *
-     * @param string          $variableValue
-     * @param string          $pattern
-     * @param ResultInterface $expectedResult
-     * @param array           $expectedExtra
-     */
+    #[Test]
+    #[DataProvider('provideParameters')]
     public function shouldSuccessCheck(string $variableValue, string $pattern, ResultInterface $expectedResult, array $expectedExtra): void
     {
         \putenv(\sprintf('%s=%s', self::ENV_VAR_NAME, $variableValue));
@@ -65,9 +60,7 @@ class EnvVarRegexCheckTest extends TestCase
         self::assertEquals($expectedExtra, $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionForEmpyVariableName(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -76,9 +69,7 @@ class EnvVarRegexCheckTest extends TestCase
         new EnvVarRegexCheck('', '/^BAR$/');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionForInvalidRegexPattern(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -87,9 +78,7 @@ class EnvVarRegexCheckTest extends TestCase
         new EnvVarRegexCheck(self::ENV_VAR_NAME, 'NOT_A_REGEX_PATTERN');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailForUnsetVariable(): void
     {
         $pattern = '/^BAR$/';
@@ -108,7 +97,7 @@ class EnvVarRegexCheckTest extends TestCase
      *
      * @return array
      */
-    public function provideParameters(): array
+    public static function provideParameters(): array
     {
         return [
             'envvar matches full pattern'         => [

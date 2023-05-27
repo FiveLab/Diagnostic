@@ -21,7 +21,7 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 class DefinitionCollectionBuilder
 {
     /**
-     * @var array<string, array>
+     * @var array<string, array{"key": string, "check": CheckInterface, "groups": array<string>}>
      */
     private array $definitions = [];
 

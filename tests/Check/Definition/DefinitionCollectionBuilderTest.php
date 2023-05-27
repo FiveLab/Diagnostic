@@ -17,10 +17,14 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
 use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
 use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollectionBuilder;
+use FiveLab\Component\Diagnostic\Tests\TestHelperTrait;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class DefinitionCollectionBuilderTest extends TestCase
 {
+    use TestHelperTrait;
+
     /**
      * @var DefinitionCollectionBuilder
      */
@@ -34,9 +38,7 @@ class DefinitionCollectionBuilderTest extends TestCase
         $this->builder = new DefinitionCollectionBuilder();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessBuildWithoutAnyChecks(): void
     {
         $builder = new DefinitionCollectionBuilder();
@@ -46,14 +48,12 @@ class DefinitionCollectionBuilderTest extends TestCase
         self::assertCount(0, $definitions);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessBuild(): void
     {
-        $check1 = $this->createUniqueCheck();
-        $check2 = $this->createUniqueCheck();
-        $check3 = $this->createUniqueCheck();
+        $check1 = $this->createUniqueMock(CheckInterface::class);
+        $check2 = $this->createUniqueMock(CheckInterface::class);
+        $check3 = $this->createUniqueMock(CheckInterface::class);
 
         $builder = new DefinitionCollectionBuilder();
 
@@ -68,13 +68,11 @@ class DefinitionCollectionBuilderTest extends TestCase
         ), $builder->build());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessMergeGroups(): void
     {
-        $check1 = $this->createUniqueCheck();
-        $check2 = $this->createUniqueCheck();
+        $check1 = $this->createUniqueMock(CheckInterface::class);
+        $check2 = $this->createUniqueMock(CheckInterface::class);
 
         $builder = new DefinitionCollectionBuilder();
 
@@ -88,12 +86,10 @@ class DefinitionCollectionBuilderTest extends TestCase
         ), $builder->build());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessWithGroupAsString(): void
     {
-        $check = $this->createUniqueCheck();
+        $check = $this->createUniqueMock(CheckInterface::class);
 
         $builder = new DefinitionCollectionBuilder();
 
@@ -104,13 +100,11 @@ class DefinitionCollectionBuilderTest extends TestCase
         ), $builder->build());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldRemoveEmptyGroups(): void
     {
-        $check1 = $this->createUniqueCheck();
-        $check2 = $this->createUniqueCheck();
+        $check1 = $this->createUniqueMock(CheckInterface::class);
+        $check2 = $this->createUniqueMock(CheckInterface::class);
 
         $builder = new DefinitionCollectionBuilder();
 
@@ -121,19 +115,5 @@ class DefinitionCollectionBuilderTest extends TestCase
             new CheckDefinition('check1', $check1, []),
             new CheckDefinition('check2', $check2, ['bar'])
         ), $builder->build());
-    }
-
-    /**
-     * Create unique check
-     *
-     * @return CheckInterface
-     */
-    private function createUniqueCheck(): CheckInterface
-    {
-        $check = $this->createMock(CheckInterface::class);
-
-        $check->uniqueIdentifier = \uniqid((string) \random_int(0, PHP_INT_MAX), true);
-
-        return $check;
     }
 }

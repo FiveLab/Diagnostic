@@ -14,19 +14,14 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Util;
 
 use FiveLab\Component\Diagnostic\Util\ArrayUtils;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class ArrayUtilsTest extends TestCase
 {
-    /**
-     * @test
-     *
-     * @param string            $path
-     * @param array             $settings
-     * @param \Throwable|string $expected
-     *
-     * @dataProvider provideSettings
-     */
+    #[Test]
+    #[DataProvider('provideSettings')]
     public function shouldSuccessTryGetSpecificSettingFromSettings(string $path, array $settings, $expected): void
     {
         if ($expected instanceof \Throwable) {
@@ -44,7 +39,7 @@ class ArrayUtilsTest extends TestCase
      *
      * @return array
      */
-    public function provideSettings(): array
+    public static function provideSettings(): array
     {
         return [
             [

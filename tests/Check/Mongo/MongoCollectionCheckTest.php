@@ -13,13 +13,14 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Mongo;
 
-use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionParameters;
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoCollectionCheck;
+use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractMongoTestCase;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\Manager;
+use PHPUnit\Framework\Attributes\Test;
 
 class MongoCollectionCheckTest extends AbstractMongoTestCase
 {
@@ -77,9 +78,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessfulCheck(): void
     {
         $check = new MongoCollectionCheck(
@@ -93,9 +92,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         self::assertEquals(new Success('Successful MongoDB collection check.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailedCheckConnectionFailed(): void
     {
         $invalidHost = $this->getHost().'_some';
@@ -122,9 +119,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         self::assertEquals(new Failure($msg), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailedCheckCollectionNotFound(): void
     {
         $wrongCollection = 'wrong_collection';
@@ -146,9 +141,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         self::assertEquals(new Failure(\sprintf('MongoDB collection check failed: %s', $msg)), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailedCheckSettingsDoNotEqual(): void
     {
         $setting = 'options.validator.$jsonSchema';
@@ -172,9 +165,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         self::assertEquals(new Failure(\sprintf('MongoDB collection check failed: the actual setting \'%s\' is different than expected.', $setting)), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldGetExtraParameters(): void
     {
         $check = new MongoCollectionCheck(

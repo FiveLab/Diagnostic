@@ -16,13 +16,12 @@ namespace FiveLab\Component\Diagnostic\Tests\Check;
 use FiveLab\Component\Diagnostic\Check\IsJsonCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class IsJsonCheckTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParams(): void
     {
         $check = new IsJsonCheck('{"foo": "bar"}');
@@ -34,9 +33,7 @@ class IsJsonCheckTest extends TestCase
         ], $params);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParamsWithType(): void
     {
         $check = new IsJsonCheck('{"foo": "bar"}', 'array');
@@ -48,9 +45,7 @@ class IsJsonCheckTest extends TestCase
         ], $params);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfTypeIsInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -59,9 +54,7 @@ class IsJsonCheckTest extends TestCase
         new IsJsonCheck('[]', 'foo-bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheckForCorrectJson(): void
     {
         $check = new IsJsonCheck('{"foo": "bar"}');
@@ -70,9 +63,7 @@ class IsJsonCheckTest extends TestCase
         self::assertEquals(new Success('The input data is correct json.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheckWithCorrectJsonAndType(): void
     {
         $check = new IsJsonCheck('{"foo": "bar"}', 'array');
@@ -81,9 +72,7 @@ class IsJsonCheckTest extends TestCase
         self::assertEquals(new Success('The input data is correct json and "array".'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailForIncorrectJson(): void
     {
         $check = new IsJsonCheck('{"foo": "bar}');
@@ -92,9 +81,7 @@ class IsJsonCheckTest extends TestCase
         self::assertEquals(new Failure('The input data is\'t json. Error: Control character error, possibly incorrectly encoded.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailForIncorrectType(): void
     {
         $check = new IsJsonCheck('"foo bar"', 'numeric');

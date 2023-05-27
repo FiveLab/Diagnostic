@@ -18,6 +18,7 @@ use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqConnectionCheckTest extends AbstractRabbitMqTestCase
 {
@@ -35,9 +36,7 @@ class RabbitMqConnectionCheckTest extends AbstractRabbitMqTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParams(): void
     {
         $check = new RabbitMqConnectionCheck($this->getRabbitMqConnectionParameters());
@@ -48,9 +47,7 @@ class RabbitMqConnectionCheckTest extends AbstractRabbitMqTestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnOkIfSuccessConnect(): void
     {
         $check = new RabbitMqConnectionCheck($this->getRabbitMqConnectionParameters());
@@ -60,9 +57,7 @@ class RabbitMqConnectionCheckTest extends AbstractRabbitMqTestCase
         self::assertEquals(new Success('Success connect to RabbitMQ'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnFailIfPasswordIsWrong(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(
@@ -83,9 +78,7 @@ class RabbitMqConnectionCheckTest extends AbstractRabbitMqTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfHostIsDown(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(

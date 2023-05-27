@@ -21,40 +21,29 @@ use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Http\Client\Exception\TransferException;
-use Http\Client\HttpClient;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class HttpCheckTest extends TestCase
 {
     /**
-     * @var HttpClient|MockObject
+     * @var ClientInterface
      */
-    private $client;
+    private ClientInterface $client;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp(): void
     {
-        $this->client = $this->createMock(HttpClient::class);
+        $this->client = $this->createMock(ClientInterface::class);
     }
 
-    /**
-     * @test
-     *
-     * @param ResponseInterface $response
-     * @param ResultInterface   $expectedResult
-     * @param string            $method
-     * @param string            $url
-     * @param array             $headers
-     * @param string            $body
-     * @param int               $expectedStatusCode
-     * @param string|null       $expectedBody
-     *
-     * @dataProvider provideDataForCheck
-     */
+    #[Test]
+    #[DataProvider('provideDataForCheck')]
     public function shouldSuccessCheck(ResponseInterface $response, ResultInterface $expectedResult, string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedBody = null): void
     {
         $expectedRequest = new Request($method, $url, $headers, $body);
@@ -71,9 +60,7 @@ class HttpCheckTest extends TestCase
         self::assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfClientThrowException(): void
     {
         $expectedRequest = new Request('GET', '/some');
@@ -90,9 +77,7 @@ class HttpCheckTest extends TestCase
         self::assertEquals(new Failure('Fail send HTTP request. Error: some.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetParameters(): void
     {
         $expectedRequest = new Request('GET', '/some');
@@ -115,9 +100,7 @@ class HttpCheckTest extends TestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetParametersWithBody(): void
     {
         $expectedRequest = new Request('GET', '/some');
@@ -147,7 +130,7 @@ class HttpCheckTest extends TestCase
      *
      * @return array
      */
-    public function provideDataForCheck(): array
+    public static function provideDataForCheck(): array
     {
         return [
             'success with check only status code' => [

@@ -17,6 +17,7 @@ use FiveLab\Component\Diagnostic\Check\Mailer\SymfonyMailerSmtpConnectionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractMailerTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SymfonyMailerSmtpConnectionCheckTest extends AbstractMailerTestCase
 {
@@ -30,9 +31,7 @@ class SymfonyMailerSmtpConnectionCheckTest extends AbstractMailerTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $check = new SymfonyMailerSmtpConnectionCheck($this->getDsn());
@@ -42,9 +41,7 @@ class SymfonyMailerSmtpConnectionCheckTest extends AbstractMailerTestCase
         self::assertEquals(new Success('Success connect and send HELO command to mailer.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
         $check = new SymfonyMailerSmtpConnectionCheck('smtp://'.$this->getMailerHost().'-some:'.$this->getMailerPort());
@@ -55,9 +52,7 @@ class SymfonyMailerSmtpConnectionCheckTest extends AbstractMailerTestCase
         self::assertStringStartsWith('Fail connect or send HELO command to mailer. Error:', $result->getMessage());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtra(): void
     {
         $check = new SymfonyMailerSmtpConnectionCheck('smtp://foo-bar:1025?username=some');

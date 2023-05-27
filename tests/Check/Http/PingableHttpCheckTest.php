@@ -22,43 +22,30 @@ use GuzzleHttp\Psr7\BufferStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Http\Client\Exception\TransferException;
-use Http\Client\HttpClient;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 class PingableHttpCheckTest extends TestCase
 {
     /**
-     * @var HttpClient|MockObject
+     * @var ClientInterface
      */
-    private $client;
+    private ClientInterface $client;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp(): void
     {
-        $this->client = $this->createMock(HttpClient::class);
+        $this->client = $this->createMock(ClientInterface::class);
     }
 
-    /**
-     * @test
-     *
-     * @param ResponseInterface $response
-     * @param ResultInterface   $expectedResult
-     * @param string            $method
-     * @param string            $url
-     * @param array             $headers
-     * @param string            $body
-     * @param int               $expectedStatusCode
-     * @param string            $expectedApplicationName
-     * @param array             $expectedApplicationRoles
-     * @param string|null       $expectedVersion
-     *
-     * @dataProvider provideData
-     */
+    #[Test]
+    #[DataProvider('provideData')]
     public function shouldSuccessCheck(ResponseInterface $response, ResultInterface $expectedResult, string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedApplicationName, array $expectedApplicationRoles, string $expectedVersion = null): void
     {
         $expectedRequest = new Request($method, $url, $headers, $body);
@@ -75,9 +62,7 @@ class PingableHttpCheckTest extends TestCase
         self::assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckIfGuzzleThrowException(): void
     {
         $expectedRequest = new Request('GET', '/some', [], '');
@@ -94,9 +79,7 @@ class PingableHttpCheckTest extends TestCase
         self::assertEquals(new Failure('Fail send HTTP request. Error: some.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParameters(): void
     {
         $check = new PingableHttpCheck('GET', '/some', ['Content-Type' => 'text/plain'], 'Foo Bar', 200, 'some', ['foo', 'bar'], '1.1', new HttpAdapter($this->client));
@@ -113,9 +96,7 @@ class PingableHttpCheckTest extends TestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldEncodeUriIfUriContainPassword(): void
     {
         $check = new PingableHttpCheck('GET', 'https://user:pass@domain.com/some?key=foo#frag', ['Content-Type' => 'text/plain'], '', 200, '', [], '', new HttpAdapter($this->client));
@@ -132,9 +113,7 @@ class PingableHttpCheckTest extends TestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessEncodeAuthorizationHeader(): void
     {
         $check = new PingableHttpCheck('GET', 'https://domain.com/some', ['Authorization' => 'basic some-foo'], '', 200, '', [], '', new HttpAdapter($this->client));
@@ -156,11 +135,11 @@ class PingableHttpCheckTest extends TestCase
      *
      * @return array
      */
-    public function provideData(): array
+    public static function provideData(): array
     {
         return [
             'success with only application name' => [
-                new Response(200, [], $this->makeBufferWithJson('some', ['role1'])),
+                new Response(200, [], self::makeBufferWithJson('some', ['role1'])),
                 new Success('Success get response and check all options.'),
                 'GET',
                 '/ping',
@@ -172,7 +151,7 @@ class PingableHttpCheckTest extends TestCase
             ],
 
             'success with roles' => [
-                new Response(200, [], $this->makeBufferWithJson('some', ['role1', 'role2'])),
+                new Response(200, [], self::makeBufferWithJson('some', ['role1', 'role2'])),
                 new Success('Success get response and check all options.'),
                 'GET',
                 '/ping',
@@ -184,7 +163,7 @@ class PingableHttpCheckTest extends TestCase
             ],
 
             'success with version' => [
-                new Response(200, [], $this->makeBufferWithJson('some', ['role1'], '2.1.1')),
+                new Response(200, [], self::makeBufferWithJson('some', ['role1'], '2.1.1')),
                 new Success('Success get response and check all options.'),
                 'GET',
                 '/ping',
@@ -233,7 +212,7 @@ class PingableHttpCheckTest extends TestCase
             ],
 
             'fail with application name' => [
-                new Response(200, [], $this->makeBufferWithJson('some', ['role1'])),
+                new Response(200, [], self::makeBufferWithJson('some', ['role1'])),
                 new Failure('The server return "some" application name, but we expect "foo-bar" application name.'),
                 'GET',
                 '/ping',
@@ -245,7 +224,7 @@ class PingableHttpCheckTest extends TestCase
             ],
 
             'fail with application roles' => [
-                new Response(200, [], $this->makeBufferWithJson('some', ['role1'])),
+                new Response(200, [], self::makeBufferWithJson('some', ['role1'])),
                 new Failure('Missed "role2" application roles.'),
                 'GET',
                 '/ping',
@@ -257,7 +236,7 @@ class PingableHttpCheckTest extends TestCase
             ],
 
             'fail with version' => [
-                new Response(200, [], $this->makeBufferWithJson('some', ['role1'], '1.0.15')),
+                new Response(200, [], self::makeBufferWithJson('some', ['role1'], '1.0.15')),
                 new Failure('The server return "1.0.15" version, but we expect "~1.1.0".'),
                 'GET',
                 '/ping',
@@ -280,7 +259,7 @@ class PingableHttpCheckTest extends TestCase
      *
      * @return StreamInterface
      */
-    private function makeBufferWithJson(string $applicationName, array $roles, string $version = '1.0'): StreamInterface
+    private static function makeBufferWithJson(string $applicationName, array $roles, string $version = '1.0'): StreamInterface
     {
         $buffer = new BufferStream();
 

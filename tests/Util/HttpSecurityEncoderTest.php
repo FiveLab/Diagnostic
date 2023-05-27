@@ -14,6 +14,8 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Util;
 
 use FiveLab\Component\Diagnostic\Util\HttpSecurityEncoder;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class HttpSecurityEncoderTest extends TestCase
@@ -31,14 +33,8 @@ class HttpSecurityEncoderTest extends TestCase
         $this->encoder = new HttpSecurityEncoder();
     }
 
-    /**
-     * @test
-     *
-     * @param string $uri
-     * @param string $expected
-     *
-     * @dataProvider provideUris
-     */
+    #[Test]
+    #[DataProvider('provideUris')]
     public function shouldSuccessEncodeUri(string $uri, string $expected): void
     {
         $result = $this->encoder->encodeUri($uri);
@@ -46,14 +42,8 @@ class HttpSecurityEncoderTest extends TestCase
         self::assertEquals($expected, $result);
     }
 
-    /**
-     * @test
-     *
-     * @param array $headers
-     * @param array $expected
-     *
-     * @dataProvider provideHeaders
-     */
+    #[Test]
+    #[DataProvider('provideHeaders')]
     public function shouldSuccessEncodeHeaders(array $headers, array $expected): void
     {
         $result = $this->encoder->encodeHeaders($headers);
@@ -66,7 +56,7 @@ class HttpSecurityEncoderTest extends TestCase
      *
      * @return array
      */
-    public function provideUris(): array
+    public static function provideUris(): array
     {
         return [
             'default' => [
@@ -111,7 +101,7 @@ class HttpSecurityEncoderTest extends TestCase
      *
      * @return array
      */
-    public function provideHeaders(): array
+    public static function provideHeaders(): array
     {
         return [
             'simple' => [

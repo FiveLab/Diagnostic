@@ -17,6 +17,7 @@ use FiveLab\Component\Diagnostic\Check\Redis\RedisExt\RedisSetGetCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRedisTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class RedisSetGetCheckTest extends AbstractRedisTestCase
 {
@@ -34,9 +35,7 @@ class RedisSetGetCheckTest extends AbstractRedisTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $check = new RedisSetGetCheck(
@@ -50,9 +49,7 @@ class RedisSetGetCheckTest extends AbstractRedisTestCase
         self::assertEquals(new Success('Success connect to Redis and SET/GET from Redis.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParameters(): void
     {
         $check = new RedisSetGetCheck(
@@ -67,9 +64,7 @@ class RedisSetGetCheckTest extends AbstractRedisTestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
         $check = new RedisSetGetCheck(

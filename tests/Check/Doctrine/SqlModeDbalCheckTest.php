@@ -17,6 +17,7 @@ use Doctrine\DBAL\Connection;
 use FiveLab\Component\Diagnostic\Check\Doctrine\SqlModeDbalCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
+use PHPUnit\Framework\Attributes\Test;
 
 class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
 {
@@ -56,9 +57,7 @@ class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
         $stmt->executeStatement();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParams(): void
     {
         $connection = $this->makeDbalConnection();
@@ -80,9 +79,7 @@ class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
         ], $extraParams);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParamsWithoutCheck(): void
     {
         $connection = $this->makeDbalConnection();
@@ -102,9 +99,7 @@ class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
         ], $extraParams);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheckWithExpected(): void
     {
         $this->connection->executeStatement('SET @@GLOBAL.sql_mode = \'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION\'');
@@ -117,9 +112,7 @@ class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
         self::assertEquals(new Success('All required SQL modes exist.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheckWithExpectedAndExcluded(): void
     {
         $this->connection->executeStatement('SET @@GLOBAL.sql_mode = \'NO_ENGINE_SUBSTITUTION\'');
@@ -132,9 +125,7 @@ class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
         self::assertEquals(new Success('All required SQL modes exist.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckWithMissedRequiredSqlModes(): void
     {
         $this->connection->executeStatement('SET @@GLOBAL.sql_mode = \'NO_ENGINE_SUBSTITUTION\'');
@@ -147,9 +138,7 @@ class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
         self::assertEquals(new Failure('Missed required SQL modes (ONLY_FULL_GROUP_BY, STRICT_TRANS_TABLES).'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckWithExistExcludedSqlModes(): void
     {
         $this->connection->executeStatement('SET @@GLOBAL.sql_mode = \'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION\'');
@@ -162,9 +151,7 @@ class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
         self::assertEquals(new Failure('Exist STRICT_TRANS_TABLES, ONLY_FULL_GROUP_BY sql modes, but those modes must be excluded.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfConnectionFail(): void
     {
         $connection = $this->makeDbalConnection([

@@ -13,12 +13,13 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Eloquent;
 
-use Illuminate\Database\Capsule\Manager as Capsule;
-use Illuminate\Database\ConnectionInterface;
 use FiveLab\Component\Diagnostic\Check\Eloquent\DatabaseConnectionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractDatabaseTestCase;
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Database\ConnectionInterface;
+use PHPUnit\Framework\Attributes\Test;
 
 class DatabaseConnectionCheckTest extends AbstractDatabaseTestCase
 {
@@ -32,9 +33,7 @@ class DatabaseConnectionCheckTest extends AbstractDatabaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $connection = $this->getConnection($this->getConnectionOptions());
@@ -46,9 +45,7 @@ class DatabaseConnectionCheckTest extends AbstractDatabaseTestCase
         self::assertEquals(new Success('Successfully connected to database.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParameters(): void
     {
         $connection = $this->getConnection($this->getConnectionOptions());
@@ -67,9 +64,7 @@ class DatabaseConnectionCheckTest extends AbstractDatabaseTestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfCredentialsIsWrong(): void
     {
         $options = $this->getConnectionOptions();
@@ -88,9 +83,7 @@ class DatabaseConnectionCheckTest extends AbstractDatabaseTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfHostIsInvalid(): void
     {
         $options = $this->getConnectionOptions();

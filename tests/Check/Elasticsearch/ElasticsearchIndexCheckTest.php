@@ -20,6 +20,8 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractElasticsearchTestCase;
 use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
 {
@@ -78,14 +80,9 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
         }
     }
 
-    /**
-     * @test
-     * @dataProvider clientBuildersProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     */
-    public function shouldSuccessCheckWithoutParameters($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
+    #[Test]
+    #[DataProvider('clientBuildersProvider')]
+    public function shouldSuccessCheckWithoutParameters(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -96,14 +93,9 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Success(\sprintf('Success check %s index.', $check->getEngineName())), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clientBuildersProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     */
-    public function shouldSuccessCheckWithSettings($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
+    #[Test]
+    #[DataProvider('clientBuildersProvider')]
+    public function shouldSuccessCheckWithSettings(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -122,13 +114,9 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Success(\sprintf('Success check %s index.', $check->getEngineName())), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clientBuildersProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     */
-    public function shouldFailIfCannotConnect($clientBuilder): void
+    #[Test]
+    #[DataProvider('clientBuildersProvider')]
+    public function shouldFailIfCannotConnect(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -139,14 +127,9 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Failure(\sprintf('Fail connect to %s: No alive nodes found in your cluster.', $check->getEngineName())), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clientBuildersProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     */
-    public function shouldFailIfIndexNotFound($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
+    #[Test]
+    #[DataProvider('clientBuildersProvider')]
+    public function shouldFailIfIndexNotFound(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -157,14 +140,9 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Failure(\sprintf('The index was not found in %s.', $check->getEngineName())), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clientBuildersProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     */
-    public function shouldFailIfSettingIsMissed($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
+    #[Test]
+    #[DataProvider('clientBuildersProvider')]
+    public function shouldFailIfSettingIsMissed(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -177,14 +155,9 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Failure('The setting "index.number_of_replica" is missed.'), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clientBuildersProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     */
-    public function shouldFailIfPartOfPathSettingIsMissed($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
+    #[Test]
+    #[DataProvider('clientBuildersProvider')]
+    public function shouldFailIfPartOfPathSettingIsMissed(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -197,14 +170,9 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Failure('The setting "some" is missed.'), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clientBuildersProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     */
-    public function shouldFailIfSettingIsDifferent($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
+    #[Test]
+    #[DataProvider('clientBuildersProvider')]
+    public function shouldFailIfSettingIsDifferent(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -217,14 +185,9 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Failure('The setting "index.number_of_shards" is different to expected.'), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clientBuildersProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     */
-    public function shouldSuccessGetParameters($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
+    #[Test]
+    #[DataProvider('clientBuildersProvider')]
+    public function shouldSuccessGetParameters(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 

@@ -17,14 +17,13 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\Symfony\SymfonyContainerParameterEqualCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class SymfonyContainerParameterEqualCheckTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailureIfParameterNotFound(): void
     {
         $container = new ContainerBuilder();
@@ -39,9 +38,7 @@ class SymfonyContainerParameterEqualCheckTest extends TestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $parameterCheck = $this->createMock(CheckInterface::class);
@@ -75,9 +72,7 @@ class SymfonyContainerParameterEqualCheckTest extends TestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheck(): void
     {
         $parameterCheck = $this->createMock(CheckInterface::class);

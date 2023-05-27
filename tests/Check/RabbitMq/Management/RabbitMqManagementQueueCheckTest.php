@@ -19,6 +19,8 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
 {
@@ -52,9 +54,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
@@ -65,9 +65,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
         self::assertEquals(new Success('Success check queue via RabbitMQ Management API.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtra(): void
     {
         $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
@@ -84,9 +82,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfPasswordIsWrong(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(
@@ -103,9 +99,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
         self::assertEquals(new Failure('Fail connect to RabbitMQ Management API. Return wrong status code - 401.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(
@@ -123,9 +117,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
         self::assertStringStartsWith('Fail connect to RabbitMQ Management API. Error: cURL error 6: Could not resolve host: some-foo-bar', $result->getMessage());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfQueueNotFound(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(
@@ -142,18 +134,8 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
         self::assertEquals(new Failure('Queue was not found.'), $result);
     }
 
-    /**
-     * @test
-     *
-     * @param string   $resultClass
-     * @param string   $resultText
-     * @param int      $actualLength
-     * @param int|null $max
-     * @param int|null $percentage
-     * @param int|null $min
-     *
-     * @dataProvider lengthCheckProvider
-     */
+    #[Test]
+    #[DataProvider('lengthCheckProvider')]
     public function shouldCheckQueueLength(string $resultClass, string $resultText, int $actualLength, int $max = null, int $percentage = null, int $min = null): void
     {
         $this->publishDummyMessagesToQueue($this->queueName, $actualLength);
@@ -178,7 +160,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
     /**
      * @return array[]
      */
-    public function lengthCheckProvider(): array
+    public static function lengthCheckProvider(): array
     {
         return [
             'below maximum'  => [
@@ -201,7 +183,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
 
             'above maximum'  => [
                 Failure::class,
-                '6 messages found! Max allowed 5 for queue '.$this->queueName,
+                '6 messages found! Max allowed 5 for queue ',
                 6,
                 5,
                 null,
@@ -210,7 +192,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
 
             'warning amount' => [
                 Warning::class,
-                'Warning! 6 messages found. Max 10 for queue '.$this->queueName,
+                'Warning! 6 messages found. Max 10 for queue ',
                 6,
                 10,
                 50,
@@ -219,7 +201,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
 
             'below minimum'  => [
                 Failure::class,
-                '2 messages found! Minimum required 5 for queue '.$this->queueName,
+                '2 messages found! Minimum required 5 for queue ',
                 2,
                 10,
                 null,

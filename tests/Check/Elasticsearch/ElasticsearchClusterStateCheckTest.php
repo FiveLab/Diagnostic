@@ -25,19 +25,14 @@ use FiveLab\Component\Diagnostic\Tests\Check\AbstractElasticsearchTestCase;
 use OpenSearch\Client as OpenSearchClient;
 use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 use OpenSearch\Namespaces\ClusterNamespace as OpenSearchClusterNamespace;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class ElasticsearchClusterStateCheckTest extends AbstractElasticsearchTestCase
 {
-    /**
-     * @test
-     * @dataProvider clusterStateCheckProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     * @param string                                             $clientClass
-     * @param string                                             $clusterNamespaceClass
-     */
-    public function shouldSuccessCheckGreen($clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string $clientClass, string $clusterNamespaceClass): void
+    #[Test]
+    #[DataProvider('clusterStateCheckProvider')]
+    public function shouldSuccessCheckGreen(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string $clientClass, string $clusterNamespaceClass): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -70,16 +65,9 @@ class ElasticsearchClusterStateCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Success('Cluster status is GREEN.'), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clusterStateCheckProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     * @param string                                             $clientClass
-     * @param string                                             $clusterNamespaceClass
-     */
-    public function shouldSuccessCheckRed($clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string$clientClass, string $clusterNamespaceClass): void
+    #[Test]
+    #[DataProvider('clusterStateCheckProvider')]
+    public function shouldSuccessCheckRed(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string$clientClass, string $clusterNamespaceClass): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -112,16 +100,9 @@ class ElasticsearchClusterStateCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Failure('Cluster status is RED. Please check the logs.'), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clusterStateCheckProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     * @param string                                             $clientClass
-     * @param string                                             $clusterNamespaceClass
-     */
-    public function shouldSuccessCheckYellow($clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string$clientClass, string $clusterNamespaceClass): void
+    #[Test]
+    #[DataProvider('clusterStateCheckProvider')]
+    public function shouldSuccessCheckYellow(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string$clientClass, string $clusterNamespaceClass): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -154,16 +135,9 @@ class ElasticsearchClusterStateCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Warning('Cluster status is YELLOW. Please check the logs.'), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clusterStateCheckProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     * @param string                                             $clientClass
-     * @param string                                             $clusterNamespaceClass
-     */
-    public function shouldFailCheckIfStatusIsUnknown($clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string$clientClass, string $clusterNamespaceClass): void
+    #[Test]
+    #[DataProvider('clusterStateCheckProvider')]
+    public function shouldFailCheckIfStatusIsUnknown(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string$clientClass, string $clusterNamespaceClass): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -196,16 +170,9 @@ class ElasticsearchClusterStateCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Failure('Cluster status is undefined. Please check the logs.'), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clusterStateCheckProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     * @param string                                             $clientClass
-     * @param string                                             $clusterNamespaceClass
-     */
-    public function shouldFailCheckIfStatusIsMissed($clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string$clientClass, string $clusterNamespaceClass): void
+    #[Test]
+    #[DataProvider('clusterStateCheckProvider')]
+    public function shouldFailCheckIfStatusIsMissed(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string$clientClass, string $clusterNamespaceClass): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -243,11 +210,11 @@ class ElasticsearchClusterStateCheckTest extends AbstractElasticsearchTestCase
      *
      * @return array
      */
-    public function clusterStateCheckProvider(): array
+    public static function clusterStateCheckProvider(): array
     {
         return [
-            [ElasticsearchClientBuilder::create(), $this->getElasticsearchConnectionParameters(), ElasticsearchClient::class, ElasticsearchClusterNamespace::class],
-            [OpenSearchClientBuilder::create(), $this->getOpenSearchConnectionParameters(), OpenSearchClient::class, OpenSearchClusterNamespace::class],
+            [ElasticsearchClientBuilder::create(), self::getElasticsearchConnectionParameters(), ElasticsearchClient::class, ElasticsearchClusterNamespace::class],
+            [OpenSearchClientBuilder::create(), self::getOpenSearchConnectionParameters(), OpenSearchClient::class, OpenSearchClusterNamespace::class],
         ];
     }
 

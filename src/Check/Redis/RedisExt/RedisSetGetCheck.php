@@ -65,6 +65,10 @@ class RedisSetGetCheck implements CheckInterface
 
         $redis = new \Redis();
 
+        \set_error_handler(static function (int $errno, string $errstr) {
+            throw new \Exception($errstr);
+        });
+
         try {
             $this->connect($redis);
         } catch (\Throwable $e) {
@@ -72,6 +76,8 @@ class RedisSetGetCheck implements CheckInterface
                 'Cannot connect to Redis: %s.',
                 \rtrim($e->getMessage(), '.')
             ));
+        } finally {
+            \restore_error_handler();
         }
 
         $key = \sprintf('%s:%s', self::PREFIX, \md5(\uniqid((string) \random_int(0, PHP_INT_MAX), true)));

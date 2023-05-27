@@ -27,7 +27,7 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return string|null
      */
-    protected function getElasticsearchHost(): ?string
+    protected static function getElasticsearchHost(): ?string
     {
         return \getenv('ELASTICSEARCH_HOST') ?: null;
     }
@@ -37,7 +37,7 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return int|null
      */
-    protected function getElasticsearchPort(): int
+    protected static function getElasticsearchPort(): int
     {
         return \getenv('ELASTICSEARCH_PORT') ? (int) \getenv('ELASTICSEARCH_PORT') : 9200;
     }
@@ -47,7 +47,7 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return string
      */
-    protected function getElasticsearchUser(): ?string
+    protected static function getElasticsearchUser(): ?string
     {
         return \getenv('ELASTICSEARCH_USER') ? \getenv('ELASTICSEARCH_USER') : null;
     }
@@ -57,7 +57,7 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return string
      */
-    protected function getElasticsearchPassword(): ?string
+    protected static function getElasticsearchPassword(): ?string
     {
         return \getenv('ELASTICSEARCH_PASSWORD') ? \getenv('ELASTICSEARCH_PASSWORD') : null;
     }
@@ -67,7 +67,7 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return bool
      */
-    protected function isElasticsearchSsl(): bool
+    protected static function isElasticsearchSsl(): bool
     {
         return \getenv('ELASTICSEARCH_SSL') ? true : false;
     }
@@ -77,9 +77,9 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return bool
      */
-    protected function canTestingWithElasticsearch(): bool
+    protected static function canTestingWithElasticsearch(): bool
     {
-        return $this->getElasticsearchHost() && $this->getElasticsearchPort();
+        return self::getElasticsearchHost() && self::getElasticsearchPort();
     }
 
     /**
@@ -87,14 +87,30 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return ElasticsearchConnectionParameters
      */
-    protected function getElasticsearchConnectionParameters(): ElasticsearchConnectionParameters
+    protected static function getElasticsearchConnectionParameters(): ElasticsearchConnectionParameters
     {
         return new ElasticsearchConnectionParameters(
-            $this->getElasticsearchHost(),
-            $this->getElasticsearchPort(),
-            $this->getElasticsearchUser(),
-            $this->getElasticsearchPassword(),
-            $this->isElasticsearchSsl()
+            self::getElasticsearchHost(),
+            self::getElasticsearchPort(),
+            self::getElasticsearchUser(),
+            self::getElasticsearchPassword(),
+            self::isElasticsearchSsl()
+        );
+    }
+
+    /**
+     * Get connection parameters to opensearch
+     *
+     * @return ElasticsearchConnectionParameters
+     */
+    protected static function getOpenSearchConnectionParameters(): ElasticsearchConnectionParameters
+    {
+        return new ElasticsearchConnectionParameters(
+            self::getOpenSearchHost(),
+            self::getOpenSearchPort(),
+            self::getOpenSearchUser(),
+            self::getOpenSearchPassword(),
+            self::isOpenSearchSsl()
         );
     }
 
@@ -117,7 +133,7 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return string|null
      */
-    protected function getOpenSearchHost(): ?string
+    protected static function getOpenSearchHost(): ?string
     {
         return \getenv('OPENSEARCH_HOST') ?: null;
     }
@@ -127,7 +143,7 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return int|null
      */
-    protected function getOpenSearchPort(): int
+    protected static function getOpenSearchPort(): int
     {
         return \getenv('OPENSEARCH_PORT') ? (int) \getenv('OPENSEARCH_PORT') : 9200;
     }
@@ -137,7 +153,7 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return string
      */
-    protected function getOpenSearchUser(): ?string
+    protected static function getOpenSearchUser(): ?string
     {
         return \getenv('OPENSEARCH_USER') ? \getenv('OPENSEARCH_USER') : null;
     }
@@ -145,9 +161,9 @@ abstract class AbstractElasticsearchTestCase extends TestCase
     /**
      * Get the password for connect to openSearch
      *
-     * @return string
+     * @return string|null
      */
-    protected function getOpenSearchPassword(): ?string
+    protected static function getOpenSearchPassword(): ?string
     {
         return \getenv('OPENSEARCH_PASSWORD') ? \getenv('OPENSEARCH_PASSWORD') : null;
     }
@@ -157,7 +173,7 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return bool
      */
-    protected function isOpenSearchSsl(): bool
+    protected static function isOpenSearchSsl(): bool
     {
         return \getenv('OPENSEARCH_SSL') ? true : false;
     }
@@ -167,25 +183,9 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return bool
      */
-    protected function canTestingWithOpenSearch(): bool
+    protected static function canTestingWithOpenSearch(): bool
     {
-        return $this->getOpenSearchHost() && $this->getOpenSearchPort();
-    }
-
-    /**
-     * Get connection parameters to opensearch
-     *
-     * @return ElasticsearchConnectionParameters
-     */
-    protected function getOpenSearchConnectionParameters(): ElasticsearchConnectionParameters
-    {
-        return new ElasticsearchConnectionParameters(
-            $this->getOpenSearchHost(),
-            $this->getOpenSearchPort(),
-            $this->getOpenSearchUser(),
-            $this->getOpenSearchPassword(),
-            $this->isOpenSearchSsl()
-        );
+        return self::getOpenSearchHost() && self::getOpenSearchPort();
     }
 
     /**
@@ -223,11 +223,11 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @return array
      */
-    public function clientBuildersProvider(): array
+    public static function clientBuildersProvider(): array
     {
         return [
-            [ElasticsearchClientBuilder::create(), $this->getElasticsearchConnectionParameters()],
-            [OpenSearchClientBuilder::create(), $this->getElasticsearchConnectionParameters()],
+            [ElasticsearchClientBuilder::create(), self::getElasticsearchConnectionParameters()],
+            [OpenSearchClientBuilder::create(), self::getElasticsearchConnectionParameters()],
         ];
     }
 }

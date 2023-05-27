@@ -69,7 +69,7 @@ class SqlModeDbalCheck extends AbstractDbalCheck
             ));
         }
 
-        [$sqlMode] = $stmt->fetchNumeric();
+        [$sqlMode] = $stmt->fetchNumeric(); // @phpstan-ignore-line
 
         $sqlModes = \explode(',', $sqlMode);
         $sqlModes = \array_map('\trim', $sqlModes);

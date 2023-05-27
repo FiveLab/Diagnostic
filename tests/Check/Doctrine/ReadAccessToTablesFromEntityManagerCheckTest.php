@@ -21,6 +21,7 @@ use FiveLab\Component\Diagnostic\Check\Doctrine\ReadAccessToTablesFromEntityMana
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\Doctrine\Entity\User;
+use PHPUnit\Framework\Attributes\Test;
 
 class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheckTestCase
 {
@@ -47,9 +48,7 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheck
         $this->dropSchema();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldPassCheckForExistingTables(): void
     {
         $this->createSchema();
@@ -60,9 +59,7 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheck
         self::assertEquals(new Success('Success check rights for read from all tables in entity manager.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckWithEmptySchema(): void
     {
         $check = new ReadAccessToTablesFromEntityManagerCheck($this->entityManager);
@@ -71,9 +68,7 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheck
         self::assertEquals(new Failure('Fail check read access from tables: "products", "users".'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnCorrectExtraParameters(): void
     {
         $this->createSchema();
@@ -90,9 +85,7 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheck
         self::assertSame($expected, $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSkipSuccessfully(): void
     {
         $check = new ReadAccessToTablesFromEntityManagerCheck($this->entityManager);

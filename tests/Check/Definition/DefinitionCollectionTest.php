@@ -17,13 +17,12 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
 use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class DefinitionCollectionTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCreate(): void
     {
         $definitions = [
@@ -37,9 +36,7 @@ class DefinitionCollectionTest extends TestCase
         self::assertCount(2, $definitions);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetGroups(): void
     {
         /** @var CheckInterface $check */
@@ -60,9 +57,7 @@ class DefinitionCollectionTest extends TestCase
         ], $definitions->getGroups());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessFilter(): void
     {
         $definitions = [
@@ -72,13 +67,12 @@ class DefinitionCollectionTest extends TestCase
             $this->createMock(CheckDefinitionInterface::class),
         ];
 
-        $definitions[1]->__forTesting = true;
-        $definitions[2]->__forTesting = true;
+        $forTestings = [$definitions[1], $definitions[2]];
 
         $collection = new DefinitionCollection(...$definitions);
 
-        $filtered = $collection->filter(function (CheckDefinitionInterface $definition) {
-            return \property_exists($definition, '__forTesting');
+        $filtered = $collection->filter(function (CheckDefinitionInterface $definition) use ($forTestings) {
+            return \in_array($definition, $forTestings, true);
         });
 
         self::assertEquals(
@@ -90,9 +84,7 @@ class DefinitionCollectionTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowRuntimeException(): void
     {
         $this->expectException(\RuntimeException::class);

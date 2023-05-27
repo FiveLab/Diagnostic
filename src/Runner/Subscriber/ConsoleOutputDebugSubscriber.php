@@ -108,8 +108,8 @@ class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
     /**
      * Write additional parameters
      *
-     * @param array<string, array|string|int|float|bool|null> $params
-     * @param int                                             $leftPad
+     * @param array<string, mixed> $params
+     * @param int                  $leftPad
      */
     private function writeAdditionalParameters(array $params, int $leftPad = 1): void
     {

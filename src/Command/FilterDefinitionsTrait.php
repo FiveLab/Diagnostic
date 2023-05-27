@@ -26,7 +26,7 @@ trait FilterDefinitionsTrait
      * Filter definitions by group
      *
      * @param DefinitionCollection $definitions
-     * @param array<string|bool>   $groups
+     * @param array<string>        $groups
      *
      * @return DefinitionCollection
      */

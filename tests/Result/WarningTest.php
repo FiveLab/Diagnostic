@@ -14,13 +14,12 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Result;
 
 use FiveLab\Component\Diagnostic\Result\Warning;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class WarningTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCreate(): void
     {
         $result = new Warning('some foo');

@@ -18,6 +18,7 @@ use FiveLab\Component\Diagnostic\Result\Skip;
 use FiveLab\Component\Diagnostic\Runner\Event\BeforeRunCheckEvent;
 use FiveLab\Component\Diagnostic\Runner\Skip\SkipRegistryInterface;
 use FiveLab\Component\Diagnostic\Runner\Subscriber\SkipCheckSubscriber;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -42,9 +43,7 @@ class SkipCheckSubscriberTest extends TestCase
         $this->subscriber = new SkipCheckSubscriber($this->skipRegistry);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnCorrectListenEvents(): void
     {
         $listenEvents = $this->subscriber::getSubscribedEvents();
@@ -54,9 +53,7 @@ class SkipCheckSubscriberTest extends TestCase
         ], $listenEvents);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSetSkipResultIfShouldBeSkipped(): void
     {
         $definition = $this->createMock(CheckDefinitionInterface::class);
@@ -72,9 +69,7 @@ class SkipCheckSubscriberTest extends TestCase
         self::assertEquals(new Skip('Must be skipped.'), $event->getResult());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldNotSetResultIfShouldNotBeSkipped(): void
     {
         $definition = $this->createMock(CheckDefinitionInterface::class);

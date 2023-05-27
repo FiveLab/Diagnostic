@@ -18,6 +18,7 @@ use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqManagementVhostCheckTest extends AbstractRabbitMqTestCase
 {
@@ -33,9 +34,7 @@ class RabbitMqManagementVhostCheckTest extends AbstractRabbitMqTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
@@ -46,9 +45,7 @@ class RabbitMqManagementVhostCheckTest extends AbstractRabbitMqTestCase
         self::assertEquals(new Success('Success check virtual host via RabbitMQ Management API.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtra(): void
     {
         $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
@@ -61,9 +58,7 @@ class RabbitMqManagementVhostCheckTest extends AbstractRabbitMqTestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfPasswordIsWrong(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(
@@ -80,9 +75,7 @@ class RabbitMqManagementVhostCheckTest extends AbstractRabbitMqTestCase
         self::assertEquals(new Failure('Fail connect to RabbitMQ Management API. Return wrong status code - 401.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(
@@ -100,9 +93,7 @@ class RabbitMqManagementVhostCheckTest extends AbstractRabbitMqTestCase
         self::assertStringStartsWith('Fail connect to RabbitMQ Management API. Error: cURL error 6: Could not resolve host: some-foo-bar', $result->getMessage());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfVhostNotFound(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(

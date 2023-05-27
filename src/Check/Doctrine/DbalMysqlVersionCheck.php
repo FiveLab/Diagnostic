@@ -70,7 +70,7 @@ class DbalMysqlVersionCheck extends AbstractDbalCheck
             $query = 'SHOW VARIABLES WHERE Variable_name = \'version\'';
             $statement = $this->connection->executeQuery($query);
 
-            [, $mysqlVersionVariableContent] = $statement->fetchNumeric();
+            [, $mysqlVersionVariableContent] = $statement->fetchNumeric(); // @phpstan-ignore-line
         } catch (\Throwable $e) {
             return new Failure(\sprintf(
                 'Failed checking MySQL version: %s.',

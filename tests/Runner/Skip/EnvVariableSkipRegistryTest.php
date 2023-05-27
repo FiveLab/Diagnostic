@@ -15,6 +15,7 @@ namespace FiveLab\Component\Diagnostic\Tests\Runner\Skip;
 
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
 use FiveLab\Component\Diagnostic\Runner\Skip\EnvVariableSkipRegistry;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class EnvVariableSkipRegistryTest extends TestCase
@@ -27,9 +28,7 @@ class EnvVariableSkipRegistryTest extends TestCase
         \putenv('PHPUNIT_SKIP_HEALTH_CHECKS=');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnTrueIfCheckShouldBeSkipped(): void
     {
         \putenv('PHPUNIT_SKIP_HEALTH_CHECKS=foo,bar,,qwerty');
@@ -41,9 +40,7 @@ class EnvVariableSkipRegistryTest extends TestCase
         self::assertTrue($registry->isShouldBeSkipped($definition));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnFalseIfCheckShouldNotBeSkipped(): void
     {
         \putenv('PHPUNIT_SKIP_HEALTH_CHECKS=foo,bar,,qwerty');
