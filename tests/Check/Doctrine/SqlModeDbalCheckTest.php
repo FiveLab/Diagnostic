@@ -107,7 +107,7 @@ class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
      */
     public function shouldSuccessCheckWithExpected(): void
     {
-        $this->connection->executeStatement('SET @@GLOBAL.sql_mode = \'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\'');
+        $this->connection->executeStatement('SET @@GLOBAL.sql_mode = \'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION\'');
 
         $connection = $this->makeDbalConnection();
 
@@ -152,7 +152,7 @@ class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
      */
     public function shouldFailCheckWithExistExcludedSqlModes(): void
     {
-        $this->connection->executeStatement('SET @@GLOBAL.sql_mode = \'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\'');
+        $this->connection->executeStatement('SET @@GLOBAL.sql_mode = \'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION\'');
 
         $connection = $this->makeDbalConnection();
 

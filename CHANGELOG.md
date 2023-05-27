@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+Next release
+------------
+
+* Require PHP 8.2 and higher.
+
 v1.3.9
 ------
 

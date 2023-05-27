@@ -22,7 +22,7 @@ use FiveLab\Component\Diagnostic\Tests\Check\AbstractDatabaseTestCase;
 
 class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
 {
-    private const RIGHT_MYSQL_VERSION = '~5.7.0';
+    private const RIGHT_MYSQL_VERSION = '~8.0.0';
     private const WRONG_MYSQL_VERSION = '~1.0.0';
 
     /**

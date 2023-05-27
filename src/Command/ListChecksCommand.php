@@ -14,6 +14,7 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Command;
 
 use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -22,6 +23,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * The command for get list of available checks.
  */
+#[AsCommand(name: 'diagnostic:checks', description: 'List available checks.')]
 class ListChecksCommand extends Command
 {
     use FilterDefinitionsTrait;
@@ -37,20 +39,13 @@ class ListChecksCommand extends Command
     protected static $defaultDescription = 'List available checks.';
 
     /**
-     * @var DefinitionCollection
-     */
-    private DefinitionCollection $definitions;
-
-    /**
      * Constructor.
      *
      * @param DefinitionCollection $definitions
      */
-    public function __construct(DefinitionCollection $definitions)
+    public function __construct(private readonly DefinitionCollection $definitions)
     {
         parent::__construct();
-
-        $this->definitions = $definitions;
     }
 
     /**

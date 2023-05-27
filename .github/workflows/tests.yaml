@@ -19,7 +19,7 @@ jobs:
                     coverage: "none"
                     extensions: "json,amqp,redis"
                     ini-values: "memory_limit=-1"
-                    php-version: "8.0"
+                    php-version: "8.2"
                     tools: "composer"
 
             -   name: Install vendors
@@ -45,7 +45,7 @@ jobs:
                     coverage: "none"
                     extensions: "json,amqp"
                     ini-values: "memory_limit=-1"
-                    php-version: "7.4"
+                    php-version: "8.2"
                     tools: "composer"
 
             -   name: Install vendors
@@ -61,28 +61,12 @@ jobs:
         strategy:
             matrix:
                 include:
-                    -   php: 7.4
-                        symfony: '~4.4'
-                        doctrine_dbal: '~2.0 | ~3.0'
-
-                    -   php: 7.4
+                    -   php: 8.2
                         symfony: '~5.4'
                         doctrine_dbal: '~2.0'
 
-                    -   php: 7.4
+                    -   php: 8.2
                         symfony: '~5.4'
-                        doctrine_dbal: '~3.0'
-
-                    -   php: 8.0
-                        symfony: '~6.0'
-                        doctrine_dbal: '~2.0 | ~3.0'
-
-                    -   php: 8.1
-                        symfony: '~6.0'
-                        doctrine_dbal: '~2.0'
-
-                    -   php: 8.1
-                        symfony: '~6.0'
                         doctrine_dbal: '~3.0'
 
                     -   php: 8.2

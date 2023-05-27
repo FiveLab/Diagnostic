@@ -14,14 +14,13 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\Doctrine;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
 use FiveLab\Component\Diagnostic\Check\Doctrine\DbalMysqlVersionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 
 class DbalMysqlVersionCheckTest extends AbstractDoctrineCheckTestCase
 {
-    private const RIGHT_MYSQL_VERSION = '~5.7.0';
+    private const RIGHT_MYSQL_VERSION = '~8.0.0';
     private const WRONG_MYSQL_VERSION = '~1.0.0';
 
     /**
@@ -230,15 +229,13 @@ class DbalMysqlVersionCheckTest extends AbstractDoctrineCheckTestCase
      * @param Connection $connection
      *
      * @return string
-     *
-     * @throws DBALException
      */
     private function getMysqlServerBuildVersion(object $connection): string
     {
         $query = 'SHOW VARIABLES WHERE Variable_name = \'version\'';
         $statement = $connection->executeQuery($query);
 
-        [, $version] = $statement->fetchNumeric() ;
+        [, $version] = $statement->fetchNumeric();
 
         return $version;
     }
