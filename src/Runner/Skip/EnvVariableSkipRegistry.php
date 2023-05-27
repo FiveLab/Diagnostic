@@ -32,15 +32,15 @@ readonly class EnvVariableSkipRegistry implements SkipRegistryInterface
      */
     public function __construct(string $envName = 'SKIP_CHECKS')
     {
-        if ($envValue = \getenv($envName)) {
-            $skipKeys = \explode(',', $envValue);
+        $envValue = (string) \getenv($envName);
 
-            $skipKeys = \array_map('\trim', $skipKeys);
-            $skipKeys = \array_filter($skipKeys);
-            $skipKeys = \array_map('\strtolower', $skipKeys);
+        $skipKeys = \explode(',', $envValue);
 
-            $this->skipKeys = $skipKeys;
-        }
+        $skipKeys = \array_map('\trim', $skipKeys);
+        $skipKeys = \array_filter($skipKeys);
+        $skipKeys = \array_map('\strtolower', $skipKeys);
+
+        $this->skipKeys = $skipKeys;
     }
 
     /**

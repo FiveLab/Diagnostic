@@ -30,6 +30,16 @@ class EnvVariableSkipRegistryTest extends TestCase
     }
 
     #[Test]
+    public function shouldSuccessWorkWithoutVariable(): void
+    {
+        $registry = new EnvVariableSkipRegistry();
+
+        $definition = $this->createDefinitionWithKey('foo');
+
+        self::assertFalse($registry->isShouldBeSkipped($definition));
+    }
+
+    #[Test]
     public function shouldReturnTrueIfCheckShouldBeSkipped(): void
     {
         \putenv('PHPUNIT_SKIP_HEALTH_CHECKS=foo,bar,,qwerty');
