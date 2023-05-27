@@ -32,6 +32,33 @@ readonly class ElasticsearchConnectionParameters
     }
 
     /**
+     * Make connection params from DSN.
+     *
+     * @param string $dsn
+     *
+     * @return self
+     */
+    public static function fromDsn(string $dsn): self
+    {
+        $parts = \parse_url($dsn);
+
+        if (!$host = $parts['host'] ?? null) {
+            throw new \InvalidArgumentException(\sprintf(
+                'Missed "host" in DSN "%s".',
+                $dsn
+            ));
+        }
+
+        return new self(
+            $host,
+            (int) ($parts['port'] ?? 9200),
+            $parts['user'] ?? null,
+            $parts['pass'] ?? null,
+            ($parts['scheme'] ?? 'http') === 'https'
+        );
+    }
+
+    /**
      * Get DSN
      *
      * @return string

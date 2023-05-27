@@ -39,6 +39,43 @@ class RabbitMqConnectionParameters
     }
 
     /**
+     * Make connection parameters from DSN.
+     *
+     * @param string $dsn
+     *
+     * @return self
+     */
+    public static function fromDsn(string $dsn): self
+    {
+        $parts = \parse_url($dsn);
+
+        if (!$host = $parts['host'] ?? null) {
+            throw new \InvalidArgumentException(\sprintf(
+                'Missed "host" in DSN "%s".',
+                $dsn
+            ));
+        }
+
+        if (!$port = $parts['port'] ?? null) {
+            throw new \InvalidArgumentException(\sprintf(
+                'Missed "port" in DSN "%s".',
+                $dsn
+            ));
+        }
+
+        $vhost = $parts['path'] ?? '/%2f';
+
+        return new self(
+            $host,
+            (int) $port,
+            $parts['user'] ?? 'guest',
+            $parts['pass'] ?? 'guest',
+            \urldecode(\ltrim($vhost, '/')),
+            ($parts['scheme'] ?? 'http') === 'https'
+        );
+    }
+
+    /**
      * Get DSN
      *
      * @param bool $httpTransport

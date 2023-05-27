@@ -16,6 +16,7 @@ namespace FiveLab\Component\Diagnostic\Tests\Check\Elasticsearch;
 use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 class ElasticsearchConnectionParametersTest extends TestCase
@@ -33,6 +34,16 @@ class ElasticsearchConnectionParametersTest extends TestCase
         );
 
         self::assertEquals($expectedDsn, $connectionParameters->getDsn());
+    }
+
+    #[Test]
+    #[TestWith(['http://localhost', new ElasticsearchConnectionParameters('localhost', 9200, null, null, false)])]
+    #[TestWith(['https://foo:bar@domain.com:9201/bar', new ElasticsearchConnectionParameters('domain.com', 9201, 'foo', 'bar', true)])]
+    public function shouldSuccessCreateFromDsn(string $dsn, ElasticsearchConnectionParameters $expected): void
+    {
+        $parameters = ElasticsearchConnectionParameters::fromDsn($dsn);
+
+        self::assertEquals($expected, $parameters);
     }
 
     /**
