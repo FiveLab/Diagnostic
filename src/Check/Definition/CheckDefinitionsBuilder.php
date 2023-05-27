@@ -18,7 +18,7 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 /**
  * The builder for build the definition collection without created definition instances.
  */
-class DefinitionCollectionBuilder
+class CheckDefinitionsBuilder
 {
     /**
      * @var array<string, array{"key": string, "check": CheckInterface, "groups": array<string>}>
@@ -32,7 +32,7 @@ class DefinitionCollectionBuilder
      * @param CheckInterface       $check
      * @param array<string>|string $groups
      */
-    public function addCheck(string $key, CheckInterface $check, $groups = []): void
+    public function addCheck(string $key, CheckInterface $check, array|string $groups = []): void
     {
         $groups = (array) $groups;
 
@@ -56,9 +56,9 @@ class DefinitionCollectionBuilder
     /**
      * Build the definition collection
      *
-     * @return DefinitionCollection
+     * @return CheckDefinitions
      */
-    public function build(): DefinitionCollection
+    public function build(): CheckDefinitions
     {
         $definitions = [];
 
@@ -66,6 +66,6 @@ class DefinitionCollectionBuilder
             $definitions[] = new CheckDefinition($entry['key'], $entry['check'], $entry['groups']);
         }
 
-        return new DefinitionCollection(...$definitions);
+        return new CheckDefinitions(...$definitions);
     }
 }

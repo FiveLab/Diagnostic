@@ -15,31 +15,16 @@ namespace FiveLab\Component\Diagnostic\Check\Redis\Predis;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use Predis\Client;
 
 /**
  * Check access to Redis and simple operation (SET/GET) via Predis
  */
-class PredisSetGetCheck implements CheckInterface
+readonly class PredisSetGetCheck implements CheckInterface
 {
     private const PREFIX = '__diagnostic__';
-
-    /**
-     * @var string
-     */
-    private string $host;
-
-    /**
-     * @var int
-     */
-    private int $port;
-
-    /**
-     * @var string|null
-     */
-    private ?string $password;
 
     /**
      * Constructor.
@@ -48,17 +33,14 @@ class PredisSetGetCheck implements CheckInterface
      * @param int         $port
      * @param string|null $password
      */
-    public function __construct(string $host, int $port, string $password = null)
+    public function __construct(private string $host, private int $port, private ?string $password = null)
     {
-        $this->host = $host;
-        $this->port = $port;
-        $this->password = $password;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         if (!\class_exists(Client::class)) {
             return new Failure('The predis/predis not installed.');

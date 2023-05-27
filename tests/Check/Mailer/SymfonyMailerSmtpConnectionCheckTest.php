@@ -49,7 +49,7 @@ class SymfonyMailerSmtpConnectionCheckTest extends AbstractMailerTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith('Fail connect or send HELO command to mailer. Error:', $result->getMessage());
+        self::assertStringStartsWith('Fail connect or send HELO command to mailer. Error:', $result->message);
     }
 
     #[Test]

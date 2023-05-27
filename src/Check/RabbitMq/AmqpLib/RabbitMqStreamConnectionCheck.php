@@ -16,7 +16,7 @@ namespace FiveLab\Component\Diagnostic\Check\RabbitMq\AmqpLib;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Exception\AMQPConnectionClosedException;
@@ -25,27 +25,21 @@ use PhpAmqpLib\Exception\AMQPIOException;
 /**
  * Check connect to RabbitMQ
  */
-class RabbitMqStreamConnectionCheck implements CheckInterface
+readonly class RabbitMqStreamConnectionCheck implements CheckInterface
 {
-    /**
-     * @var RabbitMqConnectionParameters
-     */
-    private RabbitMqConnectionParameters $connectionParameters;
-
     /**
      * Constructor.
      *
      * @param RabbitMqConnectionParameters $connectionParameters
      */
-    public function __construct(RabbitMqConnectionParameters $connectionParameters)
+    public function __construct(private RabbitMqConnectionParameters $connectionParameters)
     {
-        $this->connectionParameters = $connectionParameters;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         if (!\class_exists(AMQPStreamConnection::class)) {
             return new Failure('php-amqplib/php-amqplib is not installed.');
@@ -53,11 +47,11 @@ class RabbitMqStreamConnectionCheck implements CheckInterface
 
         try {
             new AMQPStreamConnection(
-                $this->connectionParameters->getHost(),
-                $this->connectionParameters->getPort(),
-                $this->connectionParameters->getUsername(),
-                $this->connectionParameters->getPassword(),
-                $this->connectionParameters->getVhost()
+                $this->connectionParameters->host,
+                $this->connectionParameters->port,
+                $this->connectionParameters->username,
+                $this->connectionParameters->password,
+                $this->connectionParameters->vhost
             );
         } catch (AMQPConnectionClosedException $e) {
             return new Failure($e->getMessage());
@@ -75,7 +69,7 @@ class RabbitMqStreamConnectionCheck implements CheckInterface
     {
         return [
             'dsn'   => $this->connectionParameters->getDsn(false, true),
-            'vhost' => $this->connectionParameters->getVhost(),
+            'vhost' => $this->connectionParameters->vhost,
         ];
     }
 }

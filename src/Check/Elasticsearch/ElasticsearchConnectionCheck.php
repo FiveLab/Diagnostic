@@ -13,12 +13,9 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
-use Elasticsearch\Client as ElasticsearchClient;
-use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
-use OpenSearch\Client as OpenSearchClient;
 
 /**
  * Check success connect to ElasticSearch.
@@ -27,15 +24,14 @@ use OpenSearch\Client as OpenSearchClient;
  *           As result if you connect to any services via ssl, check return success result.
  *           For fix this, please use additional check for check version of ElasticSearch (as an example).
  */
-class ElasticsearchConnectionCheck extends AbstractElasticsearchCheck implements CheckInterface
+class ElasticsearchConnectionCheck extends AbstractElasticsearchCheck
 {
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         try {
-            /** @var ElasticsearchClient|OpenSearchClient */
             $client = $this->createClient();
 
             $ping = $client->ping();
@@ -52,13 +48,5 @@ class ElasticsearchConnectionCheck extends AbstractElasticsearchCheck implements
         }
 
         return new Failure(\sprintf('Fail connect to %s or send ping request.', $this->getEngineName()));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtraParameters(): array
-    {
-        return $this->convertConnectionParametersToArray();
     }
 }

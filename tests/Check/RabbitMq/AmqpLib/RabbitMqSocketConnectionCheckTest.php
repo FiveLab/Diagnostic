@@ -99,6 +99,6 @@ class RabbitMqSocketConnectionCheckTest extends AbstractRabbitMqTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringContainsString('Error Connecting to server', $result->getMessage());
+        self::assertStringContainsString('Error Connecting to server', $result->message);
     }
 }

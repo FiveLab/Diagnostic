@@ -22,21 +22,15 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * The subscriber for skip checks.
  */
-class SkipCheckSubscriber implements EventSubscriberInterface
+readonly class SkipCheckSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var SkipRegistryInterface
-     */
-    private SkipRegistryInterface $skipRegistry;
-
     /**
      * Constructor.
      *
      * @param SkipRegistryInterface $skipRegistry
      */
-    public function __construct(SkipRegistryInterface $skipRegistry)
+    public function __construct(private SkipRegistryInterface $skipRegistry)
     {
-        $this->skipRegistry = $skipRegistry;
     }
 
     /**
@@ -48,7 +42,7 @@ class SkipCheckSubscriber implements EventSubscriberInterface
      */
     public function onBeforeRunCheck(BeforeRunCheckEvent $event): BeforeRunCheckEvent
     {
-        if ($this->skipRegistry->isShouldBeSkipped($event->getDefinition())) {
+        if ($this->skipRegistry->isShouldBeSkipped($event->definition)) {
             $event->setResult(new Skip('Must be skipped.'));
         }
 

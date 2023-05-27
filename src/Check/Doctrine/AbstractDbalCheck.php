@@ -23,27 +23,12 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 abstract class AbstractDbalCheck implements CheckInterface
 {
     /**
-     * @var Connection|DriverConnection
-     */
-    protected $connection;
-
-    /**
      * Constructor.
      *
-     * @param DriverConnection|Connection|object $connection
+     * @param DriverConnection|Connection $connection
      */
-    public function __construct(object $connection)
+    public function __construct(protected readonly Connection|DriverConnection $connection)
     {
-        if (!$connection instanceof DriverConnection && !$connection instanceof Connection) {
-            throw new \InvalidArgumentException(\sprintf(
-                'Wrong connection instance "%s". Must be one of "%s" or "%s".',
-                \get_class($connection),
-                DriverConnection::class,
-                Connection::class
-            ));
-        }
-
-        $this->connection = $connection;
     }
 
     /**

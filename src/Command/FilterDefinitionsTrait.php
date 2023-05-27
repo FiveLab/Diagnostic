@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Command;
 
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 use FiveLab\Component\Diagnostic\Check\Definition\Filter\CheckDefinitionsInGroupFilter;
 use FiveLab\Component\Diagnostic\Check\Definition\Filter\OrXFilter;
 
@@ -25,12 +25,12 @@ trait FilterDefinitionsTrait
     /**
      * Filter definitions by group
      *
-     * @param DefinitionCollection $definitions
-     * @param array<string>        $groups
+     * @param CheckDefinitions $definitions
+     * @param array<string>    $groups
      *
-     * @return DefinitionCollection
+     * @return CheckDefinitions
      */
-    protected function filterDefinitionsByGroupInInput(DefinitionCollection $definitions, array $groups): DefinitionCollection
+    protected function filterDefinitionsByGroupInInput(CheckDefinitions $definitions, array $groups): CheckDefinitions
     {
         if ($groups) {
             $notExistenceGroups = \array_diff($groups, $definitions->getGroups());

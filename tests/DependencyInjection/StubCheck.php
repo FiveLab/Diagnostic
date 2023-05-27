@@ -14,14 +14,14 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\DependencyInjection;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 
 class StubCheck implements CheckInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         throw new \BadMethodCallException();
     }

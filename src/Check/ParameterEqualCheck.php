@@ -14,7 +14,7 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Check;
 
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
 /**
@@ -22,16 +22,6 @@ use FiveLab\Component\Diagnostic\Result\Success;
  */
 class ParameterEqualCheck implements CheckInterface
 {
-    /**
-     * @var mixed
-     */
-    private $expected;
-
-    /**
-     * @var mixed
-     */
-    private $actual;
-
     /**
      * @var array<mixed>
      */
@@ -43,7 +33,7 @@ class ParameterEqualCheck implements CheckInterface
      * @param mixed $expected
      * @param mixed $actual
      */
-    public function __construct($expected, $actual)
+    public function __construct(private readonly mixed $expected, private readonly mixed $actual)
     {
         if ($expected && !\is_array($expected) && !\is_scalar($expected)) {
             throw new \InvalidArgumentException(\sprintf(
@@ -58,9 +48,6 @@ class ParameterEqualCheck implements CheckInterface
                 \gettype($actual)
             ));
         }
-
-        $this->expected = $expected;
-        $this->actual = $actual;
     }
 
     /**
@@ -74,7 +61,7 @@ class ParameterEqualCheck implements CheckInterface
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         $this->extra['expected'] = $this->expected;
         $this->extra['actual'] = $this->actual;

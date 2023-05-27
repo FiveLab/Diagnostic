@@ -15,7 +15,7 @@ namespace FiveLab\Component\Diagnostic\Tests\Check\Http;
 
 use FiveLab\Component\Diagnostic\Check\Http\HttpCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use GuzzleHttp\Psr7\Request;
@@ -44,7 +44,7 @@ class HttpCheckTest extends TestCase
 
     #[Test]
     #[DataProvider('provideDataForCheck')]
-    public function shouldSuccessCheck(ResponseInterface $response, ResultInterface $expectedResult, string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedBody = null): void
+    public function shouldSuccessCheck(ResponseInterface $response, Result $expectedResult, string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedBody = null): void
     {
         $expectedRequest = new Request($method, $url, $headers, $body);
 

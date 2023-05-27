@@ -14,41 +14,29 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Check;
 
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
 
 /**
  * Check what the path is readable.
  */
-class PathReadableCheck implements CheckInterface
+readonly class PathReadableCheck implements CheckInterface
 {
-    /**
-     * @var string
-     */
-    private string $path;
-
-    /**
-     * @var bool
-     */
-    private bool $strict;
-
     /**
      * Constructor.
      *
      * @param string $path
      * @param bool   $strict
      */
-    public function __construct(string $path, bool $strict = true)
+    public function __construct(private string $path, private bool $strict = true)
     {
-        $this->path = $path;
-        $this->strict = $strict;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         if (!\file_exists($this->path)) {
             if ($this->strict) {

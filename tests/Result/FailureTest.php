@@ -24,6 +24,6 @@ class FailureTest extends TestCase
     {
         $result = new Failure('some foo');
 
-        self::assertEquals('some foo', $result->getMessage());
+        self::assertEquals('some foo', $result->message);
     }
 }

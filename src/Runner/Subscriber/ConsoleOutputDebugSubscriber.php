@@ -25,21 +25,15 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * The subscriber for render info about run in console.
  */
-class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
+readonly class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var OutputInterface
-     */
-    private OutputInterface $output;
-
     /**
      * Constructor.
      *
      * @param OutputInterface $output
      */
-    public function __construct(OutputInterface $output)
+    public function __construct(private OutputInterface $output)
     {
-        $this->output = $output;
     }
 
     /**
@@ -51,8 +45,8 @@ class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
      */
     public function onCheckComplete(CompleteRunCheckEvent $event): CompleteRunCheckEvent
     {
-        $definition = $event->getDefinition();
-        $result = $event->getResult();
+        $definition = $event->definition;
+        $result = $event->result;
 
         $statusVerbosity = OutputInterface::VERBOSITY_VERBOSE;
         $paramsVerbosity = OutputInterface::VERBOSITY_DEBUG;
@@ -80,13 +74,13 @@ class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
             $this->output->writeln(\sprintf(
                 '%s %s: %s',
                 $statusText,
-                $definition->getKey(),
-                $result->getMessage()
+                $definition->key,
+                $result->message
             ));
         }
 
         if ($this->output->getVerbosity() >= $paramsVerbosity) {
-            $this->writeAdditionalParameters($definition->getCheck()->getExtraParameters());
+            $this->writeAdditionalParameters($definition->check->getExtraParameters());
             $this->output->writeln('');
         }
 

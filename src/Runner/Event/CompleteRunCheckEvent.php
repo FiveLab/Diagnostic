@@ -13,8 +13,8 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Runner\Event;
 
-use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
+use FiveLab\Component\Diagnostic\Result\Result;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -23,44 +23,12 @@ use Symfony\Contracts\EventDispatcher\Event;
 class CompleteRunCheckEvent extends Event
 {
     /**
-     * @var CheckDefinitionInterface
-     */
-    private CheckDefinitionInterface $definition;
-
-    /**
-     * @var ResultInterface
-     */
-    private ResultInterface $result;
-
-    /**
      * Constructor.
      *
-     * @param CheckDefinitionInterface $definition
-     * @param ResultInterface          $result
+     * @param CheckDefinition $definition
+     * @param Result          $result
      */
-    public function __construct(CheckDefinitionInterface $definition, ResultInterface $result)
+    public function __construct(public readonly CheckDefinition $definition, public readonly Result $result)
     {
-        $this->definition = $definition;
-        $this->result = $result;
-    }
-
-    /**
-     * Get definition
-     *
-     * @return CheckDefinitionInterface
-     */
-    public function getDefinition(): CheckDefinitionInterface
-    {
-        return $this->definition;
-    }
-
-    /**
-     * Get the result
-     *
-     * @return ResultInterface
-     */
-    public function getResult(): ResultInterface
-    {
-        return $this->result;
     }
 }

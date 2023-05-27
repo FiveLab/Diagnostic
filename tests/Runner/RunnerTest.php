@@ -14,10 +14,10 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Runner;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
-use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Skip;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Runner\Event\BeforeRunCheckEvent;
@@ -102,7 +102,7 @@ class RunnerTest extends TestCase
                 self::returnArgument(0)
             );
 
-        $result = $this->runner->run(new DefinitionCollection($definition1, $definition2));
+        $result = $this->runner->run(new CheckDefinitions($definition1, $definition2));
 
         self::assertTrue($result);
     }
@@ -143,7 +143,7 @@ class RunnerTest extends TestCase
                 self::returnArgument(0)
             );
 
-        $result = $this->runner->run(new DefinitionCollection($definition1, $definition2, $definition3));
+        $result = $this->runner->run(new CheckDefinitions($definition1, $definition2, $definition3));
 
         self::assertFalse($result);
     }
@@ -184,7 +184,7 @@ class RunnerTest extends TestCase
                 new CompleteRunCheckEvent($definition2, new Success('some'))
             );
 
-        $result = $this->runner->run(new DefinitionCollection($definition1, $definition2));
+        $result = $this->runner->run(new CheckDefinitions($definition1, $definition2));
 
         self::assertTrue($result);
     }
@@ -198,11 +198,7 @@ class RunnerTest extends TestCase
             ->method('check')
             ->willThrowException(new \RuntimeException('some-foo-bar'));
 
-        $definition = $this->createMock(CheckDefinitionInterface::class);
-
-        $definition->expects(self::any())
-            ->method('getCheck')
-            ->willReturn($check);
+        $definition = new CheckDefinition('', $check, []);
 
         $map = [
             [new BeforeRunCheckEvent($definition), RunnerEvents::RUN_CHECK_BEFORE],
@@ -222,7 +218,7 @@ class RunnerTest extends TestCase
                 self::returnArgument(0),
             );
 
-        $result = $this->runner->run(new DefinitionCollection($definition));
+        $result = $this->runner->run(new CheckDefinitions($definition));
 
         self::assertFalse($result);
     }
@@ -230,11 +226,11 @@ class RunnerTest extends TestCase
     /**
      * Create definition
      *
-     * @param ResultInterface|null $result
+     * @param Result|null $result
      *
-     * @return CheckDefinitionInterface
+     * @return CheckDefinition
      */
-    private function createDefinitionWithResult(ResultInterface $result = null): CheckDefinitionInterface
+    private function createDefinitionWithResult(Result $result = null): CheckDefinition
     {
         $check = $this->createMock(CheckInterface::class);
 
@@ -247,12 +243,6 @@ class RunnerTest extends TestCase
                 ->method('check');
         }
 
-        $definition = $this->createMock(CheckDefinitionInterface::class);
-
-        $definition->expects(self::any())
-            ->method('getCheck')
-            ->willReturn($check);
-
-        return $definition;
+        return new CheckDefinition('', $check, []);
     }
 }

@@ -14,19 +14,14 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Check;
 
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
 /**
  * Check what the data is correct JSON.
  */
-class IsJsonCheck implements CheckInterface
+readonly class IsJsonCheck implements CheckInterface
 {
-    /**
-     * @var string
-     */
-    private string $json;
-
     /**
      * @var string|null
      */
@@ -38,7 +33,7 @@ class IsJsonCheck implements CheckInterface
      * @param string      $json
      * @param string|null $expectedType
      */
-    public function __construct(string $json, ?string $expectedType = null)
+    public function __construct(private string $json, ?string $expectedType = null)
     {
         if ($expectedType) {
             $expectedFunction = 'is_'.$expectedType;
@@ -52,14 +47,13 @@ class IsJsonCheck implements CheckInterface
             }
         }
 
-        $this->json = $json;
         $this->expectedType = $expectedType;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         $expectedFunction = 'is_'.$this->expectedType;
 

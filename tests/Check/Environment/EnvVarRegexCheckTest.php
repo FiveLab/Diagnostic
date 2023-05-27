@@ -15,7 +15,7 @@ namespace FiveLab\Component\Diagnostic\Tests\Check\Environment;
 
 use FiveLab\Component\Diagnostic\Check\Environment\EnvVarRegexCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -49,7 +49,7 @@ class EnvVarRegexCheckTest extends TestCase
 
     #[Test]
     #[DataProvider('provideParameters')]
-    public function shouldSuccessCheck(string $variableValue, string $pattern, ResultInterface $expectedResult, array $expectedExtra): void
+    public function shouldSuccessCheck(string $variableValue, string $pattern, Result $expectedResult, array $expectedExtra): void
     {
         \putenv(\sprintf('%s=%s', self::ENV_VAR_NAME, $variableValue));
         $check = new EnvVarRegexCheck(self::ENV_VAR_NAME, $pattern);

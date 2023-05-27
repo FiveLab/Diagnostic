@@ -63,7 +63,7 @@ class PdoConnectionCheckTest extends AbstractDatabaseTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith('Can\'t check connect to database via PDO by driver "mysql-some". The driver "mysql-some" is not supported. Available drivers are', $result->getMessage());
+        self::assertStringStartsWith('Can\'t check connect to database via PDO by driver "mysql-some". The driver "mysql-some" is not supported. Available drivers are', $result->message);
     }
 
     #[Test]
@@ -81,7 +81,7 @@ class PdoConnectionCheckTest extends AbstractDatabaseTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith('Fail connect to database. Error: SQLSTATE[HY000] [2002] php_network_getaddresses:', $result->getMessage());
+        self::assertStringStartsWith('Fail connect to database. Error: SQLSTATE[HY000] [2002] php_network_getaddresses:', $result->message);
     }
 
     #[Test]
@@ -99,7 +99,7 @@ class PdoConnectionCheckTest extends AbstractDatabaseTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith('Fail connect to database. Error: SQLSTATE[HY000] [1045] Access denied for user', $result->getMessage());
+        self::assertStringStartsWith('Fail connect to database. Error: SQLSTATE[HY000] [1045] Access denied for user', $result->message);
     }
 
     #[Test]

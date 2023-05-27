@@ -15,38 +15,34 @@ namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
 use Elasticsearch\Client as ElasticsearchClient;
 use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
+use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use OpenSearch\Client as OpenSearchClient;
 use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 
 /**
  * Helper for create elasticsearch check instances.
  */
-abstract class AbstractElasticsearchCheck
+abstract class AbstractElasticsearchCheck implements CheckInterface
 {
-    /**
-     * @var ElasticsearchConnectionParameters
-     */
-    protected ElasticsearchConnectionParameters $connectionParameters;
-
     /**
      * @var ElasticsearchClientBuilder|OpenSearchClientBuilder
      */
-    private $clientBuilder;
+    private readonly ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder;
 
     /**
      * @var null|ElasticsearchClient|OpenSearchClient
      */
-    private $client;
+    private ElasticsearchClient|OpenSearchClient|null $client = null;
 
     /**
      * Constructor.
      *
-     * @param ElasticsearchConnectionParameters $connectionParameters
-     * @param mixed                             $clientBuilder
+     * @param ElasticsearchConnectionParameters                       $connectionParameters
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder
      *
      * @throws \RuntimeException
      */
-    public function __construct(ElasticsearchConnectionParameters $connectionParameters, $clientBuilder = null)
+    public function __construct(private readonly ElasticsearchConnectionParameters $connectionParameters, ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder = null)
     {
         if (null === $clientBuilder) {
             if (!\class_exists(ElasticsearchClientBuilder::class)) {
@@ -56,15 +52,15 @@ abstract class AbstractElasticsearchCheck
             $clientBuilder = ElasticsearchClientBuilder::create();
         }
 
-        if (!$clientBuilder instanceof ElasticsearchClientBuilder && !$clientBuilder instanceof OpenSearchClientBuilder) {
-            throw new \RuntimeException(\sprintf(
-                'ClientBuilder must be one of: %s',
-                \implode(' or ', [ElasticsearchClientBuilder::class, OpenSearchClientBuilder::class])
-            ));
-        }
-
-        $this->connectionParameters = $connectionParameters;
         $this->clientBuilder = $clientBuilder;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtraParameters(): array
+    {
+        return $this->convertConnectionParametersToArray();
     }
 
     /**
@@ -95,7 +91,7 @@ abstract class AbstractElasticsearchCheck
      *
      * @return ElasticsearchClient|OpenSearchClient
      */
-    protected function createClient()
+    protected function createClient(): ElasticsearchClient|OpenSearchClient
     {
         if (null === $this->client) {
             $this->client = $this->clientBuilder
@@ -114,13 +110,13 @@ abstract class AbstractElasticsearchCheck
     protected function convertConnectionParametersToArray(): array
     {
         $params = [
-            'host' => $this->connectionParameters->getHost(),
-            'port' => $this->connectionParameters->getPort(),
-            'ssl'  => $this->connectionParameters->isSsl() ? 'yes' : 'no',
+            'host' => $this->connectionParameters->host,
+            'port' => $this->connectionParameters->port,
+            'ssl'  => $this->connectionParameters->ssl ? 'yes' : 'no',
         ];
 
-        if ($this->connectionParameters->getUsername() || $this->connectionParameters->getPassword()) {
-            $params['user'] = $this->connectionParameters->getUsername() ?: '(null)';
+        if ($this->connectionParameters->username || $this->connectionParameters->password) {
+            $params['user'] = $this->connectionParameters->username ?: '(null)';
             $params['pass'] = '***';
         }
 

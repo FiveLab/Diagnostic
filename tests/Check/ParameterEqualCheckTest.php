@@ -15,7 +15,7 @@ namespace FiveLab\Component\Diagnostic\Tests\Check;
 
 use FiveLab\Component\Diagnostic\Check\ParameterEqualCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -25,7 +25,7 @@ class ParameterEqualCheckTest extends TestCase
 {
     #[Test]
     #[DataProvider('provideParameters')]
-    public function shouldSuccessCheck($expected, $actual, ResultInterface $expectedResult, array $expectedExtra): void
+    public function shouldSuccessCheck($expected, $actual, Result $expectedResult, array $expectedExtra): void
     {
         $check = new ParameterEqualCheck($expected, $actual);
 

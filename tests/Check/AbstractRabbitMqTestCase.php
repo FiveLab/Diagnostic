@@ -39,7 +39,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         $url = \sprintf(
             '%s/api/exchanges/%s/%s',
             $dsn,
-            \urlencode($parameters->getVhost()),
+            \urlencode($parameters->vhost),
             \urlencode($exchangeName)
         );
 
@@ -62,7 +62,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         $parameters = $this->getRabbitMqManagementConnectionParameters();
 
         $dsn = $parameters->getDsn(true, false);
-        $url = \sprintf('%s/api/exchanges/%s', $dsn, \urlencode($parameters->getVhost()));
+        $url = \sprintf('%s/api/exchanges/%s', $dsn, \urlencode($parameters->vhost));
 
         $data = \json_decode(\file_get_contents($url), true);
 
@@ -81,7 +81,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
             $url = \sprintf(
                 '%s/api/exchanges/%s/%s',
                 $dsn,
-                \urlencode($parameters->getVhost()),
+                \urlencode($parameters->vhost),
                 \urlencode($exchangeInfo['name'])
             );
 
@@ -108,7 +108,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         $url = \sprintf(
             '%s/api/queues/%s/%s',
             $dsn,
-            \urlencode($parameters->getVhost()),
+            \urlencode($parameters->vhost),
             \urlencode($queueName)
         );
 
@@ -131,7 +131,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         $parameters = $this->getRabbitMqManagementConnectionParameters();
 
         $dsn = $parameters->getDsn(true, false);
-        $url = \sprintf('%s/api/queues/%s', $dsn, \urlencode($parameters->getVhost()));
+        $url = \sprintf('%s/api/queues/%s', $dsn, \urlencode($parameters->vhost));
 
         $data = \json_decode(\file_get_contents($url), true);
 
@@ -145,7 +145,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
             $url = \sprintf(
                 '%s/api/queues/%s/%s',
                 $dsn,
-                \urlencode($parameters->getVhost()),
+                \urlencode($parameters->vhost),
                 \urlencode($queueInfo['name'])
             );
 

@@ -15,49 +15,14 @@ namespace FiveLab\Component\Diagnostic\Check\Pdo;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
 /**
  * Check the connect to database
  */
-class PdoConnectionCheck implements CheckInterface
+readonly class PdoConnectionCheck implements CheckInterface
 {
-    /**
-     * @var string
-     */
-    private string $driver;
-
-    /**
-     * @var string
-     */
-    private string $host;
-
-    /**
-     * @var int
-     */
-    private int $port;
-
-    /**
-     * @var string
-     */
-    private string $dbName;
-
-    /**
-     * @var string
-     */
-    private string $user;
-
-    /**
-     * @var string
-     */
-    private string $password;
-
-    /**
-     * @var array<mixed>
-     */
-    private array $options;
-
     /**
      * Constructor.
      *
@@ -69,21 +34,21 @@ class PdoConnectionCheck implements CheckInterface
      * @param string       $password
      * @param array<mixed> $options
      */
-    public function __construct(string $driver, string $host, int $port, string $dbName, string $user, string $password, array $options = [])
-    {
-        $this->driver = $driver;
-        $this->host = $host;
-        $this->port = $port;
-        $this->dbName = $dbName;
-        $this->user = $user;
-        $this->password = $password;
-        $this->options = $options;
+    public function __construct(
+        private string $driver,
+        private string $host,
+        private int    $port,
+        private string $dbName,
+        private string $user,
+        private string $password,
+        private array  $options = []
+    ) {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         if (!\class_exists(\PDO::class)) {
             return new Failure('Can\'t check connect to database via PDO. PDO is not installed.');

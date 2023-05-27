@@ -15,7 +15,7 @@ namespace FiveLab\Component\Diagnostic\Check\Http;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
@@ -28,49 +28,19 @@ use Psr\Http\Client\ClientExceptionInterface;
 class HttpCheck implements CheckInterface
 {
     /**
-     * @var string
-     */
-    private string $method;
-
-    /**
-     * @var string
-     */
-    private string $url;
-
-    /**
-     * @var array<string, string>
-     */
-    private array $headers;
-
-    /**
-     * @var string
-     */
-    private string $body;
-
-    /**
-     * @var int
-     */
-    private int $expectedStatusCode;
-
-    /**
-     * @var string|null
-     */
-    private ?string $expectedBody;
-
-    /**
      * @var HttpAdapterInterface
      */
-    private HttpAdapterInterface $http;
+    private readonly HttpAdapterInterface $http;
 
     /**
      * @var HttpSecurityEncoder
      */
-    private HttpSecurityEncoder $httpSecurityEncoder;
+    private readonly HttpSecurityEncoder $httpSecurityEncoder;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private string $responseBody;
+    private ?string $responseBody = null;
 
     /**
      * Constructor.
@@ -84,14 +54,16 @@ class HttpCheck implements CheckInterface
      * @param HttpAdapter|null         $http
      * @param HttpSecurityEncoder|null $securityEncoder
      */
-    public function __construct(string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedBody = null, HttpAdapter $http = null, HttpSecurityEncoder $securityEncoder = null)
-    {
-        $this->method = $method;
-        $this->url = $url;
-        $this->headers = $headers;
-        $this->body = $body;
-        $this->expectedStatusCode = $expectedStatusCode;
-        $this->expectedBody = $expectedBody;
+    public function __construct(
+        private readonly string  $method,
+        private readonly string  $url,
+        private readonly array   $headers,
+        private readonly string  $body,
+        private readonly int     $expectedStatusCode,
+        private readonly ?string $expectedBody = null,
+        HttpAdapter              $http = null,
+        HttpSecurityEncoder      $securityEncoder = null
+    ) {
         $this->http = $http ?: new HttpAdapter();
         $this->httpSecurityEncoder = $securityEncoder ?: new HttpSecurityEncoder();
     }
@@ -99,7 +71,7 @@ class HttpCheck implements CheckInterface
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         $request = $this->http->createRequest($this->method, $this->url, $this->headers, $this->body);
 

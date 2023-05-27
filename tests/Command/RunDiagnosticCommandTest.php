@@ -13,19 +13,16 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Command;
 
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 use FiveLab\Component\Diagnostic\Check\Definition\Filter\CheckDefinitionsInGroupFilter;
 use FiveLab\Component\Diagnostic\Check\Definition\Filter\OrXFilter;
 use FiveLab\Component\Diagnostic\Command\RunDiagnosticCommand;
-use FiveLab\Component\Diagnostic\Runner\Runner;
 use FiveLab\Component\Diagnostic\Runner\RunnerInterface;
-use FiveLab\Component\Diagnostic\Runner\Subscriber\ConsoleOutputDebugSubscriber;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RunDiagnosticCommandTest extends TestCase
 {
@@ -35,9 +32,9 @@ class RunDiagnosticCommandTest extends TestCase
     private RunnerInterface $runner;
 
     /**
-     * @var DefinitionCollection
+     * @var CheckDefinitions
      */
-    private DefinitionCollection $definitions;
+    private CheckDefinitions $definitions;
 
     /**
      * @var InputInterface
@@ -59,8 +56,8 @@ class RunDiagnosticCommandTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->runner = $this->createMock(Runner::class);
-        $this->definitions = $this->createMock(DefinitionCollection::class);
+        $this->runner = $this->createMock(RunnerInterface::class);
+        $this->definitions = $this->createMock(CheckDefinitions::class);
         $this->input = $this->createMock(InputInterface::class);
         $this->output = $this->createMock(OutputInterface::class);
 
@@ -70,16 +67,6 @@ class RunDiagnosticCommandTest extends TestCase
     #[Test]
     public function shouldSuccessConfigure(): void
     {
-        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-
-        $eventDispatcher->expects(self::once())
-            ->method('addSubscriber')
-            ->with(new ConsoleOutputDebugSubscriber($this->output));
-
-        $this->runner->expects(self::once())
-            ->method('getEventDispatcher')
-            ->willReturn($eventDispatcher);
-
         $this->command->run($this->input, $this->output);
 
         self::assertEquals('diagnostic:run', $this->command->getName());
@@ -118,7 +105,7 @@ class RunDiagnosticCommandTest extends TestCase
             ->method('getGroups')
             ->willReturn(['foo', 'bar', 'some']);
 
-        $expectedDefinitions = $this->createMock(DefinitionCollection::class);
+        $expectedDefinitions = $this->createMock(CheckDefinitions::class);
 
         $this->definitions->expects(self::once())
             ->method('filter')

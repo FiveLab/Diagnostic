@@ -79,7 +79,7 @@ class DatabaseConnectionCheckTest extends AbstractDatabaseTestCase
         self::assertInstanceOf(Failure::class, $result);
         self::assertStringContainsString(
             'SQLSTATE[HY000] [1045]',
-            $result->getMessage()
+            $result->message
         );
     }
 
@@ -98,7 +98,7 @@ class DatabaseConnectionCheckTest extends AbstractDatabaseTestCase
         self::assertInstanceOf(Failure::class, $result);
         self::assertStringContainsString(
             'SQLSTATE[HY000] [2002]',
-            $result->getMessage()
+            $result->message
         );
     }
 

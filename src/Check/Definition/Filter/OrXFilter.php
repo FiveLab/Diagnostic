@@ -13,12 +13,12 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Definition\Filter;
 
-use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
 
 /**
  * Composite filter with implement OR logic.
  */
-class OrXFilter
+readonly class OrXFilter
 {
     /**
      * @var array|callable[]
@@ -38,11 +38,11 @@ class OrXFilter
     /**
      * Filter with OR logic.
      *
-     * @param CheckDefinitionInterface $definition
+     * @param CheckDefinition $definition
      *
      * @return bool
      */
-    public function __invoke(CheckDefinitionInterface $definition): bool
+    public function __invoke(CheckDefinition $definition): bool
     {
         foreach ($this->filters as $filter) {
             if ($filter($definition)) {

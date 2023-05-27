@@ -14,29 +14,14 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Check;
 
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
 /**
  * Check disk usage.
  */
-class DiskUsageCheck implements CheckInterface
+readonly class DiskUsageCheck implements CheckInterface
 {
-    /**
-     * @var int
-     */
-    private int $criticalThreshold;
-
-    /**
-     * @var int
-     */
-    private int $warningThreshold;
-
-    /**
-     * @var string
-     */
-    private string $path;
-
     /**
      * Constructor.
      *
@@ -44,7 +29,7 @@ class DiskUsageCheck implements CheckInterface
      * @param int    $warningThreshold
      * @param string $path
      */
-    public function __construct(int $criticalThreshold, int $warningThreshold, string $path = '/')
+    public function __construct(private int $criticalThreshold, private int $warningThreshold, private string $path = '/')
     {
         if ($criticalThreshold < 0 || $criticalThreshold > 100) {
             throw new \InvalidArgumentException(\sprintf(
@@ -59,10 +44,6 @@ class DiskUsageCheck implements CheckInterface
                 $warningThreshold
             ));
         }
-
-        $this->criticalThreshold = $criticalThreshold;
-        $this->warningThreshold = $warningThreshold;
-        $this->path = $path;
     }
 
     /**
@@ -76,7 +57,7 @@ class DiskUsageCheck implements CheckInterface
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         $freeSpace = \disk_free_space($this->path);
         $totalSpace = \disk_total_space($this->path);

@@ -45,10 +45,10 @@ class ElasticsearchConnectionCheckTest extends AbstractElasticsearchTestCase
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
         $connectionParameters = new ElasticsearchConnectionParameters(
-            $connectionParameters->getHost().'_some',
-            $connectionParameters->getPort(),
-            $connectionParameters->getUsername(),
-            $connectionParameters->getPassword(),
+            $connectionParameters->host.'_some',
+            $connectionParameters->port,
+            $connectionParameters->username,
+            $connectionParameters->password,
             false
         );
 

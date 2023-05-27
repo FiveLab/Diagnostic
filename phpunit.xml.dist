@@ -6,6 +6,8 @@
          bootstrap="./vendor/autoload.php"
          displayDetailsOnTestsThatTriggerDeprecations="true"
          displayDetailsOnTestsThatTriggerWarnings="true"
+         stopOnFailure="true"
+         stopOnError="true"
 >
     <testsuites>
         <testsuite name="Diagnostic tests">

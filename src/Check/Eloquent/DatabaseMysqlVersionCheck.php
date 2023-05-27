@@ -15,7 +15,7 @@ namespace FiveLab\Component\Diagnostic\Check\Eloquent;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterface;
@@ -29,19 +29,9 @@ class DatabaseMysqlVersionCheck implements CheckInterface
     public const MYSQL_EXTRACT_VERSION_REGEX = '/^([\d\.]+)/';
 
     /**
-     * @var ConnectionInterface
-     */
-    private ConnectionInterface $connection;
-
-    /**
-     * @var string
-     */
-    private string $expectedVersion;
-
-    /**
      * @var VersionComparatorInterface
      */
-    private VersionComparatorInterface $versionComparator;
+    private readonly VersionComparatorInterface $versionComparator;
 
     /**
      * @var string
@@ -55,17 +45,15 @@ class DatabaseMysqlVersionCheck implements CheckInterface
      * @param string                          $expectedVersion
      * @param VersionComparatorInterface|null $versionComparator
      */
-    public function __construct(ConnectionInterface $connection, string $expectedVersion, VersionComparatorInterface $versionComparator = null)
+    public function __construct(private readonly ConnectionInterface $connection, private readonly string $expectedVersion, VersionComparatorInterface $versionComparator = null)
     {
-        $this->connection = $connection;
-        $this->expectedVersion = $expectedVersion;
         $this->versionComparator = $versionComparator ?: new SemverVersionComparator();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         try {
             $query = 'SHOW VARIABLES WHERE Variable_name = \'version\'';

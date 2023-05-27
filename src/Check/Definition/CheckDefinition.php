@@ -18,23 +18,8 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 /**
  * Default check definition.
  */
-class CheckDefinition implements CheckDefinitionInterface
+readonly class CheckDefinition
 {
-    /**
-     * @var string
-     */
-    private string $key;
-
-    /**
-     * @var CheckInterface
-     */
-    private CheckInterface $check;
-
-    /**
-     * @var array<string>
-     */
-    private array $groups;
-
     /**
      * Constructor.
      *
@@ -42,34 +27,7 @@ class CheckDefinition implements CheckDefinitionInterface
      * @param CheckInterface $check
      * @param array<string>  $groups
      */
-    public function __construct(string $key, CheckInterface $check, array $groups)
+    public function __construct(public string $key, public CheckInterface $check, public array $groups)
     {
-        $this->key = $key;
-        $this->check = $check;
-        $this->groups = $groups;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getKey(): string
-    {
-        return $this->key;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCheck(): CheckInterface
-    {
-        return $this->check;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroups(): array
-    {
-        return $this->groups;
     }
 }

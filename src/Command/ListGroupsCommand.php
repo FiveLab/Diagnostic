@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Command;
 
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,9 +38,9 @@ class ListGroupsCommand extends Command
     /**
      * Constructor.
      *
-     * @param DefinitionCollection $definitions
+     * @param CheckDefinitions $definitions
      */
-    public function __construct(private readonly DefinitionCollection $definitions)
+    public function __construct(private readonly CheckDefinitions $definitions)
     {
         parent::__construct();
     }

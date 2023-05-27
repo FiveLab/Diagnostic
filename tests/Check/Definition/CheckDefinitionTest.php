@@ -28,8 +28,8 @@ class CheckDefinitionTest extends TestCase
 
         $definition = new CheckDefinition('some', $check, ['foo', 'bar']);
 
-        self::assertEquals('some', $definition->getKey());
-        self::assertEquals($check, $definition->getCheck());
-        self::assertEquals(['foo', 'bar'], $definition->getGroups());
+        self::assertEquals('some', $definition->key);
+        self::assertEquals($check, $definition->check);
+        self::assertEquals(['foo', 'bar'], $definition->groups);
     }
 }

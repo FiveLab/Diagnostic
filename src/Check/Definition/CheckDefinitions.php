@@ -16,29 +16,29 @@ namespace FiveLab\Component\Diagnostic\Check\Definition;
 /**
  * Collection for store check definitions.
  *
- * @implements \IteratorAggregate<CheckDefinitionInterface>
+ * @implements \IteratorAggregate<CheckDefinition>
  */
-class DefinitionCollection implements \IteratorAggregate, \Countable
+class CheckDefinitions implements \IteratorAggregate, \Countable
 {
     /**
-     * @var array|CheckDefinitionInterface[]
+     * @var array|CheckDefinition[]
      */
-    private array $definitions;
+    private readonly array $definitions;
 
     /**
      * Constructor.
      *
-     * @param CheckDefinitionInterface ...$definitions
+     * @param CheckDefinition ...$definitions
      */
-    public function __construct(CheckDefinitionInterface ...$definitions)
+    public function __construct(CheckDefinition ...$definitions)
     {
-        \array_reduce($definitions, static function (array $definitionKeys, CheckDefinitionInterface $definition): array {
-            if (\in_array($definition->getKey(), $definitionKeys, true)) {
-                throw new \RuntimeException(\sprintf('Duplicate definition with key "%s"', $definition->getKey()));
+        \array_reduce($definitions, static function (array $definitionKeys, CheckDefinition $definition): array {
+            if (\in_array($definition->key, $definitionKeys, true)) {
+                throw new \RuntimeException(\sprintf('Duplicate definition with key "%s"', $definition->key));
             }
 
-            if ($definition->getKey()) {
-                $definitionKeys[] = $definition->getKey();
+            if ($definition->key) {
+                $definitionKeys[] = $definition->key;
             }
 
             return $definitionKeys;
@@ -50,7 +50,7 @@ class DefinitionCollection implements \IteratorAggregate, \Countable
     /**
      * {@inheritdoc}
      *
-     * @return \ArrayIterator<int, CheckDefinitionInterface>
+     * @return \ArrayIterator<int, CheckDefinition>
      */
     public function getIterator(): \Iterator
     {
@@ -75,7 +75,7 @@ class DefinitionCollection implements \IteratorAggregate, \Countable
         $groups = [[]];
 
         foreach ($this->definitions as $definition) {
-            $groups[] = $definition->getGroups();
+            $groups[] = $definition->groups;
         }
 
         $groups = \array_merge(...$groups);
@@ -88,9 +88,9 @@ class DefinitionCollection implements \IteratorAggregate, \Countable
      *
      * @param callable $filter
      *
-     * @return DefinitionCollection
+     * @return CheckDefinitions
      */
-    public function filter(callable $filter): DefinitionCollection
+    public function filter(callable $filter): CheckDefinitions
     {
         $filtered = \array_filter($this->definitions, $filter);
 

@@ -16,6 +16,6 @@ namespace FiveLab\Component\Diagnostic\Result;
 /**
  * Warning result.
  */
-class Warning extends AbstractResult
+class Warning extends Result
 {
 }

@@ -16,6 +16,6 @@ namespace FiveLab\Component\Diagnostic\Result;
 /**
  * Failure result
  */
-class Failure extends AbstractResult
+class Failure extends Result
 {
 }

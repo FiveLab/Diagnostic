@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Command;
 
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 use FiveLab\Component\Diagnostic\Command\ListGroupsCommand;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -34,9 +34,9 @@ class ListGroupsCommandTest extends TestCase
     private BufferedOutput $output;
 
     /**
-     * @var DefinitionCollection|MockObject
+     * @var CheckDefinitions|MockObject
      */
-    private DefinitionCollection $definitions;
+    private CheckDefinitions $definitions;
 
     /**
      * @var ListGroupsCommand
@@ -50,7 +50,7 @@ class ListGroupsCommandTest extends TestCase
     {
         $this->input = new ArrayInput([]);
         $this->output = new BufferedOutput();
-        $this->definitions = $this->createMock(DefinitionCollection::class);
+        $this->definitions = $this->createMock(CheckDefinitions::class);
         $this->command = new ListGroupsCommand($this->definitions);
     }
 

@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Command;
 
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -41,9 +41,9 @@ class ListChecksCommand extends Command
     /**
      * Constructor.
      *
-     * @param DefinitionCollection $definitions
+     * @param CheckDefinitions $definitions
      */
-    public function __construct(private readonly DefinitionCollection $definitions)
+    public function __construct(private readonly CheckDefinitions $definitions)
     {
         parent::__construct();
     }
@@ -70,7 +70,7 @@ class ListChecksCommand extends Command
         }
 
         foreach ($definitions as $definition) {
-            $output->write($definition->getKey());
+            $output->write($definition->key);
 
             if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
                 $output->write(': '.\get_class($definition));

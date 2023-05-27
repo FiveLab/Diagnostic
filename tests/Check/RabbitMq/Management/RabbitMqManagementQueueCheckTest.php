@@ -74,7 +74,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
 
         self::assertEquals([
             'dsn'                    => $connectionParameters->getDsn(true, true),
-            'vhost'                  => $connectionParameters->getVhost(),
+            'vhost'                  => $connectionParameters->vhost,
             'queue'                  => $this->queueName,
             'max_messages'           => null,
             'min_messages'           => null,
@@ -114,7 +114,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith('Fail connect to RabbitMQ Management API. Error: cURL error 6: Could not resolve host: some-foo-bar', $result->getMessage());
+        self::assertStringStartsWith('Fail connect to RabbitMQ Management API. Error: cURL error 6: Could not resolve host: some-foo-bar', $result->message);
     }
 
     #[Test]
@@ -153,8 +153,8 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
         \sleep(6); // RabbitMQ-management does not update stats fast (By default emit stats every 5 seconds).
         $result = $check->check();
 
-        self::assertInstanceOf($resultClass, $result, $result->getMessage());
-        self::assertStringContainsString($resultText, $result->getMessage());
+        self::assertInstanceOf($resultClass, $result, $result->message);
+        self::assertStringContainsString($resultText, $result->message);
     }
 
     /**

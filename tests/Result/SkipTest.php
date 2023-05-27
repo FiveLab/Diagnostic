@@ -24,6 +24,6 @@ class SkipTest extends TestCase
     {
         $result = new Skip('some foo');
 
-        self::assertEquals('some foo', $result->getMessage());
+        self::assertEquals('some foo', $result->message);
     }
 }

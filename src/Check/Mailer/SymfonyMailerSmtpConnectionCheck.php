@@ -15,7 +15,7 @@ namespace FiveLab\Component\Diagnostic\Check\Mailer;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\Transport;
@@ -26,31 +26,19 @@ use Symfony\Component\Mailer\Transport;
 class SymfonyMailerSmtpConnectionCheck implements CheckInterface
 {
     /**
-     * @var string
-     */
-    private string $dsn;
-
-    /**
-     * @var array<int>
-     */
-    private array $codes;
-
-    /**
      * Constructor.
      *
      * @param string     $dsn
      * @param array<int> $codes
      */
-    public function __construct(string $dsn, array $codes = [220, 250])
+    public function __construct(private readonly string $dsn, private readonly array $codes = [220, 250])
     {
-        $this->dsn = $dsn;
-        $this->codes = $codes;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         if (!\class_exists(Transport::class)) {
             return new Failure('The package "symfony/mailer" is not installed.');

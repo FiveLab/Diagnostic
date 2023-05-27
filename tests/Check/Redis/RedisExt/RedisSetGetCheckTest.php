@@ -76,6 +76,6 @@ class RedisSetGetCheckTest extends AbstractRedisTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith('Cannot connect to Redis: php_network_getaddresses:', $result->getMessage());
+        self::assertStringStartsWith('Cannot connect to Redis: php_network_getaddresses:', $result->message);
     }
 }

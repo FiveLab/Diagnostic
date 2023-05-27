@@ -58,7 +58,7 @@ class DbalConnectionCheckTest extends AbstractDoctrineCheckTestCase
         self::assertInstanceOf(Failure::class, $result);
         self::assertStringContainsString(
             'SQLSTATE[HY000] [1045]',
-            $result->getMessage()
+            $result->message
         );
     }
 
@@ -76,7 +76,7 @@ class DbalConnectionCheckTest extends AbstractDoctrineCheckTestCase
         self::assertInstanceOf(Failure::class, $result);
         self::assertStringContainsString(
             'SQLSTATE[HY000] [2002]',
-            $result->getMessage()
+            $result->message
         );
     }
 }

@@ -16,7 +16,7 @@ namespace FiveLab\Component\Diagnostic\Util;
 /**
  * Service for encode secured parts in HTTP parameters.
  */
-class HttpSecurityEncoder
+readonly class HttpSecurityEncoder
 {
     /**
      * Encode the URI for security issues.

@@ -24,6 +24,6 @@ class WarningTest extends TestCase
     {
         $result = new Warning('some foo');
 
-        self::assertEquals('some foo', $result->getMessage());
+        self::assertEquals('some foo', $result->message);
     }
 }

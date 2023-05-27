@@ -60,14 +60,14 @@ declare(strict_types = 1);
 
 namespace Example;
 
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollectionBuilder;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionsBuilder;
 use FiveLab\Component\Diagnostic\Check\Definition\Filter\CheckDefinitionsInGroupFilter;
 use FiveLab\Component\Diagnostic\Check\Definition\Filter\OrXFilter;
 use FiveLab\Component\Diagnostic\Check\PathReadableCheck;
 use FiveLab\Component\Diagnostic\Check\PathWritableCheck;
 use FiveLab\Component\Diagnostic\Runner\Runner;
 
-$builder = new DefinitionCollectionBuilder();
+$builder = new CheckDefinitionsBuilder();
 
 $builder->addCheck('cache_dir', new PathWritableCheck('./var/cache'), 'system_dir');
 $builder->addCheck('logs_dir', new PathWritableCheck('./var/logs'), 'system_dir');

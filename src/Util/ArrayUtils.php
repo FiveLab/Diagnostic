@@ -16,7 +16,7 @@ namespace FiveLab\Component\Diagnostic\Util;
 /**
  * Array utils helper.
  */
-class ArrayUtils
+readonly class ArrayUtils
 {
     /**
      * Try to get specific setting from settings

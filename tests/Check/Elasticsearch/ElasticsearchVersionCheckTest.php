@@ -80,9 +80,9 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
         $check->check();
         $parameters = $check->getExtraParameters();
 
-        self::assertEquals($connectionParameters->getHost(), $parameters['host']);
-        self::assertEquals($connectionParameters->getPort(), $parameters['port']);
-        self::assertEquals($connectionParameters->isSsl() ? 'yes' : 'no', $parameters['ssl']);
+        self::assertEquals($connectionParameters->host, $parameters['host']);
+        self::assertEquals($connectionParameters->port, $parameters['port']);
+        self::assertEquals($connectionParameters->ssl ? 'yes' : 'no', $parameters['ssl']);
 
         self::assertArrayHasKey('actual version', $parameters);
         self::assertArrayHasKey('expected version', $parameters);

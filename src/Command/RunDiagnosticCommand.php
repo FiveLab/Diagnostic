@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Command;
 
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 use FiveLab\Component\Diagnostic\Runner\RunnerInterface;
 use FiveLab\Component\Diagnostic\Runner\Subscriber\ConsoleOutputDebugSubscriber;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -43,10 +43,10 @@ class RunDiagnosticCommand extends Command
     /**
      * Constructor.
      *
-     * @param RunnerInterface      $runner
-     * @param DefinitionCollection $definitions
+     * @param RunnerInterface  $runner
+     * @param CheckDefinitions $definitions
      */
-    public function __construct(private readonly RunnerInterface $runner, private readonly DefinitionCollection $definitions)
+    public function __construct(private readonly RunnerInterface $runner, private readonly CheckDefinitions $definitions)
     {
         parent::__construct();
     }

@@ -162,6 +162,6 @@ class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringContainsString('SQLSTATE[HY000] [2002]', $result->getMessage());
+        self::assertStringContainsString('SQLSTATE[HY000] [2002]', $result->message);
     }
 }

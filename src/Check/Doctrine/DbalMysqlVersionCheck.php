@@ -16,7 +16,7 @@ namespace FiveLab\Component\Diagnostic\Check\Doctrine;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Connection as DriverConnection;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterface;
@@ -29,14 +29,9 @@ class DbalMysqlVersionCheck extends AbstractDbalCheck
     public const MYSQL_EXTRACT_VERSION_REGEX = '/^([\d\.]+)/';
 
     /**
-     * @var string
-     */
-    private string $expectedVersion;
-
-    /**
      * @var VersionComparatorInterface
      */
-    private VersionComparatorInterface $versionComparator;
+    private readonly VersionComparatorInterface $versionComparator;
 
     /**
      * @var string
@@ -52,19 +47,17 @@ class DbalMysqlVersionCheck extends AbstractDbalCheck
      *
      * @see https://getcomposer.org/doc/articles/versions.md
      */
-    public function __construct(object $connection, string $expectedVersion, VersionComparatorInterface $versionComparator = null)
+    public function __construct(DriverConnection|Connection $connection, private readonly string $expectedVersion, ?VersionComparatorInterface $versionComparator = null)
     {
         parent::__construct($connection);
 
-        $this->connection = $connection;
-        $this->expectedVersion = $expectedVersion;
         $this->versionComparator = $versionComparator ?: new SemverVersionComparator();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         try {
             $query = 'SHOW VARIABLES WHERE Variable_name = \'version\'';

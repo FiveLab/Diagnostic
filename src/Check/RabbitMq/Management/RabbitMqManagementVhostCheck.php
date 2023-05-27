@@ -16,7 +16,7 @@ namespace FiveLab\Component\Diagnostic\Check\RabbitMq\Management;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
@@ -25,7 +25,7 @@ use Psr\Http\Client\ClientExceptionInterface;
 /**
  * Check virtual host existence
  */
-class RabbitMqManagementVhostCheck implements CheckInterface
+readonly class RabbitMqManagementVhostCheck implements CheckInterface
 {
     /**
      * @var HttpAdapterInterface
@@ -33,31 +33,25 @@ class RabbitMqManagementVhostCheck implements CheckInterface
     private HttpAdapterInterface $http;
 
     /**
-     * @var RabbitMqConnectionParameters
-     */
-    private RabbitMqConnectionParameters $connectionParameters;
-
-    /**
      * Constructor.
      *
      * @param RabbitMqConnectionParameters $connectionParameters
      * @param HttpAdapterInterface|null    $http
      */
-    public function __construct(RabbitMqConnectionParameters $connectionParameters, HttpAdapterInterface $http = null)
+    public function __construct(private RabbitMqConnectionParameters $connectionParameters, HttpAdapterInterface $http = null)
     {
-        $this->connectionParameters = $connectionParameters;
         $this->http = $http ?: new HttpAdapter();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         $url = \sprintf(
             '%s/api/vhosts/%s',
             $this->connectionParameters->getDsn(true, false),
-            \urlencode($this->connectionParameters->getVhost())
+            \urlencode($this->connectionParameters->vhost)
         );
 
         $request = $this->http->createRequest('GET', $url, [
@@ -94,7 +88,7 @@ class RabbitMqManagementVhostCheck implements CheckInterface
     {
         return [
             'dsn'   => $this->connectionParameters->getDsn(true, true),
-            'vhost' => $this->connectionParameters->getVhost(),
+            'vhost' => $this->connectionParameters->vhost,
         ];
     }
 }

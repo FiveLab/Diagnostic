@@ -16,7 +16,7 @@ namespace FiveLab\Component\Diagnostic\Check\RabbitMq\Management;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
@@ -25,7 +25,7 @@ use Psr\Http\Client\ClientExceptionInterface;
 /**
  * Check access to RabbitMQ Management via API.
  */
-class RabbitMqManagementCheck implements CheckInterface
+readonly class RabbitMqManagementCheck implements CheckInterface
 {
     /**
      * @var HttpAdapterInterface
@@ -33,26 +33,20 @@ class RabbitMqManagementCheck implements CheckInterface
     private HttpAdapterInterface $http;
 
     /**
-     * @var RabbitMqConnectionParameters
-     */
-    private RabbitMqConnectionParameters $connectionParameters;
-
-    /**
      * Constructor.
      *
      * @param RabbitMqConnectionParameters $connectionParameters
      * @param HttpAdapterInterface|null    $http
      */
-    public function __construct(RabbitMqConnectionParameters $connectionParameters, HttpAdapterInterface $http = null)
+    public function __construct(private RabbitMqConnectionParameters $connectionParameters, HttpAdapterInterface $http = null)
     {
-        $this->connectionParameters = $connectionParameters;
         $this->http = $http ?: new HttpAdapter();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         $url = \sprintf(
             '%s/api/overview',

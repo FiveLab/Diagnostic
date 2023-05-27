@@ -95,7 +95,7 @@ class RabbitMqStreamConnectionCheckTest extends AbstractRabbitMqTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringContainsString('getaddrinfo', $result->getMessage());
-        self::assertStringContainsString('failed', $result->getMessage());
+        self::assertStringContainsString('getaddrinfo', $result->message);
+        self::assertStringContainsString('failed', $result->message);
     }
 }

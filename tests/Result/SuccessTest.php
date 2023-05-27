@@ -24,6 +24,6 @@ class SuccessTest extends TestCase
     {
         $result = new Success('some foo');
 
-        self::assertEquals('some foo', $result->getMessage());
+        self::assertEquals('some foo', $result->message);
     }
 }

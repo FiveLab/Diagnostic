@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\DependencyInjection;
 
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollectionBuilder;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionsBuilder;
 use FiveLab\Component\Diagnostic\Check\LazyContainerCheck;
 use FiveLab\Component\Diagnostic\DependencyInjection\AddDiagnosticToBuilderCheckPass;
 use PHPUnit\Framework\Attributes\Test;
@@ -356,7 +356,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
     private function createContainerBuilderWithDefinitionsBuilder(): ContainerBuilder
     {
         $containerBuilder = new ContainerBuilder();
-        $containerBuilder->setDefinition('diagnostic.definitions.builder', new Definition(DefinitionCollectionBuilder::class));
+        $containerBuilder->setDefinition('diagnostic.definitions.builder', new Definition(CheckDefinitionsBuilder::class));
 
         return $containerBuilder;
     }
