@@ -1,8 +1,8 @@
 CHANGELOG
 =========
 
-Next release
-------------
+v2.0.0
+------
 
 * Require PHP 8.2 and higher.
 * Remove `SwiftMailer` checks (package is deprecated, use `symfony/mailer` instead).
