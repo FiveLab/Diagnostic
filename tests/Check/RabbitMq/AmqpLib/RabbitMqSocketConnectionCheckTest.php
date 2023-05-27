@@ -19,6 +19,7 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqSocketConnectionCheckTest extends AbstractRabbitMqTestCase
 {
@@ -40,9 +41,7 @@ class RabbitMqSocketConnectionCheckTest extends AbstractRabbitMqTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParams(): void
     {
         $check = new RabbitMqSocketConnectionCheck($this->getRabbitMqConnectionParameters());
@@ -53,9 +52,7 @@ class RabbitMqSocketConnectionCheckTest extends AbstractRabbitMqTestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnOkIfSuccessConnect(): void
     {
         $check = new RabbitMqSocketConnectionCheck($this->getRabbitMqConnectionParameters());
@@ -65,9 +62,7 @@ class RabbitMqSocketConnectionCheckTest extends AbstractRabbitMqTestCase
         self::assertEquals(new Success('Successfully connected to RabbitMQ'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnFailIfPasswordIsWrong(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(
@@ -88,9 +83,7 @@ class RabbitMqSocketConnectionCheckTest extends AbstractRabbitMqTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfHostIsDown(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(
@@ -106,6 +99,6 @@ class RabbitMqSocketConnectionCheckTest extends AbstractRabbitMqTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringContainsString('Error Connecting to server', $result->getMessage());
+        self::assertStringContainsString('Error Connecting to server', $result->message);
     }
 }

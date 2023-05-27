@@ -15,23 +15,17 @@ namespace FiveLab\Component\Diagnostic\Tests\Check;
 
 use FiveLab\Component\Diagnostic\Check\ParameterEqualCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class ParameterEqualCheckTest extends TestCase
 {
-    /**
-     * @test
-     *
-     * @param mixed           $expected
-     * @param mixed           $actual
-     * @param ResultInterface $expectedResult
-     * @param array           $expectedExtra
-     *
-     * @dataProvider provideParameters
-     */
-    public function shouldSuccessCheck($expected, $actual, ResultInterface $expectedResult, array $expectedExtra): void
+    #[Test]
+    #[DataProvider('provideParameters')]
+    public function shouldSuccessCheck($expected, $actual, Result $expectedResult, array $expectedExtra): void
     {
         $check = new ParameterEqualCheck($expected, $actual);
 
@@ -41,9 +35,7 @@ class ParameterEqualCheckTest extends TestCase
         self::assertEquals($expectedExtra, $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionIfExpectedNotSupported(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -52,9 +44,7 @@ class ParameterEqualCheckTest extends TestCase
         new ParameterEqualCheck(new \stdClass(), []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionIfActualNotSupported(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -68,7 +58,7 @@ class ParameterEqualCheckTest extends TestCase
      *
      * @return array
      */
-    public function provideParameters(): array
+    public static function provideParameters(): array
     {
         return [
             // Arrays

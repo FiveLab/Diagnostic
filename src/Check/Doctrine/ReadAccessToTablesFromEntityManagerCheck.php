@@ -17,7 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
 /**
@@ -25,11 +25,6 @@ use FiveLab\Component\Diagnostic\Result\Success;
  */
 class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $entityManager;
-
     /**
      * @var array<string>
      */
@@ -40,15 +35,14 @@ class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         $this->tables = $this->getTableNames();
         $failureSelect = [];

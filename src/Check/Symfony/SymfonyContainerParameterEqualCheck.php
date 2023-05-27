@@ -16,7 +16,7 @@ namespace FiveLab\Component\Diagnostic\Check\Symfony;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\ParameterEqualCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,22 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SymfonyContainerParameterEqualCheck implements CheckInterface
 {
     /**
-     * @var ContainerInterface
-     */
-    private ContainerInterface $container;
-
-    /**
-     * @var string
-     */
-    private string $parameterName;
-
-    /**
-     * @var mixed
-     */
-    private $expectedValue;
-
-    /**
-     * @var \Closure
+     * @var \Closure(mixed, mixed): CheckInterface
      */
     private \Closure $parameterEqualCheckFactory;
 
@@ -56,13 +41,9 @@ class SymfonyContainerParameterEqualCheck implements CheckInterface
      * @param string             $parameterName
      * @param mixed              $expectedValue
      */
-    public function __construct(ContainerInterface $container, string $parameterName, $expectedValue)
+    public function __construct(private readonly ContainerInterface $container, private readonly string $parameterName, private readonly mixed $expectedValue)
     {
-        $this->container = $container;
-        $this->parameterName = $parameterName;
-        $this->expectedValue = $expectedValue;
-
-        $this->parameterEqualCheckFactory = static function ($expected, $actual) {
+        $this->parameterEqualCheckFactory = static function (mixed $expected, mixed $actual) {
             return new ParameterEqualCheck($expected, $actual);
         };
     }
@@ -82,7 +63,7 @@ class SymfonyContainerParameterEqualCheck implements CheckInterface
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         if (!$this->container->hasParameter($this->parameterName)) {
             return new Failure('The parameter was not found.');

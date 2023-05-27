@@ -16,6 +16,7 @@ namespace FiveLab\Component\Diagnostic\Tests\Check\PhpIni;
 use FiveLab\Component\Diagnostic\Check\PhpIni\PhpIniParameterCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class PhpIniParameterCheckTest extends TestCase
@@ -44,9 +45,7 @@ class PhpIniParameterCheckTest extends TestCase
         \ini_set('date.timezone', $this->activeTimezone);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $check = new PhpIniParameterCheck('date.timezone', 'Europe/Kiev');
@@ -56,9 +55,7 @@ class PhpIniParameterCheckTest extends TestCase
         self::assertEquals(new Success('Success check php.ini parameter.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtra(): void
     {
         $check = new PhpIniParameterCheck('date.timezone', 'Europe/Kiev');
@@ -72,9 +69,7 @@ class PhpIniParameterCheckTest extends TestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckIfParametersNotEquals(): void
     {
         $check = new PhpIniParameterCheck('date.timezone', 'UTC');
@@ -90,9 +85,7 @@ class PhpIniParameterCheckTest extends TestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckIfParametersWasNotFound(): void
     {
         $check = new PhpIniParameterCheck('some.foo.bar', 'Qwerty');

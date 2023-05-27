@@ -15,48 +15,35 @@ namespace FiveLab\Component\Diagnostic\Check\Environment;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
 /**
  * Check whether an environment variable matches specific pattern
  */
-class EnvVarRegexCheck implements CheckInterface
+readonly class EnvVarRegexCheck implements CheckInterface
 {
-    /**
-     * @var string
-     */
-    private string $variableName;
-
-    /**
-     * @var string
-     */
-    private string $pattern;
-
     /**
      * Constructor.
      *
      * @param string $variableName
      * @param string $pattern
      */
-    public function __construct(string $variableName, string $pattern)
+    public function __construct(private readonly string $variableName, private readonly string $pattern)
     {
-        if (!$variableName) {
+        if (!$this->variableName) {
             throw new \InvalidArgumentException('Environment variable name should not be empty.');
         }
 
-        if (!$this->isRegularExpression($pattern)) {
+        if (!$this->isRegularExpression($this->pattern)) {
             throw new \InvalidArgumentException('Invalid regex pattern.');
         }
-
-        $this->variableName = $variableName;
-        $this->pattern = $pattern;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         if (!\getenv($this->variableName)) {
             return new Failure('Environment variable is not set.');

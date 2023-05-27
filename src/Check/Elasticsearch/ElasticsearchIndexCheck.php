@@ -13,15 +13,13 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
-use Elasticsearch\Client as ElasticsearchClient;
 use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
-use Elasticsearch\Common\Exceptions\Missing404Exception as ElasticsearchMissing404Exception ;
+use Elasticsearch\Common\Exceptions\Missing404Exception as ElasticsearchMissing404Exception;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\ArrayUtils;
-use OpenSearch\Client as OpenSearchClient;
 use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 use OpenSearch\Common\Exceptions\Missing404Exception as OpenSearchMissing404Exception;
 
@@ -31,16 +29,6 @@ use OpenSearch\Common\Exceptions\Missing404Exception as OpenSearchMissing404Exce
 class ElasticsearchIndexCheck extends AbstractElasticsearchCheck implements CheckInterface
 {
     /**
-     * @var string
-     */
-    private string $index;
-
-    /**
-     * @var array<string, mixed>
-     */
-    private array $expectedSettings;
-
-    /**
      * @var array<string, mixed>
      */
     private array $actualSettings = [];
@@ -48,26 +36,22 @@ class ElasticsearchIndexCheck extends AbstractElasticsearchCheck implements Chec
     /**
      * Constructor.
      *
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     * @param string                                             $index
-     * @param array<string, mixed>                               $expectedSettings
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
+     * @param ElasticsearchConnectionParameters                       $connectionParameters
+     * @param string                                                  $index
+     * @param array<string, mixed>                                    $expectedSettings
+     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder
      */
-    public function __construct(ElasticsearchConnectionParameters $connectionParameters, string $index, array $expectedSettings = [], $clientBuilder = null)
+    public function __construct(ElasticsearchConnectionParameters $connectionParameters, private readonly string $index, private readonly array $expectedSettings = [], ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder = null)
     {
         parent::__construct($connectionParameters, $clientBuilder);
-
-        $this->index = $index;
-        $this->expectedSettings = $expectedSettings;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         try {
-            /** @var ElasticsearchClient|OpenSearchClient */
             $client = $this->createClient();
 
             $client->ping();

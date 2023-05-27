@@ -18,7 +18,7 @@ use Composer\Semver\Semver;
 /**
  * Semver version comparator.
  */
-class SemverVersionComparator implements VersionComparatorInterface
+readonly class SemverVersionComparator implements VersionComparatorInterface
 {
     /**
      * Constructor.
@@ -26,9 +26,7 @@ class SemverVersionComparator implements VersionComparatorInterface
     public function __construct()
     {
         if (!\class_exists(Semver::class)) {
-            $message = 'Cannot use SemverVersionComparator. The package "composer/semver" not installed.';
-
-            throw new \RuntimeException($message);
+            throw new \RuntimeException('Cannot use SemverVersionComparator. The package "composer/semver" not installed.');
         }
     }
 

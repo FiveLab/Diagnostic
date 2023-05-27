@@ -15,33 +15,27 @@ namespace FiveLab\Component\Diagnostic\Check\Environment;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
 /**
  * Existence ENV variable in system check
  */
-class EnvExistenceCheck implements CheckInterface
+readonly class EnvExistenceCheck implements CheckInterface
 {
-    /**
-     * @var string
-     */
-    private string $envName;
-
     /**
      * Constructor.
      *
      * @param string $envName
      */
-    public function __construct(string $envName)
+    public function __construct(private string $envName)
     {
-        $this->envName = $envName;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         if (false === \getenv($this->envName)) {
             return new Failure(\sprintf(

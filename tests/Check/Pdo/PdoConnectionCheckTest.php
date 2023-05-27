@@ -17,6 +17,7 @@ use FiveLab\Component\Diagnostic\Check\Pdo\PdoConnectionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractDatabaseTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class PdoConnectionCheckTest extends AbstractDatabaseTestCase
 {
@@ -30,9 +31,7 @@ class PdoConnectionCheckTest extends AbstractDatabaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $check = new PdoConnectionCheck(
@@ -49,9 +48,7 @@ class PdoConnectionCheckTest extends AbstractDatabaseTestCase
         self::assertEquals(new Success('Success connect to database.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckIfDriverNotAvailable(): void
     {
         $check = new PdoConnectionCheck(
@@ -66,12 +63,10 @@ class PdoConnectionCheckTest extends AbstractDatabaseTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith('Can\'t check connect to database via PDO by driver "mysql-some". The driver "mysql-some" is not supported. Available drivers are', $result->getMessage());
+        self::assertStringStartsWith('Can\'t check connect to database via PDO by driver "mysql-some". The driver "mysql-some" is not supported. Available drivers are', $result->message);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckIfHostIsInvalid(): void
     {
         $check = new PdoConnectionCheck(
@@ -86,12 +81,10 @@ class PdoConnectionCheckTest extends AbstractDatabaseTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith('Fail connect to database. Error: SQLSTATE[HY000] [2002] php_network_getaddresses:', $result->getMessage());
+        self::assertStringStartsWith('Fail connect to database. Error: SQLSTATE[HY000] [2002] php_network_getaddresses:', $result->message);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckIfCredentialsIsInvalid(): void
     {
         $check = new PdoConnectionCheck(
@@ -106,12 +99,10 @@ class PdoConnectionCheckTest extends AbstractDatabaseTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith('Fail connect to database. Error: SQLSTATE[HY000] [1045] Access denied for user', $result->getMessage());
+        self::assertStringStartsWith('Fail connect to database. Error: SQLSTATE[HY000] [1045] Access denied for user', $result->message);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckIfDatabaseIsInvalid(): void
     {
         $check = new PdoConnectionCheck(
@@ -128,9 +119,7 @@ class PdoConnectionCheckTest extends AbstractDatabaseTestCase
         self::assertEquals(new Failure('Fail connect to database. Error: SQLSTATE[HY000] [1049] Unknown database \''.$this->getDatabaseName().'_some\''), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParameters(): void
     {
         $check = new PdoConnectionCheck(

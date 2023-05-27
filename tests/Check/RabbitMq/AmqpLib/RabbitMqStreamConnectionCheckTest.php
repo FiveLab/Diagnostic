@@ -19,6 +19,7 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqStreamConnectionCheckTest extends AbstractRabbitMqTestCase
 {
@@ -36,9 +37,7 @@ class RabbitMqStreamConnectionCheckTest extends AbstractRabbitMqTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParams(): void
     {
         $check = new RabbitMqStreamConnectionCheck($this->getRabbitMqConnectionParameters());
@@ -49,9 +48,7 @@ class RabbitMqStreamConnectionCheckTest extends AbstractRabbitMqTestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnOkIfSuccessConnect(): void
     {
         $check = new RabbitMqStreamConnectionCheck($this->getRabbitMqConnectionParameters());
@@ -61,9 +58,7 @@ class RabbitMqStreamConnectionCheckTest extends AbstractRabbitMqTestCase
         self::assertEquals(new Success('Successfully connected to RabbitMQ'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnFailIfPasswordIsWrong(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(
@@ -84,9 +79,7 @@ class RabbitMqStreamConnectionCheckTest extends AbstractRabbitMqTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfHostIsDown(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(
@@ -102,7 +95,7 @@ class RabbitMqStreamConnectionCheckTest extends AbstractRabbitMqTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringContainsString('getaddrinfo', $result->getMessage());
-        self::assertStringContainsString('failed', $result->getMessage());
+        self::assertStringContainsString('getaddrinfo', $result->message);
+        self::assertStringContainsString('failed', $result->message);
     }
 }

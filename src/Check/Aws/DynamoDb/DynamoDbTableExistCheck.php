@@ -17,29 +17,14 @@ use Aws\DynamoDb\Exception\DynamoDbException;
 use Aws\Sdk;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
 /**
  * Check what the table exist in DynamoDB (AWS).
  */
-class DynamoDbTableExistCheck implements CheckInterface
+readonly class DynamoDbTableExistCheck implements CheckInterface
 {
-    /**
-     * @var Sdk
-     */
-    private Sdk $sdk;
-
-    /**
-     * @var string
-     */
-    private string $tableName;
-
-    /**
-     * @var string
-     */
-    private string $endpoint;
-
     /**
      * Constructor.
      *
@@ -47,17 +32,14 @@ class DynamoDbTableExistCheck implements CheckInterface
      * @param string $tableName
      * @param string $endpoint
      */
-    public function __construct(Sdk $sdk, string $tableName, string $endpoint)
+    public function __construct(private Sdk $sdk, private string $tableName, private string $endpoint)
     {
-        $this->sdk = $sdk;
-        $this->tableName = $tableName;
-        $this->endpoint = $endpoint;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         $dynamodb = $this->sdk->createDynamoDb([
             'endpoint' => $this->endpoint,

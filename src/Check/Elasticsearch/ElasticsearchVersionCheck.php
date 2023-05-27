@@ -13,15 +13,13 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
-use Elasticsearch\Client as ElasticsearchClient;
 use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterface;
-use OpenSearch\Client as OpenSearchClient;
 use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 
 /**
@@ -30,19 +28,9 @@ use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 class ElasticsearchVersionCheck extends AbstractElasticsearchCheck implements CheckInterface
 {
     /**
-     * @var string|null
-     */
-    private ?string $expectedVersion;
-
-    /**
-     * @var string|null
-     */
-    private ?string $expectedLuceneVersion;
-
-    /**
      * @var VersionComparatorInterface
      */
-    private VersionComparatorInterface $versionComparator;
+    private readonly VersionComparatorInterface $versionComparator;
 
     /**
      * @var string|null
@@ -63,22 +51,19 @@ class ElasticsearchVersionCheck extends AbstractElasticsearchCheck implements Ch
      * @param VersionComparatorInterface|null                         $versionComparator
      * @param ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder
      */
-    public function __construct(ElasticsearchConnectionParameters $connectionParameters, string $expectedVersion = null, string $expectedLuceneVersion = null, VersionComparatorInterface $versionComparator = null, $clientBuilder = null)
+    public function __construct(ElasticsearchConnectionParameters $connectionParameters, private readonly ?string $expectedVersion = null, private readonly ?string $expectedLuceneVersion = null, VersionComparatorInterface $versionComparator = null, ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder = null)
     {
         parent::__construct($connectionParameters, $clientBuilder);
 
-        $this->expectedVersion = $expectedVersion;
-        $this->expectedLuceneVersion = $expectedLuceneVersion;
         $this->versionComparator = $versionComparator ?: new SemverVersionComparator();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         try {
-            /** @var ElasticsearchClient|OpenSearchClient */
             $client = $this->createClient();
 
             $info = $client->info();

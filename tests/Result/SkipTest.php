@@ -14,17 +14,16 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Result;
 
 use FiveLab\Component\Diagnostic\Result\Skip;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class SkipTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCreate(): void
     {
         $result = new Skip('some foo');
 
-        self::assertEquals('some foo', $result->getMessage());
+        self::assertEquals('some foo', $result->message);
     }
 }

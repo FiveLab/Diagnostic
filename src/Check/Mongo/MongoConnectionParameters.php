@@ -16,43 +16,8 @@ namespace FiveLab\Component\Diagnostic\Check\Mongo;
 /**
  * Model that stores connection parameters for MongoDB.
  */
-class MongoConnectionParameters
+readonly class MongoConnectionParameters
 {
-    /**
-     * @var string
-     */
-    private string $protocol;
-
-    /**
-     * @var string
-     */
-    private string $host;
-
-    /**
-     * @var int
-     */
-    private int $port;
-
-    /**
-     * @var string
-     */
-    private string $username;
-
-    /**
-     * @var string
-     */
-    private string $password;
-
-    /**
-     * @var string
-     */
-    private string $db;
-
-    /**
-     * @var array<string,int|bool|string>
-     */
-    private array $options;
-
     /**
      * Constructor.
      *
@@ -64,15 +29,15 @@ class MongoConnectionParameters
      * @param string               $db
      * @param array<string, mixed> $options
      */
-    public function __construct(string $protocol, string $host, int $port, string $username, string $password, string $db, array $options = [])
-    {
-        $this->protocol = $protocol;
-        $this->host = $host;
-        $this->port = $port;
-        $this->username = $username;
-        $this->password = $password;
-        $this->db = $db;
-        $this->options = $options;
+    public function __construct(
+        public string $protocol,
+        public string $host,
+        public int    $port,
+        public string $username,
+        public string $password,
+        public string $db,
+        public array  $options = []
+    ) {
     }
 
     /**
@@ -92,76 +57,6 @@ class MongoConnectionParameters
             $this->port,
             $this->formatOptions(),
         );
-    }
-
-    /**
-     * Get protocol
-     *
-     * @return string
-     */
-    public function getProtocol(): string
-    {
-        return $this->protocol;
-    }
-
-    /**
-     * Get host
-     *
-     * @return string
-     */
-    public function getHost(): string
-    {
-        return $this->host;
-    }
-
-    /**
-     * Get port
-     *
-     * @return int
-     */
-    public function getPort(): int
-    {
-        return $this->port;
-    }
-
-    /**
-     * Get username
-     *
-     * @return string
-     */
-    public function getUsername(): string
-    {
-        return $this->username;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    /**
-     * Get database name
-     *
-     * @return string
-     */
-    public function getDb(): string
-    {
-        return $this->db;
-    }
-
-    /**
-     * Get options
-     *
-     * @return array<string,mixed>
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
     }
 
     /**

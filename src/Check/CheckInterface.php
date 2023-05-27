@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check;
 
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 
 /**
  * All checks should implement this interface.
@@ -23,9 +23,9 @@ interface CheckInterface
     /**
      * Run the check
      *
-     * @return ResultInterface
+     * @return Result
      */
-    public function check(): ResultInterface;
+    public function check(): Result;
 
     /**
      * Get extra parameters of check. The url as an example.

@@ -14,17 +14,16 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Result;
 
 use FiveLab\Component\Diagnostic\Result\Failure;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class FailureTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCreate(): void
     {
         $result = new Failure('some foo');
 
-        self::assertEquals('some foo', $result->getMessage());
+        self::assertEquals('some foo', $result->message);
     }
 }

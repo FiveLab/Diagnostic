@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Runner;
 
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 
 /**
  * All runners should implement this interface.
@@ -23,9 +23,9 @@ interface RunnerInterface
     /**
      * Run the diagnostic.
      *
-     * @param DefinitionCollection $definitions
+     * @param CheckDefinitions $definitions
      *
      * @return bool Returns TRUE if all success and FALSE is anyone check is failure.
      */
-    public function run(DefinitionCollection $definitions): bool;
+    public function run(CheckDefinitions $definitions): bool;
 }

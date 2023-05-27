@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Runner;
 
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Runner\Event\BeforeRunCheckEvent;
 use FiveLab\Component\Diagnostic\Runner\Event\CompleteRunCheckEvent;
@@ -23,7 +23,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Default runner.
  */
-class Runner implements RunnerInterface
+readonly class Runner implements RunnerInterface
 {
     /**
      * @var EventDispatcherInterface
@@ -54,7 +54,7 @@ class Runner implements RunnerInterface
     /**
      * {@inheritdoc}
      */
-    public function run(DefinitionCollection $definitions): bool
+    public function run(CheckDefinitions $definitions): bool
     {
         $allSuccess = true;
 
@@ -67,7 +67,7 @@ class Runner implements RunnerInterface
 
             if (!$result) {
                 try {
-                    $result = $definition->getCheck()->check();
+                    $result = $definition->check->check();
                 } catch (\Throwable $e) {
                     $result = new Failure(\sprintf(
                         'Catch exception (%s): %s',

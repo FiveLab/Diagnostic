@@ -13,9 +13,10 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\DependencyInjection;
 
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollectionBuilder;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionsBuilder;
 use FiveLab\Component\Diagnostic\Check\LazyContainerCheck;
 use FiveLab\Component\Diagnostic\DependencyInjection\AddDiagnosticToBuilderCheckPass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -23,9 +24,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class AddDiagnosticToBuilderCheckPassTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldNotProcessIfDefinitionsBuilderDoesNotExist(): void
     {
         $containerBuilder = new ContainerBuilder();
@@ -38,9 +37,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         $this->expectNotToPerformAssertions();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessProcessIfChecksDoesNotExist(): void
     {
         $containerBuilder = $this->createContainerBuilderWithDefinitionsBuilder();
@@ -52,9 +49,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         $this->expectNotToPerformAssertions();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessProcessWithOnlyTagName(): void
     {
         $containerBuilder = $this->createContainerBuilderWithDefinitionsBuilder();
@@ -96,9 +91,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         ], $definitionsBuilder->getMethodCalls());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessProcessWithGroups(): void
     {
         $containerBuilder = $this->createContainerBuilderWithDefinitionsBuilder();
@@ -144,9 +137,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         ], $definitionsBuilder->getMethodCalls());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessProcessWithCustomKeys(): void
     {
         $containerBuilder = $this->createContainerBuilderWithDefinitionsBuilder();
@@ -192,9 +183,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         ], $definitionsBuilder->getMethodCalls());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessWithMultipleTagsForOneService(): void
     {
         $containerBuilder = $this->createContainerBuilderWithDefinitionsBuilder();
@@ -238,9 +227,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         ], $definitionsBuilder->getMethodCalls());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessWithResolveClassFromParameter(): void
     {
         $containerBuilder = $this->createContainerBuilderWithDefinitionsBuilder();
@@ -269,9 +256,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         ], $definitionsBuilder->getMethodCalls());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessProcessWithUseLazyDecorator(): void
     {
         $containerBuilder = $this->createContainerBuilderWithDefinitionsBuilder();
@@ -309,9 +294,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         ], $lazyDefinition->getArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionIfParametersWasNotFound(): void
     {
         $this->expectException(\RuntimeException::class);
@@ -329,9 +312,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         $compiler->process($containerBuilder);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionIfClassDoesNotExist(): void
     {
         $this->expectException(\RuntimeException::class);
@@ -349,9 +330,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         $compiler->process($containerBuilder);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionIfCheckNotImplementInterface(): void
     {
         $this->expectException(\RuntimeException::class);
@@ -377,7 +356,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
     private function createContainerBuilderWithDefinitionsBuilder(): ContainerBuilder
     {
         $containerBuilder = new ContainerBuilder();
-        $containerBuilder->setDefinition('diagnostic.definitions.builder', new Definition(DefinitionCollectionBuilder::class));
+        $containerBuilder->setDefinition('diagnostic.definitions.builder', new Definition(CheckDefinitionsBuilder::class));
 
         return $containerBuilder;
     }

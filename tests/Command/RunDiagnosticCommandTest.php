@@ -13,31 +13,28 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Command;
 
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 use FiveLab\Component\Diagnostic\Check\Definition\Filter\CheckDefinitionsInGroupFilter;
 use FiveLab\Component\Diagnostic\Check\Definition\Filter\OrXFilter;
 use FiveLab\Component\Diagnostic\Command\RunDiagnosticCommand;
-use FiveLab\Component\Diagnostic\Runner\Runner;
 use FiveLab\Component\Diagnostic\Runner\RunnerInterface;
-use FiveLab\Component\Diagnostic\Runner\Subscriber\ConsoleOutputDebugSubscriber;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RunDiagnosticCommandTest extends TestCase
 {
     /**
-     * @var RunnerInterface|MockObject
+     * @var RunnerInterface
      */
     private RunnerInterface $runner;
 
     /**
-     * @var DefinitionCollection|MockObject
+     * @var CheckDefinitions
      */
-    private DefinitionCollection $definitions;
+    private CheckDefinitions $definitions;
 
     /**
      * @var InputInterface
@@ -59,37 +56,23 @@ class RunDiagnosticCommandTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->runner = $this->createMock(Runner::class);
-        $this->definitions = $this->createMock(DefinitionCollection::class);
+        $this->runner = $this->createMock(RunnerInterface::class);
+        $this->definitions = $this->createMock(CheckDefinitions::class);
         $this->input = $this->createMock(InputInterface::class);
         $this->output = $this->createMock(OutputInterface::class);
 
         $this->command = new RunDiagnosticCommand($this->runner, $this->definitions);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessConfigure(): void
     {
-        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-
-        $eventDispatcher->expects(self::once())
-            ->method('addSubscriber')
-            ->with(new ConsoleOutputDebugSubscriber($this->output));
-
-        $this->runner->expects(self::once())
-            ->method('getEventDispatcher')
-            ->willReturn($eventDispatcher);
-
         $this->command->run($this->input, $this->output);
 
         self::assertEquals('diagnostic:run', $this->command->getName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessRunWithSuccessStatus(): void
     {
         $this->runner->expects(self::once())
@@ -102,9 +85,7 @@ class RunDiagnosticCommandTest extends TestCase
         self::assertEquals(0, $code);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessRunWithFailStatus(): void
     {
         $this->runner->expects(self::once())
@@ -117,17 +98,14 @@ class RunDiagnosticCommandTest extends TestCase
         self::assertEquals(1, $code);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessRunWithGroupFiltering(): void
     {
         $this->definitions->expects(self::once())
             ->method('getGroups')
             ->willReturn(['foo', 'bar', 'some']);
 
-        $expectedDefinitions = $this->createMock(DefinitionCollection::class);
-        $expectedDefinitions->uniqueIdentifier = \uniqid((string) \random_int(0, PHP_INT_MAX), true);
+        $expectedDefinitions = $this->createMock(CheckDefinitions::class);
 
         $this->definitions->expects(self::once())
             ->method('filter')
@@ -151,9 +129,7 @@ class RunDiagnosticCommandTest extends TestCase
         self::assertEquals(0, $code);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailInGroupNotConfigured(): void
     {
         $this->expectException(\InvalidArgumentException::class);

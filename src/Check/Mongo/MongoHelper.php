@@ -16,7 +16,7 @@ namespace FiveLab\Component\Diagnostic\Check\Mongo;
 /**
  * A simple helper for add additional functionality.
  */
-class MongoHelper
+final readonly class MongoHelper
 {
     /**
      * Convert connection parameters to array
@@ -28,13 +28,13 @@ class MongoHelper
     public static function convertConnectionParametersToArray(MongoConnectionParameters $parameters): array
     {
         return [
-            'protocol' => $parameters->getProtocol(),
-            'host'     => $parameters->getHost(),
-            'port'     => $parameters->getPort(),
-            'user'     => $parameters->getUsername(),
+            'protocol' => $parameters->protocol,
+            'host'     => $parameters->host,
+            'port'     => $parameters->port,
+            'user'     => $parameters->username,
             'pass'     => '***',
-            'db'       => $parameters->getDb(),
-            'options'  => $parameters->getOptions(),
+            'db'       => $parameters->db,
+            'options'  => $parameters->options,
         ];
     }
 }

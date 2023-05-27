@@ -16,7 +16,7 @@ namespace FiveLab\Component\Diagnostic\Check\RabbitMq\Management;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
@@ -30,22 +30,7 @@ class RabbitMqManagementExchangeCheck implements CheckInterface
     /**
      * @var HttpAdapterInterface
      */
-    private HttpAdapterInterface $http;
-
-    /**
-     * @var RabbitMqConnectionParameters
-     */
-    private RabbitMqConnectionParameters $connectionParameters;
-
-    /**
-     * @var string
-     */
-    private string $exchangeName;
-
-    /**
-     * @var string
-     */
-    private string $exchangeType;
+    private readonly HttpAdapterInterface $http;
 
     /**
      * @var string|null
@@ -60,23 +45,24 @@ class RabbitMqManagementExchangeCheck implements CheckInterface
      * @param string                       $exchangeType
      * @param HttpAdapterInterface|null    $http
      */
-    public function __construct(RabbitMqConnectionParameters $connectionParameters, string $exchangeName, string $exchangeType, HttpAdapterInterface $http = null)
-    {
-        $this->connectionParameters = $connectionParameters;
-        $this->exchangeName = $exchangeName;
-        $this->exchangeType = $exchangeType;
+    public function __construct(
+        private readonly RabbitMqConnectionParameters $connectionParameters,
+        private readonly string                       $exchangeName,
+        private readonly string                       $exchangeType,
+        HttpAdapterInterface                          $http = null
+    ) {
         $this->http = $http ?: new HttpAdapter();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         $url = \sprintf(
             '%s/api/exchanges/%s/%s',
             $this->connectionParameters->getDsn(true, false),
-            \urlencode($this->connectionParameters->getVhost()),
+            \urlencode($this->connectionParameters->vhost),
             \urlencode($this->exchangeName)
         );
 
@@ -121,7 +107,7 @@ class RabbitMqManagementExchangeCheck implements CheckInterface
     {
         return [
             'dsn'         => $this->connectionParameters->getDsn(true, true),
-            'vhost'       => $this->connectionParameters->getVhost(),
+            'vhost'       => $this->connectionParameters->vhost,
             'exchange'    => $this->exchangeName,
             'type'        => $this->exchangeType,
             'actual type' => $this->actualExchangeType,

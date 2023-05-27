@@ -13,17 +13,17 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Runner\Skip;
 
-use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
 
 /**
  * The registry for read skip checks from ENV variable.
  */
-class EnvVariableSkipRegistry implements SkipRegistryInterface
+readonly class EnvVariableSkipRegistry implements SkipRegistryInterface
 {
     /**
      * @var array<string>
      */
-    private array $skipKeys = [];
+    private array $skipKeys;
 
     /**
      * Constructor.
@@ -46,8 +46,8 @@ class EnvVariableSkipRegistry implements SkipRegistryInterface
     /**
      * {@inheritdoc}
      */
-    public function isShouldBeSkipped(CheckDefinitionInterface $definition): bool
+    public function isShouldBeSkipped(CheckDefinition $definition): bool
     {
-        return \in_array($definition->getKey(), $this->skipKeys, true);
+        return \in_array($definition->key, $this->skipKeys, true);
     }
 }

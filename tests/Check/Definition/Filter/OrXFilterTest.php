@@ -13,15 +13,15 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Definition\Filter;
 
-use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
+use FiveLab\Component\Diagnostic\Check\CheckInterface;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
 use FiveLab\Component\Diagnostic\Check\Definition\Filter\OrXFilter;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class OrXFilterTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnFalseWithoutAnyConditions(): void
     {
         $filter = new OrXFilter();
@@ -31,9 +31,7 @@ class OrXFilterTest extends TestCase
         self::assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnTrueIfOneFromClosuresReturnTrue(): void
     {
         $filter = new OrXFilter(
@@ -47,9 +45,7 @@ class OrXFilterTest extends TestCase
         self::assertTrue($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnFalseIfAllClosuresReturnFalse(): void
     {
         $filter = new OrXFilter(
@@ -80,10 +76,10 @@ class OrXFilterTest extends TestCase
     /**
      * Create definition
      *
-     * @return CheckDefinitionInterface
+     * @return CheckDefinition
      */
-    private function createDefinition(): CheckDefinitionInterface
+    private function createDefinition(): CheckDefinition
     {
-        return $this->createMock(CheckDefinitionInterface::class);
+        return new CheckDefinition(\uniqid((string) \random_int(0, PHP_INT_MAX), true), $this->createMock(CheckInterface::class), []);
     }
 }

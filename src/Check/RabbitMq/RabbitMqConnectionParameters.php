@@ -19,36 +19,6 @@ namespace FiveLab\Component\Diagnostic\Check\RabbitMq;
 class RabbitMqConnectionParameters
 {
     /**
-     * @var string
-     */
-    private string $host;
-
-    /**
-     * @var int
-     */
-    private int $port;
-
-    /**
-     * @var string
-     */
-    private string $username;
-
-    /**
-     * @var string
-     */
-    private string $password;
-
-    /**
-     * @var string
-     */
-    private string $vhost;
-
-    /**
-     * @var bool
-     */
-    private bool $ssl;
-
-    /**
      * Constructor.
      *
      * @param string $host
@@ -58,74 +28,51 @@ class RabbitMqConnectionParameters
      * @param string $vhost
      * @param bool   $ssl
      */
-    public function __construct(string $host, int $port, string $username, string $password, string $vhost = '/', bool $ssl = false)
-    {
-        $this->host = $host;
-        $this->port = $port;
-        $this->username = $username;
-        $this->password = $password;
-        $this->vhost = $vhost;
-        $this->ssl = $ssl;
+    public function __construct(
+        public string $host,
+        public int    $port,
+        public string $username,
+        public string $password,
+        public string $vhost = '/',
+        public bool   $ssl = false
+    ) {
     }
 
     /**
-     * Get host
+     * Make connection parameters from DSN.
      *
-     * @return string
+     * @param string $dsn
+     *
+     * @return self
      */
-    public function getHost(): string
+    public static function fromDsn(string $dsn): self
     {
-        return $this->host;
-    }
+        $parts = \parse_url($dsn);
 
-    /**
-     * Get port
-     *
-     * @return int
-     */
-    public function getPort(): int
-    {
-        return $this->port;
-    }
+        if (!$host = $parts['host'] ?? null) {
+            throw new \InvalidArgumentException(\sprintf(
+                'Missed "host" in DSN "%s".',
+                $dsn
+            ));
+        }
 
-    /**
-     * Get username
-     *
-     * @return string
-     */
-    public function getUsername(): string
-    {
-        return $this->username;
-    }
+        if (!$port = $parts['port'] ?? null) {
+            throw new \InvalidArgumentException(\sprintf(
+                'Missed "port" in DSN "%s".',
+                $dsn
+            ));
+        }
 
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
+        $vhost = $parts['path'] ?? '/%2f';
 
-    /**
-     * Get virtual host
-     *
-     * @return string
-     */
-    public function getVhost(): string
-    {
-        return $this->vhost;
-    }
-
-    /**
-     * Is use SSL?
-     *
-     * @return bool
-     */
-    public function isSsl(): bool
-    {
-        return $this->ssl;
+        return new self(
+            $host,
+            (int) $port,
+            $parts['user'] ?? 'guest',
+            $parts['pass'] ?? 'guest',
+            \urldecode(\ltrim($vhost, '/')),
+            ($parts['scheme'] ?? 'http') === 'https'
+        );
     }
 
     /**
@@ -138,10 +85,10 @@ class RabbitMqConnectionParameters
      */
     public function getDsn(bool $httpTransport, bool $maskedPassword): string
     {
-        $prefix = $this->isSsl() ? 'ssl' : 'tcp';
+        $prefix = $this->ssl ? 'ssl' : 'tcp';
 
         if ($httpTransport) {
-            $prefix = $this->isSsl() ? 'https' : 'http';
+            $prefix = $this->ssl ? 'https' : 'http';
         }
 
         return \sprintf(

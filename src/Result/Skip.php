@@ -16,6 +16,6 @@ namespace FiveLab\Component\Diagnostic\Result;
 /**
  * Skip result. Indicate what check has been skipped.
  */
-class Skip extends AbstractResult
+class Skip extends Result
 {
 }

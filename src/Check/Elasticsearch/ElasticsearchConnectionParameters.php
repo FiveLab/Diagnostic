@@ -16,33 +16,8 @@ namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 /**
  * The model for store parameters for connect to Elasticsearch.
  */
-class ElasticsearchConnectionParameters
+readonly class ElasticsearchConnectionParameters
 {
-    /**
-     * @var string
-     */
-    private string $host;
-
-    /**
-     * @var int
-     */
-    private int $port;
-
-    /**
-     * @var string|null
-     */
-    private ?string $username;
-
-    /**
-     * @var string|null
-     */
-    private ?string $password;
-
-    /**
-     * @var bool
-     */
-    private bool $ssl;
-
     /**
      * Constructor.
      *
@@ -52,13 +27,35 @@ class ElasticsearchConnectionParameters
      * @param string|null $password
      * @param bool        $ssl
      */
-    public function __construct(string $host, int $port = 9200, string $username = null, string $password = null, bool $ssl = false)
+    public function __construct(public string $host, public int $port = 9200, public ?string $username = null, public ?string $password = null, public bool $ssl = false)
     {
-        $this->host = $host;
-        $this->port = $port;
-        $this->username = $username;
-        $this->password = $password;
-        $this->ssl = $ssl;
+    }
+
+    /**
+     * Make connection params from DSN.
+     *
+     * @param string $dsn
+     *
+     * @return self
+     */
+    public static function fromDsn(string $dsn): self
+    {
+        $parts = \parse_url($dsn);
+
+        if (!$host = $parts['host'] ?? null) {
+            throw new \InvalidArgumentException(\sprintf(
+                'Missed "host" in DSN "%s".',
+                $dsn
+            ));
+        }
+
+        return new self(
+            $host,
+            (int) ($parts['port'] ?? 9200),
+            $parts['user'] ?? null,
+            $parts['pass'] ?? null,
+            ($parts['scheme'] ?? 'http') === 'https'
+        );
     }
 
     /**
@@ -81,55 +78,5 @@ class ElasticsearchConnectionParameters
             $this->host,
             $this->port
         );
-    }
-
-    /**
-     * Get the host for connect to Elasticsearch
-     *
-     * @return string
-     */
-    public function getHost(): string
-    {
-        return $this->host;
-    }
-
-    /**
-     * Get the port for connect to Elasticsearch
-     *
-     * @return int
-     */
-    public function getPort(): int
-    {
-        return $this->port;
-    }
-
-    /**
-     * Get the username for connect to Elasticsearch
-     *
-     * @return string
-     */
-    public function getUsername(): ?string
-    {
-        return $this->username;
-    }
-
-    /**
-     * Get the password for connect to Elasticsearch
-     *
-     * @return string
-     */
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    /**
-     * Is must use SSL connection?
-     *
-     * @return bool
-     */
-    public function isSsl(): bool
-    {
-        return $this->ssl;
     }
 }

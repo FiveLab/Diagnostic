@@ -16,6 +16,7 @@ namespace FiveLab\Component\Diagnostic\Tests\Check;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\LazyContainerCheck;
 use FiveLab\Component\Diagnostic\Result\Success;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 
@@ -44,9 +45,7 @@ class LazyContainerCheckTest extends TestCase
         $this->lazyCheck = new LazyContainerCheck($container, 'foo.bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $this->check->expects(self::once())
@@ -58,9 +57,7 @@ class LazyContainerCheckTest extends TestCase
         self::assertEquals(new Success('Some result'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParameters(): void
     {
         $this->check->expects(self::once())

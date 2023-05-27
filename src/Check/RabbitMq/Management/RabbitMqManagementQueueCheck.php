@@ -16,7 +16,7 @@ namespace FiveLab\Component\Diagnostic\Check\RabbitMq\Management;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
@@ -27,39 +27,12 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Check queue existence
  */
-class RabbitMqManagementQueueCheck implements CheckInterface
+readonly class RabbitMqManagementQueueCheck implements CheckInterface
 {
     /**
      * @var HttpAdapterInterface
      */
     private HttpAdapterInterface $http;
-
-    /**
-     * @var RabbitMqConnectionParameters
-     */
-    private RabbitMqConnectionParameters $connectionParameters;
-
-    /**
-     * @var string
-     */
-    private string $queueName;
-
-    /**
-     * @var int|null
-     */
-    private ?int $maxMessages;
-
-    /**
-     * Must be between 0 and 100
-     *
-     * @var int|null
-     */
-    private ?int $maxWarningPercentage;
-
-    /**
-     * @var int|null
-     */
-    private ?int $minMessages;
 
     /**
      * Constructor.
@@ -71,18 +44,17 @@ class RabbitMqManagementQueueCheck implements CheckInterface
      * @param int|null                     $maxWarningPercentage
      * @param HttpAdapterInterface|null    $http
      */
-    public function __construct(RabbitMqConnectionParameters $connectionParameters, string $queueName, int $maxMessages = null, int $minMessages = null, int $maxWarningPercentage = null, HttpAdapterInterface $http = null)
-    {
-        $this->connectionParameters = $connectionParameters;
-        $this->queueName = $queueName;
-        $this->maxMessages = $maxMessages;
-        $this->minMessages = $minMessages;
-
-        if ($maxWarningPercentage < 0 || $maxWarningPercentage > 100) {
+    public function __construct(
+        private RabbitMqConnectionParameters $connectionParameters,
+        private string                       $queueName,
+        private ?int                         $maxMessages = null,
+        private ?int                         $minMessages = null,
+        private ?int                         $maxWarningPercentage = null,
+        HttpAdapterInterface                 $http = null
+    ) {
+        if ($this->maxWarningPercentage < 0 || $this->maxWarningPercentage > 100) {
             throw new \InvalidArgumentException('$maxWarningPercentage must be between 0 and 100');
         }
-
-        $this->maxWarningPercentage = $maxWarningPercentage;
 
         $this->http = $http ?: new HttpAdapter();
     }
@@ -90,12 +62,12 @@ class RabbitMqManagementQueueCheck implements CheckInterface
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         $url = \sprintf(
             '%s/api/queues/%s/%s',
             $this->connectionParameters->getDsn(true, false),
-            \urlencode($this->connectionParameters->getVhost()),
+            \urlencode($this->connectionParameters->vhost),
             \urlencode($this->queueName)
         );
 
@@ -139,7 +111,7 @@ class RabbitMqManagementQueueCheck implements CheckInterface
     {
         return [
             'dsn'                    => $this->connectionParameters->getDsn(true, true),
-            'vhost'                  => $this->connectionParameters->getVhost(),
+            'vhost'                  => $this->connectionParameters->vhost,
             'queue'                  => $this->queueName,
             'max_messages'           => $this->maxMessages,
             'min_messages'           => $this->minMessages,
@@ -152,9 +124,9 @@ class RabbitMqManagementQueueCheck implements CheckInterface
      *
      * @param ResponseInterface $response
      *
-     * @return ResultInterface|null
+     * @return Result|null
      */
-    private function checkMessageLimits(ResponseInterface $response): ?ResultInterface
+    private function checkMessageLimits(ResponseInterface $response): ?Result
     {
         if (!$this->maxMessages && !$this->minMessages) {
             return null;
@@ -184,9 +156,9 @@ class RabbitMqManagementQueueCheck implements CheckInterface
      *
      * @param int $queuedMessages
      *
-     * @return ResultInterface|null
+     * @return Result|null
      */
-    private function checkForMaxMessages(int $queuedMessages): ?ResultInterface
+    private function checkForMaxMessages(int $queuedMessages): ?Result
     {
         if (!$this->maxMessages) {
             return null;
@@ -218,9 +190,9 @@ class RabbitMqManagementQueueCheck implements CheckInterface
      *
      * @param int $queuedMessages
      *
-     * @return ResultInterface|null
+     * @return Result|null
      */
-    private function checkForMinMessages(int $queuedMessages): ?ResultInterface
+    private function checkForMinMessages(int $queuedMessages): ?Result
     {
         if (!$this->minMessages || $queuedMessages >= $this->minMessages) {
             return null;

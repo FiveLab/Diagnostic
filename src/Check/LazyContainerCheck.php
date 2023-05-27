@@ -13,41 +13,29 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check;
 
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use Psr\Container\ContainerInterface;
 
 /**
  * Lazy check. Previously get check from container.
  * Note: for Symfony, the check service must be "public".
  */
-class LazyContainerCheck implements CheckInterface
+readonly class LazyContainerCheck implements CheckInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private ContainerInterface $container;
-
-    /**
-     * @var string
-     */
-    private string $id;
-
     /**
      * Constructor.
      *
      * @param ContainerInterface $container
      * @param string             $id
      */
-    public function __construct(ContainerInterface $container, string $id)
+    public function __construct(private ContainerInterface $container, private string $id)
     {
-        $this->container = $container;
-        $this->id = $id;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         return $this->getCheck()->check();
     }

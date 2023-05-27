@@ -16,6 +16,7 @@ namespace FiveLab\Component\Diagnostic\Tests\Check\Environment;
 use FiveLab\Component\Diagnostic\Check\Environment\EnvExistenceCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class EnvExistenceCheckTest extends TestCase
@@ -45,9 +46,7 @@ class EnvExistenceCheckTest extends TestCase
         \putenv(self::ENV_VAR_NAME);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtra(): void
     {
         self::assertEquals([
@@ -55,9 +54,7 @@ class EnvExistenceCheckTest extends TestCase
         ], $this->check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $result = $this->check->check();
@@ -65,9 +62,7 @@ class EnvExistenceCheckTest extends TestCase
         self::assertEquals(new Success('Variable "FOO_ENV" exist in ENV.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheck(): void
     {
         \putenv(self::ENV_VAR_NAME);

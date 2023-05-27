@@ -16,7 +16,7 @@ namespace FiveLab\Component\Diagnostic\Util;
 /**
  * Service for encode secured parts in HTTP parameters.
  */
-class HttpSecurityEncoder
+readonly class HttpSecurityEncoder
 {
     /**
      * Encode the URI for security issues.
@@ -81,9 +81,9 @@ class HttpSecurityEncoder
     /**
      * Encode headers
      *
-     * @param array<string, string|array> $headers
+     * @param array<string, string|array<string>> $headers
      *
-     * @return array<string, string|array>
+     * @return array<string, string|array<string>>
      */
     public function encodeHeaders(array $headers): array
     {

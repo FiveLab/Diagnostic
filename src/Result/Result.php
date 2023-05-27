@@ -16,28 +16,14 @@ namespace FiveLab\Component\Diagnostic\Result;
 /**
  * Helper for create result instances.
  */
-abstract class AbstractResult implements ResultInterface
+abstract class Result
 {
-    /**
-     * @var string
-     */
-    private string $message;
-
     /**
      * Constructor.
      *
      * @param string $message
      */
-    public function __construct(string $message)
+    public function __construct(public string $message)
     {
-        $this->message = $message;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMessage(): string
-    {
-        return $this->message;
     }
 }

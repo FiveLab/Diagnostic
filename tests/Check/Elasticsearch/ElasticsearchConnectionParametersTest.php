@@ -14,22 +14,15 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\Elasticsearch;
 
 use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 class ElasticsearchConnectionParametersTest extends TestCase
 {
-    /**
-     * @test
-     *
-     * @param string      $host
-     * @param int         $port
-     * @param string|null $username
-     * @param string|null $password
-     * @param bool        $ssl
-     * @param string|null $expectedDsn
-     *
-     * @dataProvider provideConnectionParameters
-     */
+    #[Test]
+    #[DataProvider('provideConnectionParameters')]
     public function shouldSuccessGetDsn(string $host, int $port, string $username = null, string $password = null, bool $ssl = false, string $expectedDsn = null): void
     {
         $connectionParameters = new ElasticsearchConnectionParameters(
@@ -43,12 +36,22 @@ class ElasticsearchConnectionParametersTest extends TestCase
         self::assertEquals($expectedDsn, $connectionParameters->getDsn());
     }
 
+    #[Test]
+    #[TestWith(['http://localhost', new ElasticsearchConnectionParameters('localhost', 9200, null, null, false)])]
+    #[TestWith(['https://foo:bar@domain.com:9201/bar', new ElasticsearchConnectionParameters('domain.com', 9201, 'foo', 'bar', true)])]
+    public function shouldSuccessCreateFromDsn(string $dsn, ElasticsearchConnectionParameters $expected): void
+    {
+        $parameters = ElasticsearchConnectionParameters::fromDsn($dsn);
+
+        self::assertEquals($expected, $parameters);
+    }
+
     /**
      * Provide connection parameters
      *
      * @return array
      */
-    public function provideConnectionParameters(): array
+    public static function provideConnectionParameters(): array
     {
         return [
             'full without ssl' => [

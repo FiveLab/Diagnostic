@@ -15,7 +15,7 @@ namespace FiveLab\Component\Diagnostic\Check\PhpIni;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
 /**
@@ -23,16 +23,6 @@ use FiveLab\Component\Diagnostic\Result\Success;
  */
 class PhpIniParameterCheck implements CheckInterface
 {
-    /**
-     * @var string
-     */
-    private string $parameter;
-
-    /**
-     * @var string
-     */
-    private string $expectedValue;
-
     /**
      * @var string
      */
@@ -44,16 +34,14 @@ class PhpIniParameterCheck implements CheckInterface
      * @param string $parameter
      * @param string $expectedValue
      */
-    public function __construct(string $parameter, string $expectedValue)
+    public function __construct(private readonly string $parameter, private readonly string $expectedValue)
     {
-        $this->parameter = $parameter;
-        $this->expectedValue = $expectedValue;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         $actualValue = \ini_get($this->parameter);
 

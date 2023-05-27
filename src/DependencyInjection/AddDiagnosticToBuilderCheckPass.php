@@ -24,23 +24,8 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * The compiler pass for add diagnostic check to builder by tag.
  */
-class AddDiagnosticToBuilderCheckPass implements CompilerPassInterface
+readonly class AddDiagnosticToBuilderCheckPass implements CompilerPassInterface
 {
-    /**
-     * @var string
-     */
-    private string $builderServiceName;
-
-    /**
-     * @var string
-     */
-    private string $checkTagName;
-
-    /**
-     * @var bool
-     */
-    private bool $useLazyDecorator;
-
     /**
      * Constructor.
      *
@@ -48,11 +33,8 @@ class AddDiagnosticToBuilderCheckPass implements CompilerPassInterface
      * @param string $checkTagName
      * @param bool   $useLazyDecorator
      */
-    public function __construct(string $builderServiceName = 'diagnostic.definitions.builder', string $checkTagName = 'diagnostic.check', bool $useLazyDecorator = false)
+    public function __construct(private string $builderServiceName = 'diagnostic.definitions.builder', private string $checkTagName = 'diagnostic.check', private bool $useLazyDecorator = false)
     {
-        $this->builderServiceName = $builderServiceName;
-        $this->checkTagName = $checkTagName;
-        $this->useLazyDecorator = $useLazyDecorator;
     }
 
     /**
@@ -62,7 +44,7 @@ class AddDiagnosticToBuilderCheckPass implements CompilerPassInterface
     {
         try {
             $builderDefinition = $container->findDefinition($this->builderServiceName);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             return;
         }
 

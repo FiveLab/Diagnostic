@@ -16,19 +16,19 @@ namespace FiveLab\Component\Diagnostic\Util;
 /**
  * Array utils helper.
  */
-class ArrayUtils
+readonly class ArrayUtils
 {
     /**
      * Try to get specific setting from settings
      *
-     * @param string                                          $path
-     * @param array<string, array|bool|float|int|string|null> $settings
+     * @param string               $path
+     * @param array<string, mixed> $settings
      *
      * @return mixed
      *
      * @throws \UnexpectedValueException
      */
-    public static function tryGetSpecificSettingFromSettings(string $path, array $settings)
+    public static function tryGetSpecificSettingFromSettings(string $path, array $settings): mixed
     {
         $pathParts = \explode('.', $path);
 

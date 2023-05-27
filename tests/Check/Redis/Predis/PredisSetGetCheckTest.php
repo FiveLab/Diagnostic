@@ -17,6 +17,7 @@ use FiveLab\Component\Diagnostic\Check\Redis\Predis\PredisSetGetCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRedisTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class PredisSetGetCheckTest extends AbstractRedisTestCase
 {
@@ -34,9 +35,7 @@ class PredisSetGetCheckTest extends AbstractRedisTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $check = new PredisSetGetCheck(
@@ -50,9 +49,7 @@ class PredisSetGetCheckTest extends AbstractRedisTestCase
         self::assertEquals(new Success('Success connect to Redis and SET/GET from Redis.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParameters(): void
     {
         $check = new PredisSetGetCheck(
@@ -67,9 +64,7 @@ class PredisSetGetCheckTest extends AbstractRedisTestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
         $check = new PredisSetGetCheck(
@@ -81,6 +76,6 @@ class PredisSetGetCheckTest extends AbstractRedisTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith('Cannot connect to Redis: php_network_getaddresses:', $result->getMessage());
+        self::assertStringStartsWith('Cannot connect to Redis: php_network_getaddresses:', $result->message);
     }
 }

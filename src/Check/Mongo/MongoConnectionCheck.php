@@ -15,11 +15,11 @@ namespace FiveLab\Component\Diagnostic\Check\Mongo;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
+use MongoDB\Driver\Command;
 use MongoDB\Driver\Exception\Exception;
 use MongoDB\Driver\Manager;
-use MongoDB\Driver\Command;
 
 /**
  * Check MongoDB connection.
@@ -27,24 +27,18 @@ use MongoDB\Driver\Command;
 class MongoConnectionCheck implements CheckInterface
 {
     /**
-     * @var MongoConnectionParameters
-     */
-    private MongoConnectionParameters $connectionParameters;
-
-    /**
      * Constructor.
      *
      * @param MongoConnectionParameters $connectionParameters
      */
-    public function __construct(MongoConnectionParameters $connectionParameters)
+    public function __construct(private readonly MongoConnectionParameters $connectionParameters)
     {
-        $this->connectionParameters = $connectionParameters;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         if (!\class_exists(Manager::class)) {
             return new Failure('MongoDB driver is not installed.');
@@ -54,7 +48,7 @@ class MongoConnectionCheck implements CheckInterface
         $ping = new Command(['ping' => 1]);
 
         try {
-            $manager->executeCommand($this->connectionParameters->getDb(), $ping);
+            $manager->executeCommand($this->connectionParameters->db, $ping);
         } catch (Exception $e) {
             return new Failure(\sprintf(
                 'MongoDB connection failed: %s.',

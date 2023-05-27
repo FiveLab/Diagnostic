@@ -13,8 +13,8 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Runner\Event;
 
-use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
+use FiveLab\Component\Diagnostic\Result\Result;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -23,41 +23,25 @@ use Symfony\Contracts\EventDispatcher\Event;
 class BeforeRunCheckEvent extends Event
 {
     /**
-     * @var CheckDefinitionInterface
+     * @var Result|null
      */
-    private CheckDefinitionInterface $definition;
-
-    /**
-     * @var ResultInterface|null
-     */
-    private ?ResultInterface $result = null;
+    private ?Result $result = null;
 
     /**
      * Constructor.
      *
-     * @param CheckDefinitionInterface $definition
+     * @param CheckDefinition $definition
      */
-    public function __construct(CheckDefinitionInterface $definition)
+    public function __construct(public readonly CheckDefinition $definition)
     {
-        $this->definition = $definition;
-    }
-
-    /**
-     * Get check definition
-     *
-     * @return CheckDefinitionInterface
-     */
-    public function getDefinition(): CheckDefinitionInterface
-    {
-        return $this->definition;
     }
 
     /**
      * Force set the result
      *
-     * @param ResultInterface $result
+     * @param Result $result
      */
-    public function setResult(ResultInterface $result): void
+    public function setResult(Result $result): void
     {
         $this->result = $result;
 
@@ -67,9 +51,9 @@ class BeforeRunCheckEvent extends Event
     /**
      * Get the result
      *
-     * @return ResultInterface|null
+     * @return Result|null
      */
-    public function getResult(): ?ResultInterface
+    public function getResult(): ?Result
     {
         return $this->result;
     }

@@ -15,37 +15,33 @@ namespace FiveLab\Component\Diagnostic\Tests\Check\Definition;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
-use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitionInterface;
-use FiveLab\Component\Diagnostic\Check\Definition\DefinitionCollection;
+use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class DefinitionCollectionTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCreate(): void
     {
         $definitions = [
-            $this->createMock(CheckDefinitionInterface::class),
-            $this->createMock(CheckDefinitionInterface::class),
+            new CheckDefinition('foo', $this->createMock(CheckInterface::class), []),
+            new CheckDefinition('bar', $this->createMock(CheckInterface::class), []),
         ];
 
-        $collection = new DefinitionCollection(...$definitions);
+        $collection = new CheckDefinitions(...$definitions);
 
         self::assertEquals($definitions, \iterator_to_array($collection));
         self::assertCount(2, $definitions);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetGroups(): void
     {
         /** @var CheckInterface $check */
         $check = $this->createMock(CheckInterface::class);
 
-        $definitions = new DefinitionCollection(
+        $definitions = new CheckDefinitions(
             new CheckDefinition('check1', $check, ['foo']),
             new CheckDefinition('check2', $check, ['bar']),
             new CheckDefinition('check3', $check, []),
@@ -60,29 +56,26 @@ class DefinitionCollectionTest extends TestCase
         ], $definitions->getGroups());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessFilter(): void
     {
         $definitions = [
-            $this->createMock(CheckDefinitionInterface::class),
-            $this->createMock(CheckDefinitionInterface::class),
-            $this->createMock(CheckDefinitionInterface::class),
-            $this->createMock(CheckDefinitionInterface::class),
+            new CheckDefinition('foo1', $this->createMock(CheckInterface::class), []),
+            new CheckDefinition('foo2', $this->createMock(CheckInterface::class), []),
+            new CheckDefinition('foo3', $this->createMock(CheckInterface::class), []),
+            new CheckDefinition('foo4', $this->createMock(CheckInterface::class), []),
         ];
 
-        $definitions[1]->__forTesting = true;
-        $definitions[2]->__forTesting = true;
+        $forTestings = [$definitions[1], $definitions[2]];
 
-        $collection = new DefinitionCollection(...$definitions);
+        $collection = new CheckDefinitions(...$definitions);
 
-        $filtered = $collection->filter(function (CheckDefinitionInterface $definition) {
-            return \property_exists($definition, '__forTesting');
+        $filtered = $collection->filter(function (CheckDefinition $definition) use ($forTestings) {
+            return \in_array($definition, $forTestings, true);
         });
 
         self::assertEquals(
-            new DefinitionCollection(
+            new CheckDefinitions(
                 $definitions[1],
                 $definitions[2]
             ),
@@ -90,9 +83,7 @@ class DefinitionCollectionTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowRuntimeException(): void
     {
         $this->expectException(\RuntimeException::class);
@@ -101,7 +92,7 @@ class DefinitionCollectionTest extends TestCase
         /** @var CheckInterface $check */
         $check = $this->createMock(CheckInterface::class);
 
-        new DefinitionCollection(
+        new CheckDefinitions(
             new CheckDefinition('definitionKey', $check, []),
             new CheckDefinition('definitionKey', $check, []),
         );

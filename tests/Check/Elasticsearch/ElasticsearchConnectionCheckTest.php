@@ -20,17 +20,14 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractElasticsearchTestCase;
 use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class ElasticsearchConnectionCheckTest extends AbstractElasticsearchTestCase
 {
-    /**
-     * @test
-     * @dataProvider clientBuildersProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     */
-    public function shouldSuccessCheck($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
+    #[Test]
+    #[DataProvider('clientBuildersProvider')]
+    public function shouldSuccessCheck(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -41,22 +38,17 @@ class ElasticsearchConnectionCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Success(\sprintf('Success connect to %s and send ping request.', $check->getEngineName())), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clientBuildersProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     * @param ElasticsearchConnectionParameters                  $connectionParameters
-     */
-    public function shouldFailCheckIfHostIsInvalid($clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
+    #[Test]
+    #[DataProvider('clientBuildersProvider')]
+    public function shouldFailCheckIfHostIsInvalid(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
         $connectionParameters = new ElasticsearchConnectionParameters(
-            $connectionParameters->getHost().'_some',
-            $connectionParameters->getPort(),
-            $connectionParameters->getUsername(),
-            $connectionParameters->getPassword(),
+            $connectionParameters->host.'_some',
+            $connectionParameters->port,
+            $connectionParameters->username,
+            $connectionParameters->password,
             false
         );
 
@@ -67,13 +59,9 @@ class ElasticsearchConnectionCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Failure(\sprintf('Fail connect to %s: No alive nodes found in your cluster.', $check->getEngineName())), $result);
     }
 
-    /**
-     * @test
-     * @dataProvider clientBuildersProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     */
-    public function shouldSuccessGetExtraParametersWithoutUserAndPass($clientBuilder): void
+    #[Test]
+    #[DataProvider('clientBuildersProvider')]
+    public function shouldSuccessGetExtraParametersWithoutUserAndPass(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 
@@ -88,13 +76,9 @@ class ElasticsearchConnectionCheckTest extends AbstractElasticsearchTestCase
         ], $parameters);
     }
 
-    /**
-     * @test
-     * @dataProvider clientBuildersProvider
-     *
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
-     */
-    public function shouldSuccessGetExtraParametersWithUserAndPass($clientBuilder): void
+    #[Test]
+    #[DataProvider('clientBuildersProvider')]
+    public function shouldSuccessGetExtraParametersWithUserAndPass(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder): void
     {
         $this->markTestSkippedIfNotConfigured($clientBuilder);
 

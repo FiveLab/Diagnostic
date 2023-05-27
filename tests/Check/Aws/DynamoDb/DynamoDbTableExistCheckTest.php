@@ -19,6 +19,7 @@ use FiveLab\Component\Diagnostic\Check\Aws\DynamoDb\DynamoDbTableExistCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractAwsTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class DynamoDbTableExistCheckTest extends AbstractAwsTestCase
 {
@@ -65,9 +66,7 @@ class DynamoDbTableExistCheckTest extends AbstractAwsTestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCheck(): void
     {
         $check = new DynamoDbTableExistCheck($this->createSdk(), 'test', $this->getAwsDynamodbEndpoint());
@@ -77,9 +76,7 @@ class DynamoDbTableExistCheckTest extends AbstractAwsTestCase
         self::assertEquals(new Success('The table exist in DynamoDB.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailCheckIfTableNotFound(): void
     {
         $check = new DynamoDbTableExistCheck($this->createSdk(), 'some', $this->getAwsDynamodbEndpoint());
@@ -89,9 +86,7 @@ class DynamoDbTableExistCheckTest extends AbstractAwsTestCase
         self::assertEquals(new Failure('The table was not found in DynamoDB.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtraParams(): void
     {
         $check = new DynamoDbTableExistCheck($this->createSdk(), 'foo-bar', $this->getAwsDynamodbEndpoint());

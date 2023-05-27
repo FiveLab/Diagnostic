@@ -16,7 +16,7 @@ namespace FiveLab\Component\Diagnostic\Check\Doctrine;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Connection as DriverConnection;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
 /**
@@ -24,16 +24,6 @@ use FiveLab\Component\Diagnostic\Result\Success;
  */
 class SqlModeDbalCheck extends AbstractDbalCheck
 {
-    /**
-     * @var array<string>
-     */
-    private array $expectedSqlModes;
-
-    /**
-     * @var array<string>
-     */
-    private array $excludedSqlModes;
-
     /**
      * @var array<int, mixed>|null
      */
@@ -46,19 +36,15 @@ class SqlModeDbalCheck extends AbstractDbalCheck
      * @param string[]                    $expectedSqlModes
      * @param string[]                    $excludedSqlModes
      */
-    public function __construct($connection, array $expectedSqlModes = [], array $excludedSqlModes = [])
+    public function __construct(DriverConnection|Connection $connection, private readonly array $expectedSqlModes = [], private readonly array $excludedSqlModes = [])
     {
         parent::__construct($connection);
-
-        $this->connection = $connection;
-        $this->expectedSqlModes = $expectedSqlModes;
-        $this->excludedSqlModes = $excludedSqlModes;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         try {
             $stmt = $this->connection->executeQuery('SELECT @@GLOBAL.sql_mode');
@@ -69,7 +55,7 @@ class SqlModeDbalCheck extends AbstractDbalCheck
             ));
         }
 
-        [$sqlMode] = $stmt->fetchNumeric();
+        [$sqlMode] = $stmt->fetchNumeric(); // @phpstan-ignore-line
 
         $sqlModes = \explode(',', $sqlMode);
         $sqlModes = \array_map('\trim', $sqlModes);

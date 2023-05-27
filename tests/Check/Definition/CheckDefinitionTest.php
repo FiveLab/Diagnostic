@@ -15,13 +15,12 @@ namespace FiveLab\Component\Diagnostic\Tests\Check\Definition;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class CheckDefinitionTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessCreate(): void
     {
         /** @var CheckInterface $check */
@@ -29,8 +28,8 @@ class CheckDefinitionTest extends TestCase
 
         $definition = new CheckDefinition('some', $check, ['foo', 'bar']);
 
-        self::assertEquals('some', $definition->getKey());
-        self::assertEquals($check, $definition->getCheck());
-        self::assertEquals(['foo', 'bar'], $definition->getGroups());
+        self::assertEquals('some', $definition->key);
+        self::assertEquals($check, $definition->check);
+        self::assertEquals(['foo', 'bar'], $definition->groups);
     }
 }

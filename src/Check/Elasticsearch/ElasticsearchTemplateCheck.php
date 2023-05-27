@@ -13,15 +13,13 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
-use Elasticsearch\Client as ElasticsearchClient;
 use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
 use Elasticsearch\Common\Exceptions\Missing404Exception as ElasticsearchMissing404Exception;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\ArrayUtils;
-use OpenSearch\Client as OpenSearchClient;
 use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 use OpenSearch\Common\Exceptions\Missing404Exception as OpenSearchMissing404Exception;
 
@@ -30,21 +28,6 @@ use OpenSearch\Common\Exceptions\Missing404Exception as OpenSearchMissing404Exce
  */
 class ElasticsearchTemplateCheck extends AbstractElasticsearchCheck implements CheckInterface
 {
-    /**
-     * @var string
-     */
-    private string $name;
-
-    /**
-     * @var array<string>
-     */
-    private array $expectedPatterns;
-
-    /**
-     * @var array<string, mixed>
-     */
-    private array $expectedSettings;
-
     /**
      * @var array<string>
      */
@@ -64,22 +47,17 @@ class ElasticsearchTemplateCheck extends AbstractElasticsearchCheck implements C
      * @param array<string, mixed>                                    $expectedSettings
      * @param ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder
      */
-    public function __construct(ElasticsearchConnectionParameters $connectionParameters, string $name, array $expectedPatterns = [], array $expectedSettings = [], $clientBuilder = null)
+    public function __construct(ElasticsearchConnectionParameters $connectionParameters, private readonly string $name, private array $expectedPatterns = [], private readonly array $expectedSettings = [], ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder = null)
     {
         parent::__construct($connectionParameters, $clientBuilder);
-
-        $this->name = $name;
-        $this->expectedPatterns = $expectedPatterns;
-        $this->expectedSettings = $expectedSettings;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         try {
-            /** @var ElasticsearchClient|OpenSearchClient */
             $client = $this->createClient();
 
             $client->ping();
@@ -95,7 +73,7 @@ class ElasticsearchTemplateCheck extends AbstractElasticsearchCheck implements C
             $template = $client->indices()->getTemplate([
                 'name' => $this->name,
             ]);
-        } catch (ElasticsearchMissing404Exception|OpenSearchMissing404Exception $e) {
+        } catch (ElasticsearchMissing404Exception|OpenSearchMissing404Exception) {
             return new Failure(\sprintf('The template was not found in %s.', $this->getEngineName()));
         } catch (\Throwable $e) {
             return new Failure(\sprintf('Fail connect to %s: %s.', $this->getEngineName(), \rtrim($e->getMessage(), '.')));

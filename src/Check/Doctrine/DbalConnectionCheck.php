@@ -15,7 +15,7 @@ namespace FiveLab\Component\Diagnostic\Check\Doctrine;
 
 use Doctrine\DBAL\Driver\Exception;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
 /**
@@ -26,7 +26,7 @@ class DbalConnectionCheck extends AbstractDbalCheck
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         try {
             $this->connection->executeQuery('SELECT 1');

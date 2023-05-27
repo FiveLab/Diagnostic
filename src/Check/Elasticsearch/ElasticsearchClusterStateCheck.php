@@ -13,26 +13,22 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
-use Elasticsearch\Client as ElasticsearchClient;
-use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
-use FiveLab\Component\Diagnostic\Result\ResultInterface;
+use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
-use OpenSearch\Client as OpenSearchClient;
 
 /**
  *  Checks ES cluster state via _cluster/health endpoint
  */
-class ElasticsearchClusterStateCheck extends AbstractElasticsearchCheck implements CheckInterface
+class ElasticsearchClusterStateCheck extends AbstractElasticsearchCheck
 {
     /**
      * {@inheritdoc}
      */
-    public function check(): ResultInterface
+    public function check(): Result
     {
         try {
-            /** @var ElasticsearchClient|OpenSearchClient */
             $client = $this->createClient();
 
             $client->ping();
@@ -58,38 +54,23 @@ class ElasticsearchClusterStateCheck extends AbstractElasticsearchCheck implemen
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getExtraParameters(): array
-    {
-        return $this->convertConnectionParametersToArray();
-    }
-
-    /**
      * Parse cluster status
      *
      * @param array<string> $responseParams
      *
-     * @return ResultInterface
+     * @return Result
      */
-    private function parseClusterStatus(array $responseParams): ResultInterface
+    private function parseClusterStatus(array $responseParams): Result
     {
         $default =  new Failure('Cluster status is undefined. Please check the logs.');
 
         if (\array_key_exists('status', $responseParams)) {
-            switch ($responseParams['status']) {
-                case 'green':
-                    return new Success('Cluster status is GREEN.');
-
-                case 'yellow':
-                    return new Warning('Cluster status is YELLOW. Please check the logs.');
-
-                case 'red':
-                    return new Failure('Cluster status is RED. Please check the logs.');
-
-                default:
-                    return $default;
-            }
+            return match ($responseParams['status']) {
+                'green'  => new Success('Cluster status is GREEN.'),
+                'yellow' => new Warning('Cluster status is YELLOW. Please check the logs.'),
+                'red'    => new Failure('Cluster status is RED. Please check the logs.'),
+                default  => $default,
+            };
         }
 
         return $default;

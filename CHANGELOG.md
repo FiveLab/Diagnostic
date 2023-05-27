@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+Next release
+------------
+
+* Require PHP 8.2 and higher.
+* Remove `SwiftMailer` checks (package is deprecated, use `symfony/mailer` instead).
+* Remove `FiveLab\Component\Diagnostic\Result\ResultInterface`, use `FiveLab\Component\Diagnostic\Result\Result` instead.
+* Remove `FiveLab\Component\Diagnostic\Check\Http\PingableHttpCheck`, use `FiveLab\Component\Diagnostic\Check\Http\HttpCheck` instead.
+
 v1.3.9
 ------
 

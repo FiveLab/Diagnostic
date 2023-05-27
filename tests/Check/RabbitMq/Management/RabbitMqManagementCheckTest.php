@@ -18,6 +18,7 @@ use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqManagementCheckTest extends AbstractRabbitMqTestCase
 {
@@ -33,9 +34,7 @@ class RabbitMqManagementCheckTest extends AbstractRabbitMqTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessConnect(): void
     {
         $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
@@ -46,9 +45,7 @@ class RabbitMqManagementCheckTest extends AbstractRabbitMqTestCase
         self::assertEquals(new Success('Success connect to RabbitMQ Management API.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSuccessGetExtra(): void
     {
         $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
@@ -60,9 +57,7 @@ class RabbitMqManagementCheckTest extends AbstractRabbitMqTestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfPasswordIsWrong(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(
@@ -79,9 +74,7 @@ class RabbitMqManagementCheckTest extends AbstractRabbitMqTestCase
         self::assertEquals(new Failure('Fail connect to RabbitMQ Management API. Return wrong status code - 401.'), $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
         $connectionParameters = new RabbitMqConnectionParameters(
@@ -96,6 +89,6 @@ class RabbitMqManagementCheckTest extends AbstractRabbitMqTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith('Fail connect to RabbitMQ Management API. Error: cURL error 6: Could not resolve host: some-foo-bar', $result->getMessage());
+        self::assertStringStartsWith('Fail connect to RabbitMQ Management API. Error: cURL error 6: Could not resolve host: some-foo-bar', $result->message);
     }
 }
