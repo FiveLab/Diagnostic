@@ -74,7 +74,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
 
         foreach ($data as $exchangeInfo) {
             if ('rmq-internal' === $exchangeInfo['user_who_performed_action']) {
-                // It's a internal exchange.
+                // It's an internal exchange.
                 continue;
             }
 

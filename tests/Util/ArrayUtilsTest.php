@@ -22,7 +22,7 @@ class ArrayUtilsTest extends TestCase
 {
     #[Test]
     #[DataProvider('provideSettings')]
-    public function shouldSuccessTryGetSpecificSettingFromSettings(string $path, array $settings, $expected): void
+    public function shouldSuccessTryGetSpecificSettingFromSettings(string $path, array $settings, mixed $expected): void
     {
         if ($expected instanceof \Throwable) {
             $this->expectException(\get_class($expected));

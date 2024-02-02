@@ -207,7 +207,7 @@ abstract class AbstractElasticsearchTestCase extends TestCase
      *
      * @param ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder
      */
-    protected function markTestSkippedIfNotConfigured($clientBuilder): void
+    protected function markTestSkippedIfNotConfigured(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder): void
     {
         if ($clientBuilder instanceof ElasticsearchClientBuilder && !$this->canTestingWithElasticsearch()) {
             self::markTestSkipped('The Elasticsearch is not configured.');

@@ -171,7 +171,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
     #[TestWith(['5.0.27-standard', '5.0.27'])]
     #[TestWith(['5.0.91-community-nt-log', '5.0.91'])]
     #[TestWith(['10.1.29-MariaDB', '10.1.29'])]
-    public function mysqlVersionRegexShouldExtractValidVersions(string $buildVersion, string $expected)
+    public function mysqlVersionRegexShouldExtractValidVersions(string $buildVersion, string $expected): void
     {
         $matches = [];
         \preg_match(DatabaseMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
@@ -182,7 +182,7 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
 
     #[Test]
     #[TestWith(['abc.5.7.25-0ubuntu0.18.04.2'])]
-    public function mysqlVersionRegexShouldNotExtractInvalidVersions(string $version)
+    public function mysqlVersionRegexShouldNotExtractInvalidVersions(string $version): void
     {
         $matches = [];
         \preg_match(DatabaseMysqlVersionCheck::MYSQL_EXTRACT_VERSION_REGEX, $version, $matches);

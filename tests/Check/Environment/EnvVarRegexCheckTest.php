@@ -100,7 +100,7 @@ class EnvVarRegexCheckTest extends TestCase
     public static function provideParameters(): array
     {
         return [
-            'envvar matches full pattern'         => [
+            'envvar matches full pattern' => [
                 'BAR',
                 '/^BAR$/',
                 new Success('Environment variable matches pattern.'),
@@ -111,7 +111,7 @@ class EnvVarRegexCheckTest extends TestCase
                 ],
             ],
 
-            'envvar matches in_array pattern'     => [
+            'envvar matches in_array pattern' => [
                 'BAR',
                 '/^\b(BAR|BAZ)\b$/',
                 new Success('Environment variable matches pattern.'),
@@ -130,6 +130,28 @@ class EnvVarRegexCheckTest extends TestCase
                     'variableName'  => self::ENV_VAR_NAME,
                     'pattern'       => '/^\b(EVIL|GOOD)\b$/',
                     'variableValue' => 'BAR',
+                ],
+            ],
+
+            'envvar as zero' => [
+                '0',
+                '/^0?$/',
+                new Success('Environment variable matches pattern.'),
+                [
+                    'variableName'  => self::ENV_VAR_NAME,
+                    'pattern'       => '/^0?$/',
+                    'variableValue' => '0',
+                ],
+            ],
+
+            'envvar as zero with empty value' => [
+                '',
+                '/^0?$/',
+                new Success('Environment variable matches pattern.'),
+                [
+                    'variableName'  => self::ENV_VAR_NAME,
+                    'pattern'       => '/^0?$/',
+                    'variableValue' => '',
                 ],
             ],
         ];

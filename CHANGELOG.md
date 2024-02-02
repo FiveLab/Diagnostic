@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+Next release
+------------
+
+* Fix check ENV Regex with zero value (`FOO_BAR=0` as example).
+
 v2.0.0
 ------
 

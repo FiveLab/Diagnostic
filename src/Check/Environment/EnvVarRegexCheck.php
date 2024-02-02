@@ -45,7 +45,7 @@ readonly class EnvVarRegexCheck implements CheckInterface
      */
     public function check(): Result
     {
-        if (!\getenv($this->variableName)) {
+        if (false === \getenv($this->variableName)) {
             return new Failure('Environment variable is not set.');
         }
 

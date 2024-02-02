@@ -38,7 +38,7 @@ abstract class AbstractDoctrineCheckTestCase extends AbstractDatabaseTestCase
      *
      * @return Connection|DriverConnection
      */
-    protected function makeDbalConnection(array $connectionOptions = [])
+    protected function makeDbalConnection(array $connectionOptions = []): Connection|DriverConnection
     {
         $connectionOptions = \array_merge($this->getConnectionOptions(), $connectionOptions);
 

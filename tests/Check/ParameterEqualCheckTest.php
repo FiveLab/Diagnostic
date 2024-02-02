@@ -25,7 +25,7 @@ class ParameterEqualCheckTest extends TestCase
 {
     #[Test]
     #[DataProvider('provideParameters')]
-    public function shouldSuccessCheck($expected, $actual, Result $expectedResult, array $expectedExtra): void
+    public function shouldSuccessCheck(mixed $expected, mixed $actual, Result $expectedResult, array $expectedExtra): void
     {
         $check = new ParameterEqualCheck($expected, $actual);
 

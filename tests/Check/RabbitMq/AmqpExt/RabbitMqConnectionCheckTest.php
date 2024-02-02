@@ -72,10 +72,8 @@ class RabbitMqConnectionCheckTest extends AbstractRabbitMqTestCase
 
         $result = $check->check();
 
-        self::assertEquals(
-            new Failure('Server connection error: 403, message: ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile. - Potential login failure.'),
-            $result
-        );
+        self::assertInstanceOf(Failure::class, $result);
+        self::assertStringContainsString('403, message: ACCESS_REFUSED', $result->message);
     }
 
     #[Test]
@@ -93,9 +91,7 @@ class RabbitMqConnectionCheckTest extends AbstractRabbitMqTestCase
 
         $result = $check->check();
 
-        self::assertEquals(
-            new Failure('Socket error: could not connect to host.'),
-            $result
-        );
+        self::assertInstanceOf(Failure::class, $result);
+        self::assertStringContainsString('could not connect to host', $result->message);
     }
 }

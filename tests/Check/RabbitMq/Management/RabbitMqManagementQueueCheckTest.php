@@ -150,7 +150,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
 
         $check = new RabbitMqManagementQueueCheck($connectionParameters, $this->queueName, $max, $min, $percentage);
 
-        \sleep(6); // RabbitMQ-management does not update stats fast (By default emit stats every 5 seconds).
+        \sleep(10); // RabbitMQ-management does not update stats fast (By default emit stats every 5 seconds).
         $result = $check->check();
 
         self::assertInstanceOf($resultClass, $result, $result->message);
