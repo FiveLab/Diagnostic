@@ -17,6 +17,7 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\HttpSecurityEncoder;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\Transport;
 
@@ -28,11 +29,16 @@ class SymfonyMailerSmtpConnectionCheck implements CheckInterface
     /**
      * Constructor.
      *
-     * @param string     $dsn
-     * @param array<int> $codes
+     * @param string              $dsn
+     * @param array<int>          $codes
+     * @param HttpSecurityEncoder $securityEncoder
      */
-    public function __construct(private readonly string $dsn, private readonly array $codes = [220, 250])
-    {
+    public function __construct(
+        private readonly string      $dsn,
+        private readonly array       $codes = [220, 250],
+        private ?HttpSecurityEncoder $securityEncoder = null
+    ) {
+        $this->securityEncoder = $this->securityEncoder ?: new HttpSecurityEncoder();
     }
 
     /**
@@ -84,7 +90,7 @@ class SymfonyMailerSmtpConnectionCheck implements CheckInterface
     public function getExtraParameters(): array
     {
         return [
-            'dsn' => $this->dsn,
+            'dsn' => $this->securityEncoder->encodeUri($this->dsn),
         ];
     }
 }

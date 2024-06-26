@@ -61,4 +61,14 @@ class SymfonyMailerSmtpConnectionCheckTest extends AbstractMailerTestCase
             'dsn' => 'smtp://foo-bar:1025?username=some',
         ], $check->getExtraParameters());
     }
+
+    #[Test]
+    public function shouldSuccessGetExtraWithHidePassword(): void
+    {
+        $check = new SymfonyMailerSmtpConnectionCheck('smtp://user:pass@foo-bar:1025?username=some');
+
+        self::assertEquals([
+            'dsn' => 'smtp://user:***@foo-bar:1025?username=some',
+        ], $check->getExtraParameters());
+    }
 }
