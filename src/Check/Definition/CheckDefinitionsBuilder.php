@@ -21,7 +21,7 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 class CheckDefinitionsBuilder
 {
     /**
-     * @var array<string, array{"key": string, "check": CheckInterface, "groups": array<string>}>
+     * @var array<string, array{"key": string, "check": CheckInterface, "groups": array<string>, "error_on_failure": bool}>
      */
     private array $definitions = [];
 
@@ -31,8 +31,9 @@ class CheckDefinitionsBuilder
      * @param string               $key
      * @param CheckInterface       $check
      * @param array<string>|string $groups
+     * @param bool                 $errorOnFailure
      */
-    public function addCheck(string $key, CheckInterface $check, array|string $groups = []): void
+    public function addCheck(string $key, CheckInterface $check, array|string $groups = [], bool $errorOnFailure = true): void
     {
         $groups = (array) $groups;
 
@@ -46,9 +47,10 @@ class CheckDefinitionsBuilder
             $this->definitions[$cacheKey]['groups'] = \array_merge($this->definitions[$cacheKey]['groups'], $groups);
         } else {
             $this->definitions[$cacheKey] = [
-                'key'    => $key,
-                'check'  => $check,
-                'groups' => $groups,
+                'key'              => $key,
+                'check'            => $check,
+                'groups'           => $groups,
+                'error_on_failure' => $errorOnFailure,
             ];
         }
     }
@@ -63,7 +65,7 @@ class CheckDefinitionsBuilder
         $definitions = [];
 
         foreach ($this->definitions as $entry) {
-            $definitions[] = new CheckDefinition($entry['key'], $entry['check'], $entry['groups']);
+            $definitions[] = new CheckDefinition($entry['key'], $entry['check'], $entry['groups'], $entry['error_on_failure']);
         }
 
         return new CheckDefinitions(...$definitions);

@@ -26,8 +26,13 @@ readonly class CheckDefinition
      * @param string         $key
      * @param CheckInterface $check
      * @param array<string>  $groups
+     * @param bool           $errorOnFailure
      */
-    public function __construct(public string $key, public CheckInterface $check, public array $groups)
-    {
+    public function __construct(
+        public string         $key,
+        public CheckInterface $check,
+        public array          $groups,
+        public bool           $errorOnFailure = true
+    ) {
     }
 }

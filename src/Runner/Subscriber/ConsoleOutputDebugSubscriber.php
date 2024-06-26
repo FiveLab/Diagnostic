@@ -52,7 +52,7 @@ readonly class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
         $paramsVerbosity = OutputInterface::VERBOSITY_DEBUG;
 
         if ($result instanceof Failure) {
-            $statusText = '<error>FAIL</error>';
+            $statusText = \sprintf('<error>FAIL%s</error>', $definition->errorOnFailure ? '' : ' (ignore)');
             $statusVerbosity = OutputInterface::VERBOSITY_NORMAL;
             $paramsVerbosity = OutputInterface::VERBOSITY_NORMAL;
         } elseif ($result instanceof Warning) {

@@ -143,6 +143,7 @@ The tag `diagnostic.check` support next attributes:
 
 * **key** - the unique key of check (default is service name).
 * **group** - the group of this check (default is null).
+* **error_on_failure** - if false, system not return error code from process (ignore failures, default is true).
 
 ### Console commands
 

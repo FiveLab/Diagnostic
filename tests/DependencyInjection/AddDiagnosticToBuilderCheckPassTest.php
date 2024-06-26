@@ -78,6 +78,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
                     'check_1',
                     new Reference('check_1'),
                     '',
+                    true,
                 ],
             ],
             [
@@ -86,6 +87,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
                     'check_2',
                     new Reference('check_2'),
                     '',
+                    true,
                 ],
             ],
         ], $definitionsBuilder->getMethodCalls());
@@ -124,6 +126,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
                     'check_1',
                     new Reference('check_1'),
                     'foo',
+                    true,
                 ],
             ],
             [
@@ -132,6 +135,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
                     'check_2',
                     new Reference('check_2'),
                     'bar',
+                    true,
                 ],
             ],
         ], $definitionsBuilder->getMethodCalls());
@@ -144,12 +148,14 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
 
         $checkContainerDefinition1 = new Definition(StubCheck::class);
         $checkContainerDefinition1->addTag('diagnostic.check', [
-            'key' => 'foo',
+            'key'              => 'foo',
+            'error_on_failure' => true,
         ]);
 
         $checkContainerDefinition2 = new Definition(StubCheck::class);
         $checkContainerDefinition2->addTag('diagnostic.check', [
-            'key' => 'bar',
+            'key'              => 'bar',
+            'error_on_failure' => false,
         ]);
 
         $containerBuilder->addDefinitions([
@@ -170,6 +176,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
                     'foo',
                     new Reference('check_1'),
                     '',
+                    true,
                 ],
             ],
             [
@@ -178,6 +185,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
                     'bar',
                     new Reference('check_2'),
                     '',
+                    false,
                 ],
             ],
         ], $definitionsBuilder->getMethodCalls());
@@ -214,6 +222,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
                     'check_1',
                     new Reference('check_1'),
                     'foo',
+                    true,
                 ],
             ],
             [
@@ -222,6 +231,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
                     'check_1',
                     new Reference('check_1'),
                     'bar',
+                    true,
                 ],
             ],
         ], $definitionsBuilder->getMethodCalls());
@@ -251,6 +261,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
                     'check_1',
                     new Reference('check_1'),
                     '',
+                    true,
                 ],
             ],
         ], $definitionsBuilder->getMethodCalls());
@@ -280,6 +291,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
                     'check',
                     new Reference('check.lazy'),
                     '',
+                    true,
                 ],
             ],
         ], $definitionsBuilder->getMethodCalls());

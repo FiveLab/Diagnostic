@@ -21,7 +21,7 @@ use FiveLab\Component\Diagnostic\Tests\TestHelperTrait;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-class DefinitionCollectionBuilderTest extends TestCase
+class CheckDefinitionsBuilderTest extends TestCase
 {
     use TestHelperTrait;
 
@@ -83,6 +83,23 @@ class DefinitionCollectionBuilderTest extends TestCase
         self::assertEquals(new CheckDefinitions(
             new CheckDefinition('check1', $check1, ['foo', 'bar']),
             new CheckDefinition('check2', $check2, ['some'])
+        ), $builder->build());
+    }
+
+    #[Test]
+    public function shouldSuccessBuildWithErrorOnFailure(): void
+    {
+        $check1 = $this->createUniqueMock(CheckInterface::class);
+        $check2 = $this->createUniqueMock(CheckInterface::class);
+
+        $builder = new CheckDefinitionsBuilder();
+
+        $builder->addCheck('check1', $check1, '', true);
+        $builder->addCheck('check2', $check2, '', false);
+
+        self::assertEquals(new CheckDefinitions(
+            new CheckDefinition('check1', $check1, [], true),
+            new CheckDefinition('check2', $check2, [], false)
         ), $builder->build());
     }
 

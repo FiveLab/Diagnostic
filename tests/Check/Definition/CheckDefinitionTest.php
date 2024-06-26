@@ -31,5 +31,6 @@ class CheckDefinitionTest extends TestCase
         self::assertEquals('some', $definition->key);
         self::assertEquals($check, $definition->check);
         self::assertEquals(['foo', 'bar'], $definition->groups);
+        self::assertTrue($definition->errorOnFailure);
     }
 }

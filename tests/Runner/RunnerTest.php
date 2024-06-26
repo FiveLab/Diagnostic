@@ -193,16 +193,17 @@ class RunnerTest extends TestCase
     public function shouldCorrectCatchExceptionInCheck(): void
     {
         $check = $this->createMock(CheckInterface::class);
+        $error = new \RuntimeException('some-foo-bar');
 
         $check->expects(self::once())
             ->method('check')
-            ->willThrowException(new \RuntimeException('some-foo-bar'));
+            ->willThrowException($error);
 
         $definition = new CheckDefinition('', $check, []);
 
         $map = [
             [new BeforeRunCheckEvent($definition), RunnerEvents::RUN_CHECK_BEFORE],
-            [new CompleteRunCheckEvent($definition, new Failure('Catch exception (RuntimeException): some-foo-bar')), RunnerEvents::RUN_CHECK_COMPLETE],
+            [new CompleteRunCheckEvent($definition, new Failure('Catch exception (RuntimeException): some-foo-bar', $error)), RunnerEvents::RUN_CHECK_COMPLETE],
         ];
 
         $matcher = self::exactly(2);
@@ -223,14 +224,43 @@ class RunnerTest extends TestCase
         self::assertFalse($result);
     }
 
+    #[Test]
+    public function shouldSuccessIgnoreErrorOnFailure(): void
+    {
+        $definition1 = $this->createDefinitionWithResult(new Failure('bla bla'), false);
+
+        $this->eventDispatcher->expects(self::any())
+            ->method('dispatch')
+            ->willReturnArgument(0);
+
+        $result = $this->runner->run(new CheckDefinitions($definition1));
+
+        self::assertTrue($result);
+    }
+
+    #[Test]
+    public function shouldNotIgnoreErrorOnFailure(): void
+    {
+        $definition1 = $this->createDefinitionWithResult(new Failure('bla bla'), true);
+
+        $this->eventDispatcher->expects(self::any())
+            ->method('dispatch')
+            ->willReturnArgument(0);
+
+        $result = $this->runner->run(new CheckDefinitions($definition1));
+
+        self::assertFalse($result);
+    }
+
     /**
      * Create definition
      *
      * @param Result|null $result
+     * @param bool        $errorOnFailure
      *
      * @return CheckDefinition
      */
-    private function createDefinitionWithResult(Result $result = null): CheckDefinition
+    private function createDefinitionWithResult(Result $result = null, bool $errorOnFailure = true): CheckDefinition
     {
         $check = $this->createMock(CheckInterface::class);
 
@@ -243,6 +273,6 @@ class RunnerTest extends TestCase
                 ->method('check');
         }
 
-        return new CheckDefinition('', $check, []);
+        return new CheckDefinition('', $check, [], $errorOnFailure);
     }
 }

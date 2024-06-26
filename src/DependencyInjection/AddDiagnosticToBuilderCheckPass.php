@@ -100,6 +100,7 @@ readonly class AddDiagnosticToBuilderCheckPass implements CompilerPassInterface
                     $attributes['key'] ?? $serviceId,
                     new Reference($checkServiceId),
                     $attributes['group'] ?? '',
+                    $attributes['error_on_failure'] ?? true,
                 ]);
             }
         }

@@ -19,7 +19,7 @@ use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-class DefinitionCollectionTest extends TestCase
+class CheckDefinitionsTest extends TestCase
 {
     #[Test]
     public function shouldSuccessCreate(): void

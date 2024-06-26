@@ -73,11 +73,11 @@ readonly class Runner implements RunnerInterface
                         'Catch exception (%s): %s',
                         \get_class($e),
                         $e->getMessage()
-                    ));
+                    ), $e);
                 }
             }
 
-            if ($result instanceof Failure) {
+            if ($result instanceof Failure && $definition->errorOnFailure) {
                 $allSuccess = false;
             }
 

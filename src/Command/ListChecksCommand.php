@@ -76,6 +76,10 @@ class ListChecksCommand extends Command
                 $output->write(': '.\get_class($definition));
             }
 
+            if (!$definition->errorOnFailure) {
+                $output->write(' (Ignore Error)');
+            }
+
             $output->writeln('');
         }
 
