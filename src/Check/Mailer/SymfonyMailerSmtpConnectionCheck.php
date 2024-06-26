@@ -24,21 +24,20 @@ use Symfony\Component\Mailer\Transport;
 /**
  * Check connect to mailer via Symfony/Mailer transports.
  */
-class SymfonyMailerSmtpConnectionCheck implements CheckInterface
+readonly class SymfonyMailerSmtpConnectionCheck implements CheckInterface
 {
     /**
      * Constructor.
      *
-     * @param string              $dsn
-     * @param array<int>          $codes
-     * @param HttpSecurityEncoder $securityEncoder
+     * @param string                   $dsn
+     * @param array<int>               $codes
+     * @param HttpSecurityEncoder|null $securityEncoder
      */
     public function __construct(
-        private readonly string      $dsn,
-        private readonly array       $codes = [220, 250],
+        private string               $dsn,
+        private array                $codes = [220, 250],
         private ?HttpSecurityEncoder $securityEncoder = null
     ) {
-        $this->securityEncoder = $this->securityEncoder ?: new HttpSecurityEncoder();
     }
 
     /**
@@ -89,8 +88,10 @@ class SymfonyMailerSmtpConnectionCheck implements CheckInterface
      */
     public function getExtraParameters(): array
     {
+        $encoder = $this->securityEncoder ?: new HttpSecurityEncoder();
+
         return [
-            'dsn' => $this->securityEncoder->encodeUri($this->dsn),
+            'dsn' => $encoder->encodeUri($this->dsn),
         ];
     }
 }

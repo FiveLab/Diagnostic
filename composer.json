@@ -33,7 +33,7 @@
         "ext-sockets": "*",
         "phpunit/phpunit": "~10.1",
         "phpmetrics/phpmetrics": "^2.0",
-        "phpstan/phpstan": "~1.10",
+        "phpstan/phpstan": "~1.11",
         "escapestudios/symfony2-coding-standard": "~3.5.0",
         "fivelab/ci-rules": "dev-master",
         "symfony/dependency-injection": "~5.4 | ~6.0",
