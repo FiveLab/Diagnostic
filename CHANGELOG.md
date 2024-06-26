@@ -1,8 +1,8 @@
 CHANGELOG
 =========
 
-Next release
-------------
+v2.0.2
+------
 
 * Add possible to ignore failures (error on failure).
 
