@@ -159,24 +159,24 @@ Development
 For easy development you can use the `Docker` and `Docker compose`.
 
 ```bash
-$ docker-compose up
-$ docker-compose exec diagnostic bash
+docker compose up
+docker compose exec diagnostic bash
 
 ```
 
 After success run and attach to container you must install vendors:
 
 ```bash
-$ composer install
+composer install
 ```
 
 Before create the PR or merge into develop, please run next commands for validate code:
 
 ```bash
-$ ./bin/phpunit
+./bin/phpunit
 
-$ ./bin/phpcs --config-set show_warnings 0
-$ ./bin/phpcs --standard=vendor/escapestudios/symfony2-coding-standard/Symfony/ src/
-$ ./bin/phpcs --standard=tests/phpcs-ruleset.xml tests/
+./bin/phpcs --config-set show_warnings 0
+./bin/phpcs --standard=vendor/escapestudios/symfony2-coding-standard/Symfony/ src/
+./bin/phpcs --standard=tests/phpcs-ruleset.xml tests/
 
 ```
