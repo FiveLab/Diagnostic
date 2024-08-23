@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+v2.0.3
+------
+
+* Add support Symfony 7.*.
+
 v2.0.2
 ------
 
