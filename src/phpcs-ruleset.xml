@@ -7,5 +7,7 @@
         <exclude name="Symfony.NamingConventions.ValidClassName.InvalidAbstractName"/>
     </rule>
 
-    <rule ref="../vendor/fivelab/ci-rules/src/PhpCs/FiveLab"/>
+    <rule ref="../vendor/fivelab/ci-rules/src/PhpCs/FiveLab">
+        <exclude name="FiveLab.Formatting.TypedConstants.MissedConstantType"/>
+    </rule>
 </ruleset>
