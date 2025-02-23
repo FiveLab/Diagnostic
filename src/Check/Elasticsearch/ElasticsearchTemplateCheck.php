@@ -23,9 +23,6 @@ use FiveLab\Component\Diagnostic\Util\ArrayUtils;
 use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 use OpenSearch\Common\Exceptions\Missing404Exception as OpenSearchMissing404Exception;
 
-/**
- * Check the elasticsearch template.
- */
 class ElasticsearchTemplateCheck extends AbstractElasticsearchCheck implements CheckInterface
 {
     /**
@@ -47,14 +44,11 @@ class ElasticsearchTemplateCheck extends AbstractElasticsearchCheck implements C
      * @param array<string, mixed>                                    $expectedSettings
      * @param ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder
      */
-    public function __construct(ElasticsearchConnectionParameters $connectionParameters, private readonly string $name, private array $expectedPatterns = [], private readonly array $expectedSettings = [], ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder = null)
+    public function __construct(ElasticsearchConnectionParameters $connectionParameters, private readonly string $name, private array $expectedPatterns = [], private readonly array $expectedSettings = [], ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder = null)
     {
         parent::__construct($connectionParameters, $clientBuilder);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         try {
@@ -113,9 +107,6 @@ class ElasticsearchTemplateCheck extends AbstractElasticsearchCheck implements C
         return new Success('Success check Elasticsearch template.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         $parameters = $this->convertConnectionParametersToArray();

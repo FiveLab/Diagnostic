@@ -21,9 +21,6 @@ use PHPUnit\Framework\Attributes\Test;
 
 class SymfonyMailerSmtpConnectionCheckTest extends AbstractMailerTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         if (!$this->canTestingWithMailer()) {

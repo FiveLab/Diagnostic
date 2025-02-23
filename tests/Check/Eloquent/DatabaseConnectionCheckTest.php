@@ -23,9 +23,6 @@ use PHPUnit\Framework\Attributes\Test;
 
 class DatabaseConnectionCheckTest extends AbstractDatabaseTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         if (!$this->canTestingWithDatabase()) {
@@ -102,11 +99,6 @@ class DatabaseConnectionCheckTest extends AbstractDatabaseTestCase
         );
     }
 
-    /**
-     * Get connection options
-     *
-     * @return array
-     */
     private function getConnectionOptions(): array
     {
         return [
@@ -119,11 +111,6 @@ class DatabaseConnectionCheckTest extends AbstractDatabaseTestCase
         ];
     }
 
-    /**
-     * @param array $options
-     *
-     * @return ConnectionInterface
-     */
     private function getConnection(array $options): ConnectionInterface
     {
         $capsule = new Capsule();

@@ -19,9 +19,6 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * Check the parameter from symfony container.
- */
 class SymfonyContainerParameterEqualCheck implements CheckInterface
 {
     /**
@@ -34,13 +31,6 @@ class SymfonyContainerParameterEqualCheck implements CheckInterface
      */
     private array $extra = [];
 
-    /**
-     * Constructor.
-     *
-     * @param ContainerInterface $container
-     * @param string             $parameterName
-     * @param mixed              $expectedValue
-     */
     public function __construct(private readonly ContainerInterface $container, private readonly string $parameterName, private readonly mixed $expectedValue)
     {
         $this->parameterEqualCheckFactory = static function (mixed $expected, mixed $actual) {
@@ -48,9 +38,6 @@ class SymfonyContainerParameterEqualCheck implements CheckInterface
         };
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         $extra = [
@@ -60,9 +47,6 @@ class SymfonyContainerParameterEqualCheck implements CheckInterface
         return \array_merge($extra, $this->extra);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         if (!$this->container->hasParameter($this->parameterName)) {
@@ -80,11 +64,6 @@ class SymfonyContainerParameterEqualCheck implements CheckInterface
         return $result;
     }
 
-    /**
-     * Set factory for create parameter check
-     *
-     * @param \Closure $factory
-     */
     public function setParameterEqualCheckFactory(\Closure $factory): void
     {
         $this->parameterEqualCheckFactory = $factory;

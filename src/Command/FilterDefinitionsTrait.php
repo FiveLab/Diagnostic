@@ -17,9 +17,6 @@ use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 use FiveLab\Component\Diagnostic\Check\Definition\Filter\CheckDefinitionsInGroupFilter;
 use FiveLab\Component\Diagnostic\Check\Definition\Filter\OrXFilter;
 
-/**
- * The common trait for filter definitions
- */
 trait FilterDefinitionsTrait
 {
     /**

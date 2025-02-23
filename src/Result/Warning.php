@@ -13,9 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Result;
 
-/**
- * Warning result.
- */
-class Warning extends Result
+readonly class Warning extends Result
 {
 }

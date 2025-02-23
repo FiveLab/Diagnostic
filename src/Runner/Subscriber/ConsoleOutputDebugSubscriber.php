@@ -22,27 +22,12 @@ use FiveLab\Component\Diagnostic\Runner\RunnerEvents;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/**
- * The subscriber for render info about run in console.
- */
 readonly class ConsoleOutputDebugSubscriber implements EventSubscriberInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param OutputInterface $output
-     */
     public function __construct(private OutputInterface $output)
     {
     }
 
-    /**
-     * On check complete
-     *
-     * @param CompleteRunCheckEvent $event
-     *
-     * @return CompleteRunCheckEvent
-     */
     public function onCheckComplete(CompleteRunCheckEvent $event): CompleteRunCheckEvent
     {
         $definition = $event->definition;

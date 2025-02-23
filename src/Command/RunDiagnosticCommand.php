@@ -22,38 +22,19 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Command for run diagnostic.
- */
 #[AsCommand(name: 'diagnostic:run', description: 'Run diagnostics.')]
 class RunDiagnosticCommand extends Command
 {
     use FilterDefinitionsTrait;
 
-    /**
-     * @var string
-     */
     protected static $defaultName = 'diagnostic:run';
-
-    /**
-     * @var string
-     */
     protected static $defaultDescription = 'Run diagnostics.';
 
-    /**
-     * Constructor.
-     *
-     * @param RunnerInterface  $runner
-     * @param CheckDefinitions $definitions
-     */
     public function __construct(private readonly RunnerInterface $runner, private readonly CheckDefinitions $definitions)
     {
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -61,9 +42,6 @@ class RunDiagnosticCommand extends Command
             ->addOption('group', 'g', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The list of groups.', []);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         if (\method_exists($this->runner, 'getEventDispatcher')) {
@@ -74,12 +52,9 @@ class RunDiagnosticCommand extends Command
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $definitions = clone $this->definitions;
+        $definitions = $this->definitions;
 
         if ($input->getOption('group')) {
             $definitions = $this->filterDefinitionsByGroupInInput($definitions, (array) $input->getOption('group'));

@@ -22,19 +22,9 @@ use Symfony\Component\DependencyInjection\Container;
 
 class LazyContainerCheckTest extends TestCase
 {
-    /**
-     * @var CheckInterface
-     */
     private CheckInterface $check;
-
-    /**
-     * @var LazyContainerCheck
-     */
     private LazyContainerCheck $lazyCheck;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->check = $this->createMock(CheckInterface::class);

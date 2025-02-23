@@ -17,30 +17,14 @@ use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
 use FiveLab\Component\Diagnostic\Result\Result;
 use Symfony\Contracts\EventDispatcher\Event;
 
-/**
- * Emit this event before run check.
- */
 class BeforeRunCheckEvent extends Event
 {
-    /**
-     * @var Result|null
-     */
     private ?Result $result = null;
 
-    /**
-     * Constructor.
-     *
-     * @param CheckDefinition $definition
-     */
     public function __construct(public readonly CheckDefinition $definition)
     {
     }
 
-    /**
-     * Force set the result
-     *
-     * @param Result $result
-     */
     public function setResult(Result $result): void
     {
         $this->result = $result;
@@ -48,11 +32,6 @@ class BeforeRunCheckEvent extends Event
         $this->stopPropagation();
     }
 
-    /**
-     * Get the result
-     *
-     * @return Result|null
-     */
     public function getResult(): ?Result
     {
         return $this->result;

@@ -29,14 +29,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class HttpCheckTest extends TestCase
 {
-    /**
-     * @var ClientInterface
-     */
     private ClientInterface $client;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->client = $this->createMock(ClientInterface::class);
@@ -44,7 +38,7 @@ class HttpCheckTest extends TestCase
 
     #[Test]
     #[DataProvider('provideDataForCheck')]
-    public function shouldSuccessCheck(ResponseInterface $response, Result $expectedResult, string $method, string $url, array $headers, string $body, int $expectedStatusCode, string $expectedBody = null): void
+    public function shouldSuccessCheck(ResponseInterface $response, Result $expectedResult, string $method, string $url, array $headers, string $body, int $expectedStatusCode, ?string $expectedBody = null): void
     {
         $expectedRequest = new Request($method, $url, $headers, $body);
 
@@ -125,11 +119,6 @@ class HttpCheckTest extends TestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * Provide data for check
-     *
-     * @return array
-     */
     public static function provideDataForCheck(): array
     {
         return [

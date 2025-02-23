@@ -17,11 +17,6 @@ use PHPUnit\Framework\TestCase;
 
 abstract class AbstractAwsTestCase extends TestCase
 {
-    /**
-     * Get AWS DynamoDB endpoint
-     *
-     * @return string
-     */
     public function getAwsDynamodbEndpoint(): string
     {
         return \getenv('AWS_DYNAMODB_ENDPOINT') ?: '';

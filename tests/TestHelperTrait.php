@@ -17,9 +17,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use SebastianBergmann\Comparator\Factory;
 
-/**
- * A helper for PhpUnit 10.*
- */
 trait TestHelperTrait
 {
     /**
@@ -48,9 +45,9 @@ trait TestHelperTrait
     /**
      * Create callback for consecutive calls
      *
-     * @param InvokedCount        $matcher
-     * @param array<array<mixed>> $arguments
-     * @param int                 $index
+     * @param InvokedCount                  $matcher
+     * @param array<int, array<int, mixed>> $arguments
+     * @param int                           $index
      *
      * @return \Closure
      */

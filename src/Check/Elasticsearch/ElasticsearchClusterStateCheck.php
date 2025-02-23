@@ -18,14 +18,8 @@ use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
 
-/**
- *  Checks ES cluster state via _cluster/health endpoint
- */
 class ElasticsearchClusterStateCheck extends AbstractElasticsearchCheck
 {
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         try {
@@ -56,7 +50,7 @@ class ElasticsearchClusterStateCheck extends AbstractElasticsearchCheck
     /**
      * Parse cluster status
      *
-     * @param array<string> $responseParams
+     * @param array<string, mixed> $responseParams
      *
      * @return Result
      */

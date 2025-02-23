@@ -17,22 +17,10 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-/**
- * Check what the data is correct JSON.
- */
 readonly class IsJsonCheck implements CheckInterface
 {
-    /**
-     * @var string|null
-     */
     private ?string $expectedType;
 
-    /**
-     * Constructor.
-     *
-     * @param string      $json
-     * @param string|null $expectedType
-     */
     public function __construct(private string $json, ?string $expectedType = null)
     {
         if ($expectedType) {
@@ -50,15 +38,12 @@ readonly class IsJsonCheck implements CheckInterface
         $this->expectedType = $expectedType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         $expectedFunction = 'is_'.$this->expectedType;
 
         try {
-            $json = \json_decode($this->json, true, 512, JSON_THROW_ON_ERROR);
+            $json = \json_decode($this->json, flags: JSON_THROW_ON_ERROR | JSON_OBJECT_AS_ARRAY);
         } catch (\JsonException $error) {
             return new Failure(\sprintf(
                 'The input data is\'t json. Error: %s.',
@@ -86,9 +71,6 @@ readonly class IsJsonCheck implements CheckInterface
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return [

@@ -30,11 +30,6 @@ class DiskUsageCheckTest extends TestCase
         new DiskUsageCheck($criticalThreshold, $warningThreshold);
     }
 
-    /**
-     * Provide data for test invalid thresholds.
-     *
-     * @return array
-     */
     public static function provideInvalidThresholds(): array
     {
         return [

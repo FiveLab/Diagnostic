@@ -59,13 +59,6 @@ class OrXFilterTest extends TestCase
         self::assertFalse($result);
     }
 
-    /**
-     * Create callable with return bool
-     *
-     * @param bool $return
-     *
-     * @return callable
-     */
     private function createCallbackWithReturnBool(bool $return): callable
     {
         return function () use ($return) {
@@ -73,11 +66,6 @@ class OrXFilterTest extends TestCase
         };
     }
 
-    /**
-     * Create definition
-     *
-     * @return CheckDefinition
-     */
     private function createDefinition(): CheckDefinition
     {
         return new CheckDefinition(\uniqid((string) \random_int(0, PHP_INT_MAX), true), $this->createMock(CheckInterface::class), []);

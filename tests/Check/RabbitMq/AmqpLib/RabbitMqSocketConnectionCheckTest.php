@@ -23,9 +23,6 @@ use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqSocketConnectionCheckTest extends AbstractRabbitMqTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         if (!$this->canTestingWithRabbitMq()) {

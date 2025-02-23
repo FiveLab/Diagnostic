@@ -14,22 +14,15 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Check\Definition;
 
 /**
- * Collection for store check definitions.
- *
  * @implements \IteratorAggregate<CheckDefinition>
  */
-class CheckDefinitions implements \IteratorAggregate, \Countable
+readonly class CheckDefinitions implements \IteratorAggregate, \Countable
 {
     /**
-     * @var array|CheckDefinition[]
+     * @var array<CheckDefinition>
      */
-    private readonly array $definitions;
+    private array $definitions;
 
-    /**
-     * Constructor.
-     *
-     * @param CheckDefinition ...$definitions
-     */
     public function __construct(CheckDefinition ...$definitions)
     {
         \array_reduce($definitions, static function (array $definitionKeys, CheckDefinition $definition): array {
@@ -57,16 +50,13 @@ class CheckDefinitions implements \IteratorAggregate, \Countable
         return new \ArrayIterator($this->definitions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function count(): int
     {
         return \count($this->definitions);
     }
 
     /**
-     * Get all groups
+     * Get unique groups
      *
      * @return array<string>
      */
@@ -83,13 +73,6 @@ class CheckDefinitions implements \IteratorAggregate, \Countable
         return \array_unique($groups);
     }
 
-    /**
-     * Filter collection
-     *
-     * @param callable $filter
-     *
-     * @return CheckDefinitions
-     */
     public function filter(callable $filter): CheckDefinitions
     {
         $filtered = \array_filter($this->definitions, $filter);

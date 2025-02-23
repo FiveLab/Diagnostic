@@ -22,37 +22,20 @@ use Psr\Container\ContainerInterface;
  */
 readonly class LazyContainerCheck implements CheckInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param ContainerInterface $container
-     * @param string             $id
-     */
     public function __construct(private ContainerInterface $container, private string $id)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         return $this->getCheck()->check();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return $this->getCheck()->getExtraParameters();
     }
 
-    /**
-     * Get original check
-     *
-     * @return CheckInterface
-     */
     private function getCheck(): CheckInterface
     {
         return $this->container->get($this->id);

@@ -17,29 +17,18 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Connection as DriverConnection;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 
-/**
- * Abstract check for Doctrine DBAL
- */
 abstract class AbstractDbalCheck implements CheckInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param DriverConnection|Connection $connection
-     */
     public function __construct(protected readonly Connection|DriverConnection $connection)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         $parameters = [];
 
         if ($this->connection instanceof Connection) {
-            if (\method_exists($this->connection, 'getParams')) {
+            if (\method_exists($this->connection, 'getParams')) { // @phpstan-ignore-line
                 $parameters = $this->connection->getParams();
                 unset($parameters['password']);
             } else {

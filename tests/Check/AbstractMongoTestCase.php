@@ -18,73 +18,46 @@ use PHPUnit\Framework\TestCase;
 
 abstract class AbstractMongoTestCase extends TestCase
 {
-    /**
-     * @return string|null
-     */
     protected function getProtocol(): ?string
     {
         return \getenv('MONGO_PROTOCOL') ?: null;
     }
 
-    /**
-     * @return string|null
-     */
     protected function getHost(): ?string
     {
         return \getenv('MONGO_HOST') ?: null;
     }
 
-    /**
-     * @return int
-     */
     protected function getPort(): int
     {
         return \getenv('MONGO_PORT') ? (int) \getenv('MONGO_PORT') : 27017;
     }
 
-    /**
-     * @return string|null
-     */
     protected function getUsername(): ?string
     {
         return \getenv('MONGO_USER') ?: null;
     }
 
-    /**
-     * @return string|null
-     */
     protected function getPassword(): ?string
     {
         return \getenv('MONGO_PASSWORD') ?: null;
     }
 
-    /**
-     * @return string
-     */
     protected function getDb(): string
     {
         return \getenv('MONGO_DB');
     }
 
-    /**
-     * @return string
-     */
     protected function getCollection(): string
     {
         return \getenv('MONGO_COLLECTION');
     }
 
-    /**
-     * @return bool
-     */
     protected function connectionParametersProvided(): bool
     {
         return $this->getHost() && $this->getPort() && $this->getDb();
     }
 
-    /**
-     * @return MongoConnectionParameters
-     */
     protected function getConnectionParameters(): MongoConnectionParameters
     {
         return new MongoConnectionParameters(
@@ -97,9 +70,6 @@ abstract class AbstractMongoTestCase extends TestCase
         );
     }
 
-    /**
-     * @return array<string,mixed>
-     */
     protected function getExpectedSettings(): array
     {
         return [

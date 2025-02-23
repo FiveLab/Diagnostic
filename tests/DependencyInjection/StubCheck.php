@@ -18,17 +18,11 @@ use FiveLab\Component\Diagnostic\Result\Result;
 
 class StubCheck implements CheckInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         throw new \BadMethodCallException();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         throw new \BadMethodCallException();

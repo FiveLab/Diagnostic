@@ -35,19 +35,9 @@ class RunnerTest extends TestCase
 {
     use TestHelperTrait;
 
-    /**
-     * @var EventDispatcherInterface
-     */
     private EventDispatcherInterface $eventDispatcher;
-
-    /**
-     * @var Runner
-     */
     private Runner $runner;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -95,12 +85,7 @@ class RunnerTest extends TestCase
                 self::callback($this->createConsecutiveCallback($matcher, $map, 0)),
                 self::callback($this->createConsecutiveCallback($matcher, $map, 1))
             )
-            ->willReturnOnConsecutiveCalls(
-                self::returnArgument(0),
-                self::returnArgument(0),
-                self::returnArgument(0),
-                self::returnArgument(0)
-            );
+            ->willReturnCallback(static fn(mixed $e) => $e);
 
         $result = $this->runner->run(new CheckDefinitions($definition1, $definition2));
 
@@ -134,14 +119,7 @@ class RunnerTest extends TestCase
                 self::callback($this->createConsecutiveCallback($matcher, $map, 0)),
                 self::callback($this->createConsecutiveCallback($matcher, $map, 1))
             )
-            ->willReturnOnConsecutiveCalls(
-                self::returnArgument(0),
-                self::returnArgument(0),
-                self::returnArgument(0),
-                self::returnArgument(0),
-                self::returnArgument(0),
-                self::returnArgument(0)
-            );
+            ->willReturnCallback(static fn(mixed $e) => $e);
 
         $result = $this->runner->run(new CheckDefinitions($definition1, $definition2, $definition3));
 
@@ -214,10 +192,7 @@ class RunnerTest extends TestCase
                 self::callback($this->createConsecutiveCallback($matcher, $map, 0)),
                 self::callback($this->createConsecutiveCallback($matcher, $map, 1))
             )
-            ->willReturnOnConsecutiveCalls(
-                self::returnArgument(0),
-                self::returnArgument(0),
-            );
+            ->willReturnCallback(static fn(mixed $e) => $e);
 
         $result = $this->runner->run(new CheckDefinitions($definition));
 
@@ -252,15 +227,7 @@ class RunnerTest extends TestCase
         self::assertFalse($result);
     }
 
-    /**
-     * Create definition
-     *
-     * @param Result|null $result
-     * @param bool        $errorOnFailure
-     *
-     * @return CheckDefinition
-     */
-    private function createDefinitionWithResult(Result $result = null, bool $errorOnFailure = true): CheckDefinition
+    private function createDefinitionWithResult(?Result $result = null, bool $errorOnFailure = true): CheckDefinition
     {
         $check = $this->createMock(CheckInterface::class);
 

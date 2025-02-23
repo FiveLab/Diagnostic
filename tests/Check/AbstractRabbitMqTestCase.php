@@ -18,12 +18,6 @@ use PHPUnit\Framework\TestCase;
 
 abstract class AbstractRabbitMqTestCase extends TestCase
 {
-    /**
-     * Declare exchange
-     *
-     * @param string $exchangeName
-     * @param string $exchangeType
-     */
     protected function declareExchange(string $exchangeName, string $exchangeType = 'direct'): void
     {
         $options = [
@@ -54,9 +48,6 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         \file_get_contents($url, false, $context);
     }
 
-    /**
-     * Delete all queues
-     */
     protected function deleteAllExchanges(): void
     {
         $parameters = $this->getRabbitMqManagementConnectionParameters();
@@ -89,11 +80,6 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         }
     }
 
-    /**
-     * Declare queue
-     *
-     * @param string $queueName
-     */
     protected function declareQueue(string $queueName): void
     {
         $options = [
@@ -123,9 +109,6 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         \file_get_contents($url, false, $context);
     }
 
-    /**
-     * Delete all queues
-     */
     protected function deleteAllQueues(): void
     {
         $parameters = $this->getRabbitMqManagementConnectionParameters();
@@ -153,11 +136,6 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         }
     }
 
-    /**
-     * Get RabbitMq Connection parameters
-     *
-     * @return RabbitMqConnectionParameters
-     */
     protected function getRabbitMqConnectionParameters(): RabbitMqConnectionParameters
     {
         if (!$this->canTestingWithRabbitMq()) {
@@ -174,11 +152,6 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         );
     }
 
-    /**
-     * Get RabbitMQ Management connection parameters
-     *
-     * @return RabbitMqConnectionParameters
-     */
     protected function getRabbitMqManagementConnectionParameters(): RabbitMqConnectionParameters
     {
         if (!$this->canTestingWithRabbitMq()) {
@@ -195,71 +168,36 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         );
     }
 
-    /**
-     * Get host for connect to RabbitMQ
-     *
-     * @return string
-     */
     protected function getRabbitMqHost(): ?string
     {
         return \getenv('RABBITMQ_HOST') ?: null;
     }
 
-    /**
-     * Get port for connect to RabbitMQ
-     *
-     * @return int
-     */
     protected function getRabbitMqPort(): int
     {
         return \getenv('RABBITMQ_PORT') ? (int) \getenv('RABBITMQ_PORT') : 5672;
     }
 
-    /**
-     * Get RabbitMQ management port
-     *
-     * @return int
-     */
     public function getRabbitMqManagementPort(): int
     {
         return \getenv('RABBITMQ_MANAGEMENT_PORT') ? (int) \getenv('RABBITMQ_MANAGEMENT_PORT') : 15672;
     }
 
-    /**
-     * Get RabbitMQ virtual host
-     *
-     * @return string
-     */
     protected function getRabbitMqVhost(): string
     {
         return \getenv('RABBITMQ_VHOST') ?: '/';
     }
 
-    /**
-     * Get the login for connect to RabbitMQ
-     *
-     * @return string
-     */
     protected function getRabbitMqLogin(): string
     {
         return \getenv('RABBITMQ_LOGIN') ?: 'guest';
     }
 
-    /**
-     * Get the password for connect to RabbitMQ.
-     *
-     * @return string
-     */
     protected function getRabbitMqPassword(): string
     {
         return \getenv('RABBITMQ_PASSWORD') ?: 'guest';
     }
 
-    /**
-     * Is can testing with RabbitMQ?
-     *
-     * @return bool
-     */
     protected function canTestingWithRabbitMq(): bool
     {
         return (bool) $this->getRabbitMqHost();

@@ -21,14 +21,8 @@ use PHPUnit\Framework\TestCase;
 
 class PhpIniParameterCheckTest extends TestCase
 {
-    /**
-     * @var string
-     */
-    private $activeTimezone;
+    private string $activeTimezone;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,9 +31,6 @@ class PhpIniParameterCheckTest extends TestCase
         \ini_set('date.timezone', 'Europe/Kiev');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         \ini_set('date.timezone', $this->activeTimezone);

@@ -18,23 +18,12 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-/**
- * Existence ENV variable in system check
- */
 readonly class EnvExistenceCheck implements CheckInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param string $envName
-     */
     public function __construct(private string $envName)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         if (false === \getenv($this->envName)) {
@@ -50,9 +39,6 @@ readonly class EnvExistenceCheck implements CheckInterface
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return [

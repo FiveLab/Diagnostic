@@ -22,24 +22,10 @@ use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use FiveLab\Component\Diagnostic\Util\HttpSecurityEncoder;
 use Psr\Http\Client\ClientExceptionInterface;
 
-/**
- * Simple check connect to resource by HTTP.
- */
 class HttpCheck implements CheckInterface
 {
-    /**
-     * @var HttpAdapterInterface
-     */
     private readonly HttpAdapterInterface $http;
-
-    /**
-     * @var HttpSecurityEncoder
-     */
     private readonly HttpSecurityEncoder $httpSecurityEncoder;
-
-    /**
-     * @var string|null
-     */
     private ?string $responseBody = null;
 
     /**
@@ -61,16 +47,13 @@ class HttpCheck implements CheckInterface
         private readonly string  $body,
         private readonly int     $expectedStatusCode,
         private readonly ?string $expectedBody = null,
-        HttpAdapter              $http = null,
-        HttpSecurityEncoder      $securityEncoder = null
+        ?HttpAdapter             $http = null,
+        ?HttpSecurityEncoder     $securityEncoder = null
     ) {
         $this->http = $http ?: new HttpAdapter();
         $this->httpSecurityEncoder = $securityEncoder ?: new HttpSecurityEncoder();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         $request = $this->http->createRequest($this->method, $this->url, $this->headers, $this->body);
@@ -101,9 +84,6 @@ class HttpCheck implements CheckInterface
         return new Success('Success get response and check all options.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         $uri = $this->httpSecurityEncoder->encodeUri($this->url);

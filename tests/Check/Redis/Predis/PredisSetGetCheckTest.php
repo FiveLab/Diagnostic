@@ -21,9 +21,6 @@ use PHPUnit\Framework\Attributes\Test;
 
 class PredisSetGetCheckTest extends AbstractRedisTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         if (!$this->canTestingWithRedis()) {

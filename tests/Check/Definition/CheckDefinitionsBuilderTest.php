@@ -25,14 +25,8 @@ class CheckDefinitionsBuilderTest extends TestCase
 {
     use TestHelperTrait;
 
-    /**
-     * @var CheckDefinitionsBuilder
-     */
     private CheckDefinitionsBuilder $builder;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->builder = new CheckDefinitionsBuilder();

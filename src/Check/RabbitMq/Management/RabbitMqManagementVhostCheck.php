@@ -22,30 +22,15 @@ use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 
-/**
- * Check virtual host existence
- */
 readonly class RabbitMqManagementVhostCheck implements CheckInterface
 {
-    /**
-     * @var HttpAdapterInterface
-     */
     private HttpAdapterInterface $http;
 
-    /**
-     * Constructor.
-     *
-     * @param RabbitMqConnectionParameters $connectionParameters
-     * @param HttpAdapterInterface|null    $http
-     */
-    public function __construct(private RabbitMqConnectionParameters $connectionParameters, HttpAdapterInterface $http = null)
+    public function __construct(private RabbitMqConnectionParameters $connectionParameters, ?HttpAdapterInterface $http = null)
     {
         $this->http = $http ?: new HttpAdapter();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         $url = \sprintf(
@@ -81,9 +66,6 @@ readonly class RabbitMqManagementVhostCheck implements CheckInterface
         return new Success('Success check virtual host via RabbitMQ Management API.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return [

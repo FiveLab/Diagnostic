@@ -13,9 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Util;
 
-/**
- * Array utils helper.
- */
 readonly class ArrayUtils
 {
     /**

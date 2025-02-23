@@ -21,38 +21,21 @@ use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterface;
 use Illuminate\Database\ConnectionInterface;
 
-/**
- * Check MySQL version.
- */
 class DatabaseMysqlVersionCheck implements CheckInterface
 {
     public const MYSQL_EXTRACT_VERSION_REGEX = '/^([\d\.]+)/';
 
-    /**
-     * @var VersionComparatorInterface
-     */
     private readonly VersionComparatorInterface $versionComparator;
-
-    /**
-     * @var string
-     */
     private string $actualVersion = 'unknown';
 
-    /**
-     * Constructor.
-     *
-     * @param ConnectionInterface             $connection
-     * @param string                          $expectedVersion
-     * @param VersionComparatorInterface|null $versionComparator
-     */
-    public function __construct(private readonly ConnectionInterface $connection, private readonly string $expectedVersion, VersionComparatorInterface $versionComparator = null)
-    {
+    public function __construct(
+        private readonly ConnectionInterface $connection,
+        private readonly string              $expectedVersion,
+        ?VersionComparatorInterface          $versionComparator = null
+    ) {
         $this->versionComparator = $versionComparator ?: new SemverVersionComparator();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         try {
@@ -78,36 +61,23 @@ class DatabaseMysqlVersionCheck implements CheckInterface
         return new Success('MySQL version matches an expected one.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         $parameters = [];
 
-        if ($this->connection instanceof ConnectionInterface) {
-            $parameters = $this->connection->getConfig();
-            $parameters['password'] = '***';
-        }
-
+        $parameters = $this->connection->getConfig();
+        $parameters['password'] = '***';
         $parameters['actualVersion'] = $this->actualVersion;
         $parameters['expectedVersion'] = $this->expectedVersion;
 
         return $parameters;
     }
 
-    /**
-     * Get MySQL server version.
-     *
-     * @param string $buildVersion
-     *
-     * @return string
-     */
     private function extractMysqlServerDistributedVersion(string $buildVersion): string
     {
         $matches = [];
         \preg_match(self::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
 
-        return \rtrim($matches[0], '.');
+        return \rtrim($matches[0], '.'); // @phpstan-ignore-line
     }
 }

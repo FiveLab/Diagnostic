@@ -15,9 +15,6 @@ namespace FiveLab\Component\Diagnostic\Check;
 
 use FiveLab\Component\Diagnostic\Result\Result;
 
-/**
- * All checks should implement this interface.
- */
 interface CheckInterface
 {
     /**

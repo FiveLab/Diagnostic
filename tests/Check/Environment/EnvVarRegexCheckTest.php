@@ -25,9 +25,6 @@ class EnvVarRegexCheckTest extends TestCase
 {
     private const ENV_VAR_NAME = 'FOO_ENV';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,9 +34,6 @@ class EnvVarRegexCheckTest extends TestCase
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -92,11 +86,6 @@ class EnvVarRegexCheckTest extends TestCase
         self::assertEquals($expectedExtra, $check->getExtraParameters());
     }
 
-    /**
-     * Provide parameters for testing
-     *
-     * @return array
-     */
     public static function provideParameters(): array
     {
         return [

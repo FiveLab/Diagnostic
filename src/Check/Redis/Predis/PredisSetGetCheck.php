@@ -19,27 +19,14 @@ use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use Predis\Client;
 
-/**
- * Check access to Redis and simple operation (SET/GET) via Predis
- */
 readonly class PredisSetGetCheck implements CheckInterface
 {
     private const PREFIX = '__diagnostic__';
 
-    /**
-     * Constructor.
-     *
-     * @param string      $host
-     * @param int         $port
-     * @param string|null $password
-     */
     public function __construct(private string $host, private int $port, private ?string $password = null)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         if (!\class_exists(Client::class)) {
@@ -78,9 +65,6 @@ readonly class PredisSetGetCheck implements CheckInterface
         return new Success('Success connect to Redis and SET/GET from Redis.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         // By security we not return password (because many redis instances work in internal network).

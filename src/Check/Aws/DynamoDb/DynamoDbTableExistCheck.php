@@ -20,25 +20,12 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-/**
- * Check what the table exist in DynamoDB (AWS).
- */
 readonly class DynamoDbTableExistCheck implements CheckInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param Sdk    $sdk
-     * @param string $tableName
-     * @param string $endpoint
-     */
     public function __construct(private Sdk $sdk, private string $tableName, private string $endpoint)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         $dynamodb = $this->sdk->createDynamoDb([
@@ -60,9 +47,6 @@ readonly class DynamoDbTableExistCheck implements CheckInterface
         return new Success('The table exist in DynamoDB.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return [

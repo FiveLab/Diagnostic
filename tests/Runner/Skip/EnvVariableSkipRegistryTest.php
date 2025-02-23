@@ -21,9 +21,6 @@ use PHPUnit\Framework\TestCase;
 
 class EnvVariableSkipRegistryTest extends TestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         \putenv('PHPUNIT_SKIP_HEALTH_CHECKS=');
@@ -63,13 +60,6 @@ class EnvVariableSkipRegistryTest extends TestCase
         self::assertFalse($registry->isShouldBeSkipped($definition));
     }
 
-    /**
-     * Create the definition with key
-     *
-     * @param string $key
-     *
-     * @return CheckDefinition
-     */
     private function createDefinitionWithKey(string $key): CheckDefinition
     {
         return new CheckDefinition($key, $this->createMock(CheckInterface::class), []);

@@ -13,31 +13,12 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
-/**
- * The model for store parameters for connect to Elasticsearch.
- */
 readonly class ElasticsearchConnectionParameters
 {
-    /**
-     * Constructor.
-     *
-     * @param string      $host
-     * @param int         $port
-     * @param string|null $username
-     * @param string|null $password
-     * @param bool        $ssl
-     */
     public function __construct(public string $host, public int $port = 9200, public ?string $username = null, public ?string $password = null, public bool $ssl = false)
     {
     }
 
-    /**
-     * Make connection params from DSN.
-     *
-     * @param string $dsn
-     *
-     * @return self
-     */
     public static function fromDsn(string $dsn): self
     {
         $parts = \parse_url($dsn);
@@ -58,11 +39,6 @@ readonly class ElasticsearchConnectionParameters
         );
     }
 
-    /**
-     * Get DSN
-     *
-     * @return string
-     */
     public function getDsn(): string
     {
         $userPass = '';

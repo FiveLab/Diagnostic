@@ -27,9 +27,6 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
     private const RIGHT_MYSQL_VERSION = '~8.0.0';
     private const WRONG_MYSQL_VERSION = '~1.0.0';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         if (!$this->canTestingWithDatabase()) {
@@ -190,11 +187,6 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         self::assertEmpty($matches);
     }
 
-    /**
-     * Get connection options
-     *
-     * @return array
-     */
     private function getConnectionOptions(): array
     {
         return [
@@ -207,11 +199,6 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         ];
     }
 
-    /**
-     * @param array $options
-     *
-     * @return ConnectionInterface
-     */
     private function getConnection(array $options): ConnectionInterface
     {
         $capsule = new Capsule();
@@ -220,11 +207,6 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         return $capsule->getConnection();
     }
 
-    /**
-     * @param ConnectionInterface $connection
-     *
-     * @return string
-     */
     private function getMysqlServerBuildVersion(ConnectionInterface $connection): string
     {
         $query = 'SHOW VARIABLES WHERE Variable_name = \'version\'';
@@ -233,11 +215,6 @@ class DatabaseMysqlVersionCheckTest extends AbstractDatabaseTestCase
         return $result[0]->Value;
     }
 
-    /**
-     * @param string $buildVersion
-     *
-     * @return string
-     */
     private function extractMysqlServerDistribVersion(string $buildVersion): string
     {
         $matches = [];

@@ -26,9 +26,6 @@ use FiveLab\Component\Diagnostic\Result\Success;
  */
 class ElasticsearchConnectionCheck extends AbstractElasticsearchCheck
 {
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         try {

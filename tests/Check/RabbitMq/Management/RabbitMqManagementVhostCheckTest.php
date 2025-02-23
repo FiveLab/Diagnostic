@@ -22,9 +22,6 @@ use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqManagementVhostCheckTest extends AbstractRabbitMqTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();

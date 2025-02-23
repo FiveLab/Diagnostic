@@ -13,7 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Doctrine;
 
-use Doctrine\DBAL\Connection;
 use FiveLab\Component\Diagnostic\Check\Doctrine\DbalMysqlVersionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
@@ -169,11 +168,6 @@ class DbalMysqlVersionCheckTest extends AbstractDoctrineCheckTestCase
         self::assertEmpty($matches);
     }
 
-    /**
-     * @param Connection $connection
-     *
-     * @return string
-     */
     private function getMysqlServerBuildVersion(object $connection): string
     {
         $query = 'SHOW VARIABLES WHERE Variable_name = \'version\'';
@@ -184,11 +178,6 @@ class DbalMysqlVersionCheckTest extends AbstractDoctrineCheckTestCase
         return $version;
     }
 
-    /**
-     * @param string $buildVersion
-     *
-     * @return string
-     */
     private function extractMysqlServerDistribVersion(string $buildVersion): string
     {
         $matches = [];

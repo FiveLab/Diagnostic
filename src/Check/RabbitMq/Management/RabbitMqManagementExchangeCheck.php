@@ -22,41 +22,20 @@ use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 
-/**
- * Check exchange existence
- */
 class RabbitMqManagementExchangeCheck implements CheckInterface
 {
-    /**
-     * @var HttpAdapterInterface
-     */
     private readonly HttpAdapterInterface $http;
-
-    /**
-     * @var string|null
-     */
     private ?string $actualExchangeType = null;
 
-    /**
-     * Constructor.
-     *
-     * @param RabbitMqConnectionParameters $connectionParameters
-     * @param string                       $exchangeName
-     * @param string                       $exchangeType
-     * @param HttpAdapterInterface|null    $http
-     */
     public function __construct(
         private readonly RabbitMqConnectionParameters $connectionParameters,
         private readonly string                       $exchangeName,
         private readonly string                       $exchangeType,
-        HttpAdapterInterface                          $http = null
+        ?HttpAdapterInterface                         $http = null
     ) {
         $this->http = $http ?: new HttpAdapter();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         $url = \sprintf(
@@ -100,9 +79,6 @@ class RabbitMqManagementExchangeCheck implements CheckInterface
         return new Success('Success check exchange via RabbitMQ Management API.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return [

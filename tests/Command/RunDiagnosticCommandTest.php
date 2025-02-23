@@ -26,34 +26,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RunDiagnosticCommandTest extends TestCase
 {
-    /**
-     * @var RunnerInterface
-     */
     private RunnerInterface $runner;
-
-    /**
-     * @var CheckDefinitions
-     */
     private CheckDefinitions $definitions;
-
-    /**
-     * @var InputInterface
-     */
     private InputInterface $input;
-
-    /**
-     * @var OutputInterface
-     */
     private OutputInterface $output;
-
-    /**
-     * @var RunDiagnosticCommand
-     */
     private RunDiagnosticCommand $command;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->runner = $this->createMock(RunnerInterface::class);

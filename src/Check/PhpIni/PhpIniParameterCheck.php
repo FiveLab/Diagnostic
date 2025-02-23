@@ -18,29 +18,14 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-/**
- * Check php.ini parameter.
- */
 class PhpIniParameterCheck implements CheckInterface
 {
-    /**
-     * @var string
-     */
     private string $actualValue;
 
-    /**
-     * Constructor.
-     *
-     * @param string $parameter
-     * @param string $expectedValue
-     */
     public function __construct(private readonly string $parameter, private readonly string $expectedValue)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         $actualValue = \ini_get($this->parameter);
@@ -59,9 +44,6 @@ class PhpIniParameterCheck implements CheckInterface
         return new Success('Success check php.ini parameter.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return [

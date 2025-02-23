@@ -23,9 +23,6 @@ use FiveLab\Component\Diagnostic\Util\ArrayUtils;
 use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 use OpenSearch\Common\Exceptions\Missing404Exception as OpenSearchMissing404Exception;
 
-/**
- * Check the elasticsearch index.
- */
 class ElasticsearchIndexCheck extends AbstractElasticsearchCheck implements CheckInterface
 {
     /**
@@ -41,14 +38,11 @@ class ElasticsearchIndexCheck extends AbstractElasticsearchCheck implements Chec
      * @param array<string, mixed>                                    $expectedSettings
      * @param ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder
      */
-    public function __construct(ElasticsearchConnectionParameters $connectionParameters, private readonly string $index, private readonly array $expectedSettings = [], ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder = null)
+    public function __construct(ElasticsearchConnectionParameters $connectionParameters, private readonly string $index, private readonly array $expectedSettings = [], ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder = null)
     {
         parent::__construct($connectionParameters, $clientBuilder);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         try {
@@ -97,9 +91,6 @@ class ElasticsearchIndexCheck extends AbstractElasticsearchCheck implements Chec
         return new Success(\sprintf('Success check %s index.', $this->getEngineName()));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         $parameters = $this->convertConnectionParametersToArray();

@@ -20,24 +20,13 @@ use FiveLab\Component\Diagnostic\Runner\Event\BeforeRunCheckEvent;
 use FiveLab\Component\Diagnostic\Runner\Skip\SkipRegistryInterface;
 use FiveLab\Component\Diagnostic\Runner\Subscriber\SkipCheckSubscriber;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SkipCheckSubscriberTest extends TestCase
 {
-    /**
-     * @var SkipRegistryInterface|MockObject
-     */
     private SkipRegistryInterface $skipRegistry;
-
-    /**
-     * @var SkipCheckSubscriber
-     */
     private SkipCheckSubscriber $subscriber;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->skipRegistry = $this->createMock(SkipRegistryInterface::class);

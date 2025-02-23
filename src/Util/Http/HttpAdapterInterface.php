@@ -16,18 +16,8 @@ namespace FiveLab\Component\Diagnostic\Util\Http;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * An adapter for work wth HTTP layers.
- */
 interface HttpAdapterInterface
 {
-    /**
-     * Send request
-     *
-     * @param RequestInterface $request
-     *
-     * @return ResponseInterface
-     */
     public function sendRequest(RequestInterface $request): ResponseInterface;
 
     /**
@@ -40,5 +30,5 @@ interface HttpAdapterInterface
      *
      * @return RequestInterface
      */
-    public function createRequest(string $method, string $url, array $headers = [], string $body = null): RequestInterface;
+    public function createRequest(string $method, string $url, array $headers = [], ?string $body = null): RequestInterface;
 }

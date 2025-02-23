@@ -15,9 +15,6 @@ namespace FiveLab\Component\Diagnostic\Check\Definition;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 
-/**
- * The builder for build the definition collection without created definition instances.
- */
 class CheckDefinitionsBuilder
 {
     /**
@@ -55,11 +52,6 @@ class CheckDefinitionsBuilder
         }
     }
 
-    /**
-     * Build the definition collection
-     *
-     * @return CheckDefinitions
-     */
     public function build(): CheckDefinitions
     {
         $definitions = [];

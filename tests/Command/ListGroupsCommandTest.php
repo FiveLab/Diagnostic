@@ -16,36 +16,17 @@ namespace FiveLab\Component\Diagnostic\Tests\Command;
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 use FiveLab\Component\Diagnostic\Command\ListGroupsCommand;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 class ListGroupsCommandTest extends TestCase
 {
-    /**
-     * @var ArrayInput
-     */
     private ArrayInput $input;
-
-    /**
-     * @var BufferedOutput
-     */
     private BufferedOutput $output;
-
-    /**
-     * @var CheckDefinitions|MockObject
-     */
     private CheckDefinitions $definitions;
-
-    /**
-     * @var ListGroupsCommand
-     */
     private ListGroupsCommand $command;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->input = new ArrayInput([]);

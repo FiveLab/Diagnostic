@@ -21,25 +21,12 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
 
-/**
- * The compiler pass for add diagnostic check to builder by tag.
- */
 readonly class AddDiagnosticToBuilderCheckPass implements CompilerPassInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param string $builderServiceName
-     * @param string $checkTagName
-     * @param bool   $useLazyDecorator
-     */
     public function __construct(private string $builderServiceName = 'diagnostic.definitions.builder', private string $checkTagName = 'diagnostic.check', private bool $useLazyDecorator = false)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container): void
     {
         try {

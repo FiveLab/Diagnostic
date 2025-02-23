@@ -20,14 +20,8 @@ use PHPUnit\Framework\TestCase;
 
 class HttpSecurityEncoderTest extends TestCase
 {
-    /**
-     * @var HttpSecurityEncoder
-     */
     private HttpSecurityEncoder $encoder;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->encoder = new HttpSecurityEncoder();
@@ -51,11 +45,6 @@ class HttpSecurityEncoderTest extends TestCase
         self::assertEquals($expected, $result);
     }
 
-    /**
-     * Provide data for testing encode uri.
-     *
-     * @return array
-     */
     public static function provideUris(): array
     {
         return [
@@ -96,11 +85,6 @@ class HttpSecurityEncoderTest extends TestCase
         ];
     }
 
-    /**
-     * Provide data for testing encode headers
-     *
-     * @return array
-     */
     public static function provideHeaders(): array
     {
         return [

@@ -15,9 +15,6 @@ namespace FiveLab\Component\Diagnostic\Runner\Skip;
 
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
 
-/**
- * All skip registries should implement this interface.
- */
 interface SkipRegistryInterface
 {
     /**

@@ -23,14 +23,8 @@ use PHPUnit\Framework\Attributes\Test;
 
 class DynamoDbTableExistCheckTest extends AbstractAwsTestCase
 {
-    /**
-     * @var DynamoDbClient
-     */
     private DynamoDbClient $dynamodb;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         if (!$this->getAwsDynamodbEndpoint()) {
@@ -56,9 +50,6 @@ class DynamoDbTableExistCheckTest extends AbstractAwsTestCase
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         $this->dynamodb->deleteTable([
@@ -96,11 +87,6 @@ class DynamoDbTableExistCheckTest extends AbstractAwsTestCase
         ], $check->getExtraParameters());
     }
 
-    /**
-     * Create a SDK
-     *
-     * @return Sdk
-     */
     private function createSdk(): Sdk
     {
         return new Sdk([

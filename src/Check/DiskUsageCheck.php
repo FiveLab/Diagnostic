@@ -17,18 +17,8 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-/**
- * Check disk usage.
- */
 readonly class DiskUsageCheck implements CheckInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param int    $criticalThreshold
-     * @param int    $warningThreshold
-     * @param string $path
-     */
     public function __construct(private int $criticalThreshold, private int $warningThreshold, private string $path = '/')
     {
         if ($criticalThreshold < 0 || $criticalThreshold > 100) {
@@ -46,17 +36,11 @@ readonly class DiskUsageCheck implements CheckInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         $freeSpace = \disk_free_space($this->path);

@@ -19,27 +19,12 @@ use FiveLab\Component\Diagnostic\Runner\RunnerEvents;
 use FiveLab\Component\Diagnostic\Runner\Skip\SkipRegistryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/**
- * The subscriber for skip checks.
- */
 readonly class SkipCheckSubscriber implements EventSubscriberInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param SkipRegistryInterface $skipRegistry
-     */
     public function __construct(private SkipRegistryInterface $skipRegistry)
     {
     }
 
-    /**
-     * Call before run check.
-     *
-     * @param BeforeRunCheckEvent $event
-     *
-     * @return BeforeRunCheckEvent
-     */
     public function onBeforeRunCheck(BeforeRunCheckEvent $event): BeforeRunCheckEvent
     {
         if ($this->skipRegistry->isShouldBeSkipped($event->definition)) {

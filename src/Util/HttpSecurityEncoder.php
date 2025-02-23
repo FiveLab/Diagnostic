@@ -13,18 +13,8 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Util;
 
-/**
- * Service for encode secured parts in HTTP parameters.
- */
 readonly class HttpSecurityEncoder
 {
-    /**
-     * Encode the URI for security issues.
-     *
-     * @param string $url
-     *
-     * @return string
-     */
     public function encodeUri(string $url): string
     {
         $parts = \parse_url($url);

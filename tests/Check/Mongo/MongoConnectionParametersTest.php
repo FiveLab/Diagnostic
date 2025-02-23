@@ -22,7 +22,7 @@ class MongoConnectionParametersTest extends TestCase
 {
     #[Test]
     #[DataProvider('provideConnectionParameters')]
-    public function shouldGetDsn(string $protocol, string $host, int $port, string $username, string $password, string $db, array $options, string $expectedDsn = null): void
+    public function shouldGetDsn(string $protocol, string $host, int $port, string $username, string $password, string $db, array $options, ?string $expectedDsn = null): void
     {
         $connectionParameters = new MongoConnectionParameters(
             $protocol,
@@ -37,11 +37,6 @@ class MongoConnectionParametersTest extends TestCase
         self::assertEquals($expectedDsn, $connectionParameters->getDsn());
     }
 
-    /**
-     * Provide data for teest connection.
-     *
-     * @return array[]
-     */
     public static function provideConnectionParameters(): array
     {
         return [

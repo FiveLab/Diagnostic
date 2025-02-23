@@ -20,9 +20,6 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-/**
- * Class whether database tables of registered EntityManager entities are accessible
- */
 class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
 {
     /**
@@ -30,18 +27,10 @@ class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
      */
     private array $tables = [];
 
-    /**
-     * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(private readonly EntityManagerInterface $entityManager)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         $this->tables = $this->getTableNames();
@@ -65,9 +54,6 @@ class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
         return new Success('Success check rights for read from all tables in entity manager.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return [
@@ -94,13 +80,6 @@ class ReadAccessToTablesFromEntityManagerCheck implements CheckInterface
         return $tableNames;
     }
 
-    /**
-     * Is we have access to read from table?
-     *
-     * @param string $tableName
-     *
-     * @return bool
-     */
     private function isSelectSuccessful(string $tableName): bool
     {
         $connection = $this->entityManager->getConnection();

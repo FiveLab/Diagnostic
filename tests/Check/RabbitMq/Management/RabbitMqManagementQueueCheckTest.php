@@ -24,14 +24,8 @@ use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
 {
-    /**
-     * @var string|null
-     */
     private ?string $queueName = null;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,9 +38,6 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
         $this->declareQueue($this->queueName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         if ($this->canTestingWithRabbitMq()) {
@@ -136,7 +127,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
 
     #[Test]
     #[DataProvider('lengthCheckProvider')]
-    public function shouldCheckQueueLength(string $resultClass, string $resultText, int $actualLength, int $max = null, int $percentage = null, int $min = null): void
+    public function shouldCheckQueueLength(string $resultClass, string $resultText, int $actualLength, ?int $max = null, ?int $percentage = null, ?int $min = null): void
     {
         $this->publishDummyMessagesToQueue($this->queueName, $actualLength);
 
@@ -157,9 +148,6 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
         self::assertStringContainsString($resultText, $result->message);
     }
 
-    /**
-     * @return array[]
-     */
     public static function lengthCheckProvider(): array
     {
         return [
@@ -210,12 +198,6 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
         ];
     }
 
-    /**
-     * Publish some messages to queue
-     *
-     * @param string $queueName
-     * @param int    $amount
-     */
     private function publishDummyMessagesToQueue(string $queueName, int $amount = 1): void
     {
         $connection = new \AMQPConnection([

@@ -25,19 +25,9 @@ use PHPUnit\Framework\Attributes\Test;
 
 class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheckTestCase
 {
-    /**
-     * @var EntityManager
-     */
     private EntityManager $entityManager;
-
-    /**
-     * @var SchemaTool
-     */
     private SchemaTool $schemaTool;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         if (!$this->canTestingWithDatabase()) {
@@ -100,9 +90,6 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheck
         self::assertSame($expected, $check->getExtraParameters());
     }
 
-    /**
-     * Setup database
-     */
     private function setUpDatabase(): void
     {
         $connection = $this->makeDbalConnection();
@@ -114,27 +101,16 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheck
         $this->schemaTool = new SchemaTool($this->entityManager);
     }
 
-    /**
-     * Create schema
-     */
     private function createSchema(): void
     {
         $this->schemaTool->createSchema($this->getEntityMetadata());
     }
 
-    /**
-     * Drop schema
-     */
     private function dropSchema(): void
     {
         $this->schemaTool->dropSchema($this->getEntityMetadata());
     }
 
-    /**
-     * Drop table by entity class.
-     *
-     * @param string $entityClass
-     */
     private function dropEntityClassTable(string $entityClass): void
     {
         $classMetadata = $this->entityManager->getClassMetadata($entityClass);
@@ -144,7 +120,7 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheck
     /**
      * Get doctrine metadata.
      *
-     * @return ClassMetadata[]|\Doctrine\Common\Persistence\Mapping\ClassMetadata[]
+     * @return array<ClassMetadata|\Doctrine\Common\Persistence\Mapping\ClassMetadata>
      */
     private function getEntityMetadata(): array
     {

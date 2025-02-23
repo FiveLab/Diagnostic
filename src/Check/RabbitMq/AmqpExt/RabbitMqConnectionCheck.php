@@ -19,23 +19,12 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-/**
- * Check connect to RabbitMQ
- */
 readonly class RabbitMqConnectionCheck implements CheckInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param RabbitMqConnectionParameters $connectionParameters
-     */
     public function __construct(private RabbitMqConnectionParameters $connectionParameters)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         if (!\class_exists(\AMQPConnection::class)) {
@@ -62,9 +51,6 @@ readonly class RabbitMqConnectionCheck implements CheckInterface
         return new Success('Success connect to RabbitMQ');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return [

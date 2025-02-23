@@ -205,11 +205,6 @@ class ElasticsearchClusterStateCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals(new Failure('Cluster status is undefined. Please check the logs.'), $result);
     }
 
-    /**
-     * Cluster state check provider
-     *
-     * @return array
-     */
     public static function clusterStateCheckProvider(): array
     {
         return [
@@ -218,13 +213,6 @@ class ElasticsearchClusterStateCheckTest extends AbstractElasticsearchTestCase
         ];
     }
 
-    /**
-     * Get health params with status
-     *
-     * @param string $status
-     *
-     * @return array
-     */
     private function getHealthParamsWithStatus(string $status): array
     {
         return [

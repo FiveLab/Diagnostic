@@ -21,19 +21,9 @@ use PHPUnit\Framework\Attributes\Test;
 
 class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
 {
-    /**
-     * @var Connection
-     */
     private Connection $connection;
-
-    /**
-     * @var string
-     */
     private string $backupSqlMode;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         if (!$this->canTestingWithDatabase()) {
@@ -47,9 +37,6 @@ class SqlModeDbalCheckTest extends AbstractDoctrineCheckTestCase
         $this->backupSqlMode = $stmt->fetchFirstColumn()[0];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         $stmt = $this->connection->prepare('SET @@GLOBAL.sql_mode = :sql_mode');

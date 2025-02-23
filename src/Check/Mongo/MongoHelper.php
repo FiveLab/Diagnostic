@@ -13,9 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Mongo;
 
-/**
- * A simple helper for add additional functionality.
- */
 final readonly class MongoHelper
 {
     /**

@@ -13,17 +13,8 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Result;
 
-/**
- * Failure result
- */
-class Failure extends Result
+readonly class Failure extends Result
 {
-    /**
-     * Constructor.
-     *
-     * @param string          $message
-     * @param \Throwable|null $error
-     */
     public function __construct(string $message, public ?\Throwable $error = null)
     {
         parent::__construct($message);

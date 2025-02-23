@@ -17,17 +17,8 @@ use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinition;
 use FiveLab\Component\Diagnostic\Result\Result;
 use Symfony\Contracts\EventDispatcher\Event;
 
-/**
- * Emit this event after complete run check.
- */
 class CompleteRunCheckEvent extends Event
 {
-    /**
-     * Constructor.
-     *
-     * @param CheckDefinition $definition
-     * @param Result          $result
-     */
     public function __construct(public readonly CheckDefinition $definition, public readonly Result $result)
     {
     }

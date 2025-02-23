@@ -360,11 +360,6 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         $compiler->process($containerBuilder);
     }
 
-    /**
-     * Create container builder with definitions builder
-     *
-     * @return ContainerBuilder
-     */
     private function createContainerBuilderWithDefinitionsBuilder(): ContainerBuilder
     {
         $containerBuilder = new ContainerBuilder();

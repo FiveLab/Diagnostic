@@ -13,9 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Mongo;
 
-/**
- * Model that stores connection parameters for MongoDB.
- */
 readonly class MongoConnectionParameters
 {
     /**
@@ -40,11 +37,6 @@ readonly class MongoConnectionParameters
     ) {
     }
 
-    /**
-     * Format DSN for connect
-     *
-     * @return string
-     */
     public function getDsn(): string
     {
         $userPass = \sprintf('%s:%s@', $this->username, $this->password);
@@ -59,11 +51,6 @@ readonly class MongoConnectionParameters
         );
     }
 
-    /**
-     * Format options to string
-     *
-     * @return string
-     */
     private function formatOptions(): string
     {
         if (!\count($this->options)) {

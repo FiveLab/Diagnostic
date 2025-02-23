@@ -13,9 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Runner;
 
-/**
- * The list of available vents.
- */
 final class RunnerEvents
 {
     /**

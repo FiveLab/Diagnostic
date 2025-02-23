@@ -21,9 +21,6 @@ use PHPUnit\Framework\Attributes\Test;
 
 class PdoConnectionCheckTest extends AbstractDatabaseTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         if (!$this->canTestingWithDatabase()) {

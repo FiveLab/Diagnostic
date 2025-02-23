@@ -20,37 +20,19 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * The command for get list of available checks.
- */
 #[AsCommand(name: 'diagnostic:checks', description: 'List available checks.')]
 class ListChecksCommand extends Command
 {
     use FilterDefinitionsTrait;
 
-    /**
-     * @var string
-     */
     protected static $defaultName = 'diagnostic:checks';
-
-    /**
-     * @var string
-     */
     protected static $defaultDescription = 'List available checks.';
 
-    /**
-     * Constructor.
-     *
-     * @param CheckDefinitions $definitions
-     */
     public function __construct(private readonly CheckDefinitions $definitions)
     {
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -58,9 +40,6 @@ class ListChecksCommand extends Command
             ->addOption('group', 'g', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The list of groups.', []);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $definitions = clone $this->definitions;

@@ -23,7 +23,7 @@ class ElasticsearchConnectionParametersTest extends TestCase
 {
     #[Test]
     #[DataProvider('provideConnectionParameters')]
-    public function shouldSuccessGetDsn(string $host, int $port, string $username = null, string $password = null, bool $ssl = false, string $expectedDsn = null): void
+    public function shouldSuccessGetDsn(string $host, int $port, ?string $username = null, ?string $password = null, bool $ssl = false, ?string $expectedDsn = null): void
     {
         $connectionParameters = new ElasticsearchConnectionParameters(
             $host,
@@ -46,11 +46,6 @@ class ElasticsearchConnectionParametersTest extends TestCase
         self::assertEquals($expected, $parameters);
     }
 
-    /**
-     * Provide connection parameters
-     *
-     * @return array
-     */
     public static function provideConnectionParameters(): array
     {
         return [

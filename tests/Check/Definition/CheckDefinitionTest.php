@@ -23,7 +23,6 @@ class CheckDefinitionTest extends TestCase
     #[Test]
     public function shouldSuccessCreate(): void
     {
-        /** @var CheckInterface $check */
         $check = $this->createMock(CheckInterface::class);
 
         $definition = new CheckDefinition('some', $check, ['foo', 'bar']);

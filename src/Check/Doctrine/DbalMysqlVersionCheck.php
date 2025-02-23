@@ -21,32 +21,13 @@ use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterface;
 
-/**
- * Check MySQL version.
- */
 class DbalMysqlVersionCheck extends AbstractDbalCheck
 {
     public const MYSQL_EXTRACT_VERSION_REGEX = '/^([\d\.]+)/';
 
-    /**
-     * @var VersionComparatorInterface
-     */
     private readonly VersionComparatorInterface $versionComparator;
-
-    /**
-     * @var string
-     */
     private string $actualVersion = 'unknown';
 
-    /**
-     * Constructor.
-     *
-     * @param DriverConnection|Connection     $connection
-     * @param string                          $expectedVersion
-     * @param VersionComparatorInterface|null $versionComparator
-     *
-     * @see https://getcomposer.org/doc/articles/versions.md
-     */
     public function __construct(DriverConnection|Connection $connection, private readonly string $expectedVersion, ?VersionComparatorInterface $versionComparator = null)
     {
         parent::__construct($connection);
@@ -54,9 +35,6 @@ class DbalMysqlVersionCheck extends AbstractDbalCheck
         $this->versionComparator = $versionComparator ?: new SemverVersionComparator();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         try {
@@ -84,9 +62,6 @@ class DbalMysqlVersionCheck extends AbstractDbalCheck
         return new Success('MySQL version matches an expected one.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         $parameters = parent::getExtraParameters();
@@ -97,18 +72,11 @@ class DbalMysqlVersionCheck extends AbstractDbalCheck
         return $parameters;
     }
 
-    /**
-     * Get MySQL server version.
-     *
-     * @param string $buildVersion
-     *
-     * @return string
-     */
     private function extractMysqlServerDistributedVersion(string $buildVersion): string
     {
         $matches = [];
         \preg_match(self::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
 
-        return \rtrim($matches[0], '.');
+        return \rtrim($matches[0], '.'); // @phpstan-ignore-line
     }
 }

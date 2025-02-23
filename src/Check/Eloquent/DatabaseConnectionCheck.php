@@ -20,23 +20,12 @@ use FiveLab\Component\Diagnostic\Result\Success;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\QueryException;
 
-/**
- * Check whether we are able to execute any queries against database
- */
 readonly class DatabaseConnectionCheck implements CheckInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param ConnectionInterface $connection
-     */
     public function __construct(private ConnectionInterface $connection)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         try {
@@ -56,9 +45,6 @@ readonly class DatabaseConnectionCheck implements CheckInterface
         return new Success('Successfully connected to database.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         $config = $this->connection->getConfig();

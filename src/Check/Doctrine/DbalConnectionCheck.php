@@ -18,14 +18,8 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-/**
- * Check the connect to database.
- */
 class DbalConnectionCheck extends AbstractDbalCheck
 {
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         try {

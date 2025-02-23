@@ -29,11 +29,6 @@ class RabbitMqConnectionParametersTest extends TestCase
         self::assertEquals($expected, $parameters);
     }
 
-    /**
-     * Provide data for test make via DSN.
-     *
-     * @return array
-     */
     public static function provideDsns(): array
     {
         return [

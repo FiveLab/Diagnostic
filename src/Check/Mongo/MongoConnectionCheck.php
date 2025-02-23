@@ -21,23 +21,12 @@ use MongoDB\Driver\Command;
 use MongoDB\Driver\Exception\Exception;
 use MongoDB\Driver\Manager;
 
-/**
- * Check MongoDB connection.
- */
-class MongoConnectionCheck implements CheckInterface
+readonly class MongoConnectionCheck implements CheckInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param MongoConnectionParameters $connectionParameters
-     */
-    public function __construct(private readonly MongoConnectionParameters $connectionParameters)
+    public function __construct(private MongoConnectionParameters $connectionParameters)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         if (!\class_exists(Manager::class)) {
@@ -59,9 +48,6 @@ class MongoConnectionCheck implements CheckInterface
         return new Success('Successful MongoDB connection.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return MongoHelper::convertConnectionParametersToArray($this->connectionParameters);

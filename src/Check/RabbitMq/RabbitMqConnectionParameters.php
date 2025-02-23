@@ -13,21 +13,8 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\RabbitMq;
 
-/**
- * The parameters for connect to RabbitMQ.
- */
-class RabbitMqConnectionParameters
+readonly class RabbitMqConnectionParameters
 {
-    /**
-     * Constructor.
-     *
-     * @param string $host
-     * @param int    $port
-     * @param string $username
-     * @param string $password
-     * @param string $vhost
-     * @param bool   $ssl
-     */
     public function __construct(
         public string $host,
         public int    $port,
@@ -38,13 +25,6 @@ class RabbitMqConnectionParameters
     ) {
     }
 
-    /**
-     * Make connection parameters from DSN.
-     *
-     * @param string $dsn
-     *
-     * @return self
-     */
     public static function fromDsn(string $dsn): self
     {
         $parts = \parse_url($dsn);
@@ -75,14 +55,6 @@ class RabbitMqConnectionParameters
         );
     }
 
-    /**
-     * Get DSN
-     *
-     * @param bool $httpTransport
-     * @param bool $maskedPassword
-     *
-     * @return string
-     */
     public function getDsn(bool $httpTransport, bool $maskedPassword): string
     {
         $prefix = $this->ssl ? 'ssl' : 'tcp';

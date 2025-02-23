@@ -13,16 +13,8 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Result;
 
-/**
- * Helper for create result instances.
- */
-abstract class Result
+abstract readonly class Result
 {
-    /**
-     * Constructor.
-     *
-     * @param string $message
-     */
     public function __construct(public string $message)
     {
     }

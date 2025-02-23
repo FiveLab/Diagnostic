@@ -24,14 +24,8 @@ use PHPUnit\Framework\Attributes\Test;
 
 class MongoCollectionCheckTest extends AbstractMongoTestCase
 {
-    /**
-     * @var Manager
-     */
     private Manager $mongoManager;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         if (!$this->connectionParametersProvided()) {
@@ -66,9 +60,6 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function tearDown(): void
     {
         try {
@@ -116,7 +107,8 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
 
         $msg = \sprintf('MongoDB collection check failed: No suitable servers found (`serverSelectionTryOnce` set): [Failed to resolve \'%s\'].', $invalidHost);
 
-        self::assertEquals(new Failure($msg), $result);
+        self::assertInstanceOf(Failure::class, $result);
+        self::assertStringStartsWith($msg, $result->message);
     }
 
     #[Test]

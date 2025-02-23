@@ -95,11 +95,6 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
         self::assertEquals($luceneVersion, $parameters['expected lucene version']);
     }
 
-    /**
-     * Success check versions provider
-     *
-     * @return array
-     */
     public static function successCheckVersionsProvider(): array
     {
         return [
@@ -108,11 +103,6 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
         ];
     }
 
-    /**
-     * Fail check elasticsearch versions provider
-     *
-     * @return array
-     */
     public static function failCheckElasticsearchVersionsProvider(): array
     {
         return [
@@ -121,11 +111,6 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
         ];
     }
 
-    /**
-     * Fail check lucene versions provider
-     *
-     * @return array
-     */
     public static function failCheckLuceneVersionsProvider(): array
     {
         return [
@@ -134,11 +119,6 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
         ];
     }
 
-    /**
-     * Fail if cannot connect provider
-     *
-     * @return array
-     */
     public static function failIfCannotConnectProvider(): array
     {
         return [
@@ -147,11 +127,6 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
         ];
     }
 
-    /**
-     * Success get parameters provider
-     *
-     * @return array
-     */
     public static function successGetParametersProvider(): array
     {
         return [

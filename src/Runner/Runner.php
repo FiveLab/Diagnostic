@@ -20,40 +20,20 @@ use FiveLab\Component\Diagnostic\Runner\Event\CompleteRunCheckEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-/**
- * Default runner.
- */
 readonly class Runner implements RunnerInterface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
     private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * Constructor.
-     *
-     * @param EventDispatcherInterface|null $eventDispatcher
-     */
-    public function __construct(EventDispatcherInterface $eventDispatcher = null)
+    public function __construct(?EventDispatcherInterface $eventDispatcher = null)
     {
         $this->eventDispatcher = $eventDispatcher ?: new EventDispatcher();
     }
 
-    /**
-     * Get the event dispatcher.
-     * Many plugins can add listeners or subscribers in runtime process.
-     *
-     * @return EventDispatcherInterface
-     */
     public function getEventDispatcher(): EventDispatcherInterface
     {
         return $this->eventDispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function run(CheckDefinitions $definitions): bool
     {
         $allSuccess = true;

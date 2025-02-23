@@ -53,11 +53,6 @@ class ParameterEqualCheckTest extends TestCase
         new ParameterEqualCheck([], new \stdClass());
     }
 
-    /**
-     * Provide parameters for testing
-     *
-     * @return array
-     */
     public static function provideParameters(): array
     {
         return [

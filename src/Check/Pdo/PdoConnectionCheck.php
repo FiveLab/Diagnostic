@@ -18,21 +18,18 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-/**
- * Check the connect to database
- */
 readonly class PdoConnectionCheck implements CheckInterface
 {
     /**
      * Constructor.
      *
-     * @param string       $driver
-     * @param string       $host
-     * @param int          $port
-     * @param string       $dbName
-     * @param string       $user
-     * @param string       $password
-     * @param array<mixed> $options
+     * @param string                   $driver
+     * @param string                   $host
+     * @param int                      $port
+     * @param string                   $dbName
+     * @param string                   $user
+     * @param string                   $password
+     * @param array<int|string, mixed> $options
      */
     public function __construct(
         private string $driver,
@@ -45,9 +42,6 @@ readonly class PdoConnectionCheck implements CheckInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         if (!\class_exists(\PDO::class)) {
@@ -89,9 +83,6 @@ readonly class PdoConnectionCheck implements CheckInterface
         return new Success('Success connect to database.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return [

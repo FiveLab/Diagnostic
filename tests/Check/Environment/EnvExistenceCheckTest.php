@@ -23,14 +23,8 @@ class EnvExistenceCheckTest extends TestCase
 {
     private const ENV_VAR_NAME = 'FOO_ENV';
 
-    /**
-     * @var EnvExistenceCheck
-     */
     private EnvExistenceCheck $check;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->check = new EnvExistenceCheck(self::ENV_VAR_NAME);
@@ -38,9 +32,6 @@ class EnvExistenceCheckTest extends TestCase
         \putenv(\sprintf('%s=foo', self::ENV_VAR_NAME));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         \putenv(self::ENV_VAR_NAME);

@@ -18,18 +18,9 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-/**
- * Check whether an environment variable matches specific pattern
- */
 readonly class EnvVarRegexCheck implements CheckInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param string $variableName
-     * @param string $pattern
-     */
-    public function __construct(private readonly string $variableName, private readonly string $pattern)
+    public function __construct(private string $variableName, private string $pattern)
     {
         if (!$this->variableName) {
             throw new \InvalidArgumentException('Environment variable name should not be empty.');
@@ -40,9 +31,6 @@ readonly class EnvVarRegexCheck implements CheckInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         if (false === \getenv($this->variableName)) {
@@ -56,9 +44,6 @@ readonly class EnvVarRegexCheck implements CheckInterface
         return new Failure('Environment variable does not match pattern.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         $parameters = [
@@ -75,13 +60,6 @@ readonly class EnvVarRegexCheck implements CheckInterface
         return $parameters;
     }
 
-    /**
-     * Check pattern is regular expression.
-     *
-     * @param string $pattern
-     *
-     * @return bool
-     */
     private function isRegularExpression(string $pattern): bool
     {
         \set_error_handler(static function () {

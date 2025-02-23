@@ -15,9 +15,6 @@ namespace FiveLab\Component\Diagnostic\Check\Definition;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 
-/**
- * Default check definition.
- */
 readonly class CheckDefinition
 {
     /**

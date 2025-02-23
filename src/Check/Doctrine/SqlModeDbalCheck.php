@@ -19,9 +19,6 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-/**
- * Check the SQL_MODE via doctrine dbal (use dbal connection).
- */
 class SqlModeDbalCheck extends AbstractDbalCheck
 {
     /**
@@ -33,17 +30,14 @@ class SqlModeDbalCheck extends AbstractDbalCheck
      * Constructor.
      *
      * @param DriverConnection|Connection $connection
-     * @param string[]                    $expectedSqlModes
-     * @param string[]                    $excludedSqlModes
+     * @param array<string>               $expectedSqlModes
+     * @param array<string>               $excludedSqlModes
      */
     public function __construct(DriverConnection|Connection $connection, private readonly array $expectedSqlModes = [], private readonly array $excludedSqlModes = [])
     {
         parent::__construct($connection);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         try {
@@ -97,9 +91,6 @@ class SqlModeDbalCheck extends AbstractDbalCheck
         return new Success('All required SQL modes exist.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         $parameters = parent::getExtraParameters();

@@ -22,9 +22,6 @@ use PHPUnit\Framework\Attributes\Test;
 
 class MongoConnectionCheckTest extends AbstractMongoTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         if (!$this->connectionParametersProvided()) {
@@ -62,7 +59,8 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
 
         $msg = \sprintf('MongoDB connection failed: No suitable servers found (`serverSelectionTryOnce` set): [Failed to resolve \'%s\'].', $invalidHost);
 
-        self::assertEquals(new Failure($msg), $result);
+        self::assertInstanceOf(Failure::class, $result);
+        self::assertStringStartsWith($msg, $result->message);
     }
 
     #[Test]

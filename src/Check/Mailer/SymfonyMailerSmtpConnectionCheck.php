@@ -21,9 +21,6 @@ use FiveLab\Component\Diagnostic\Util\HttpSecurityEncoder;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\Transport;
 
-/**
- * Check connect to mailer via Symfony/Mailer transports.
- */
 readonly class SymfonyMailerSmtpConnectionCheck implements CheckInterface
 {
     /**
@@ -40,9 +37,6 @@ readonly class SymfonyMailerSmtpConnectionCheck implements CheckInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         if (!\class_exists(Transport::class)) {
@@ -83,9 +77,6 @@ readonly class SymfonyMailerSmtpConnectionCheck implements CheckInterface
         return new Success('Success connect and send HELO command to mailer.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         $encoder = $this->securityEncoder ?: new HttpSecurityEncoder();

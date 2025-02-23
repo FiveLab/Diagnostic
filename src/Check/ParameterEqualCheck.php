@@ -17,9 +17,6 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-/**
- * Check the parameter equals.
- */
 class ParameterEqualCheck implements CheckInterface
 {
     /**
@@ -27,12 +24,6 @@ class ParameterEqualCheck implements CheckInterface
      */
     private array $extra;
 
-    /**
-     * Constructor.
-     *
-     * @param mixed $expected
-     * @param mixed $actual
-     */
     public function __construct(private readonly mixed $expected, private readonly mixed $actual)
     {
         if ($expected && !\is_array($expected) && !\is_scalar($expected)) {
@@ -50,17 +41,11 @@ class ParameterEqualCheck implements CheckInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return $this->extra;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         $this->extra['expected'] = $this->expected;

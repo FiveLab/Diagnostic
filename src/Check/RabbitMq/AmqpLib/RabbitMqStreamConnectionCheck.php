@@ -22,23 +22,12 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Exception\AMQPConnectionClosedException;
 use PhpAmqpLib\Exception\AMQPIOException;
 
-/**
- * Check connect to RabbitMQ
- */
 readonly class RabbitMqStreamConnectionCheck implements CheckInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param RabbitMqConnectionParameters $connectionParameters
-     */
     public function __construct(private RabbitMqConnectionParameters $connectionParameters)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         if (!\class_exists(AMQPStreamConnection::class)) {
@@ -62,9 +51,6 @@ readonly class RabbitMqStreamConnectionCheck implements CheckInterface
         return new Success('Successfully connected to RabbitMQ');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return [

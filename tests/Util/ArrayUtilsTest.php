@@ -34,11 +34,6 @@ class ArrayUtilsTest extends TestCase
         self::assertEquals($actual, $expected);
     }
 
-    /**
-     * Provide settings for testing
-     *
-     * @return array
-     */
     public static function provideSettings(): array
     {
         return [

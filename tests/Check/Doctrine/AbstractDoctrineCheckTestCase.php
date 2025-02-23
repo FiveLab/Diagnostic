@@ -21,9 +21,6 @@ use FiveLab\Component\Diagnostic\Tests\Check\AbstractDatabaseTestCase;
 
 abstract class AbstractDoctrineCheckTestCase extends AbstractDatabaseTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         if (!$this->canTestingWithDatabase()) {
@@ -31,13 +28,6 @@ abstract class AbstractDoctrineCheckTestCase extends AbstractDatabaseTestCase
         }
     }
 
-    /**
-     * Make a DBAL connection
-     *
-     * @param array $connectionOptions
-     *
-     * @return Connection|DriverConnection
-     */
     protected function makeDbalConnection(array $connectionOptions = []): Connection|DriverConnection
     {
         $connectionOptions = \array_merge($this->getConnectionOptions(), $connectionOptions);
@@ -49,11 +39,6 @@ abstract class AbstractDoctrineCheckTestCase extends AbstractDatabaseTestCase
         return new Connection($connectionOptions, new OldMySqlDriver());
     }
 
-    /**
-     * Get connection options
-     *
-     * @return array
-     */
     protected function getConnectionOptions(): array
     {
         return [

@@ -18,24 +18,12 @@ use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
 
-/**
- * Check what the path is readable.
- */
 readonly class PathReadableCheck implements CheckInterface
 {
-    /**
-     * Constructor.
-     *
-     * @param string $path
-     * @param bool   $strict
-     */
     public function __construct(private string $path, private bool $strict = true)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         if (!\file_exists($this->path)) {
@@ -55,9 +43,6 @@ readonly class PathReadableCheck implements CheckInterface
         return new Failure(\sprintf('The %s is not readable.', $state));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         return [

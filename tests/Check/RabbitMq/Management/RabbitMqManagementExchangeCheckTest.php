@@ -22,14 +22,8 @@ use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqManagementExchangeCheckTest extends AbstractRabbitMqTestCase
 {
-    /**
-     * @var string|null
-     */
     private ?string $exchangeName = null;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -42,9 +36,6 @@ class RabbitMqManagementExchangeCheckTest extends AbstractRabbitMqTestCase
         $this->declareExchange($this->exchangeName, 'direct');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         if ($this->canTestingWithRabbitMq()) {

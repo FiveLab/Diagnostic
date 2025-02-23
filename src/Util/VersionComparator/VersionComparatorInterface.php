@@ -13,9 +13,6 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Util\VersionComparator;
 
-/**
- * All version comparators should implement this interface.
- */
 interface VersionComparatorInterface
 {
     /**

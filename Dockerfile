@@ -1,6 +1,8 @@
-FROM php:8.2-cli
+FROM php:8.4-cli
 
-MAINTAINER Vitaliy Zhuk <zhuk2205@gmail.com>
+LABEL org.opencontainers.image.title="FiveLab/Diagnostic"
+LABEL org.opencontainers.image.authors="Vitalii Zhuk <v.zhuk@fivelab.org>"
+LABEL org.opencontainers.image.licenses="MIT"
 
 ARG XDEBUG_REMOTE_HOST='host.docker.internal'
 ARG XDEBUG_REMOTE_PORT=9000

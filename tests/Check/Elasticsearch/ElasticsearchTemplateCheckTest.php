@@ -25,9 +25,6 @@ use PHPUnit\Framework\Attributes\Test;
 
 class ElasticsearchTemplateCheckTest extends AbstractElasticsearchTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $template = [
@@ -52,9 +49,6 @@ class ElasticsearchTemplateCheckTest extends AbstractElasticsearchTestCase
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
         if ($this->canTestingWithElasticsearch()) {

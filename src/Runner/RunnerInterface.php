@@ -15,9 +15,6 @@ namespace FiveLab\Component\Diagnostic\Runner;
 
 use FiveLab\Component\Diagnostic\Check\Definition\CheckDefinitions;
 
-/**
- * All runners should implement this interface.
- */
 interface RunnerInterface
 {
     /**

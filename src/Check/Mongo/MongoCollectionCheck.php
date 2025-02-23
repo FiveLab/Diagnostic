@@ -22,13 +22,10 @@ use MongoDB\Driver\Command;
 use MongoDB\Driver\Exception\Exception;
 use MongoDB\Driver\Manager;
 
-/**
- * Check MongoDB collection json-schema.
- */
 class MongoCollectionCheck implements CheckInterface
 {
     /**
-     * @var array<string,mixed>
+     * @var array<string, mixed>
      */
     private array $actualSettings = [];
 
@@ -46,9 +43,6 @@ class MongoCollectionCheck implements CheckInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function check(): Result
     {
         if (!\class_exists(Manager::class)) {
@@ -110,9 +104,6 @@ class MongoCollectionCheck implements CheckInterface
         return new Success('Successful MongoDB collection check.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtraParameters(): array
     {
         $actualSettings = $this->actualSettings;
