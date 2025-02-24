@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+v2.1.0
+------
+
+* Remove `php-http/*` packages.
+* Use only psr client and factories for http checks.
+* Use http client for elasticsearch/opensearch checks (instead of clients).
+* Remove support Symfony 5, minimum required version 6.4
+
 v2.0.4
 ------
 

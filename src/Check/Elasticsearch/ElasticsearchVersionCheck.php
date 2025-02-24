@@ -13,68 +13,68 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
-use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\VersionComparatorInterface;
-use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 
-class ElasticsearchVersionCheck extends AbstractElasticsearchCheck implements CheckInterface
+class ElasticsearchVersionCheck implements CheckInterface
 {
+    use ElasticsearchHelperTrait;
+
+    private readonly HttpAdapterInterface $http;
     private readonly VersionComparatorInterface $versionComparator;
     private ?string $actualVersion = null;
     private ?string $actualLuceneVersion = null;
 
     public function __construct(
-        ElasticsearchConnectionParameters                       $connectionParameters,
-        private readonly ?string                                $expectedVersion = null,
-        private readonly ?string                                $expectedLuceneVersion = null,
-        ?VersionComparatorInterface                             $versionComparator = null,
-        ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder = null
+        private readonly ElasticsearchConnectionParameters $connectionParameters,
+        private readonly ?string                           $expectedVersion = null,
+        private readonly ?string                           $expectedLuceneVersion = null,
+        ?VersionComparatorInterface                        $versionComparator = null,
+        ?HttpAdapterInterface                              $http = null
     ) {
-        parent::__construct($connectionParameters, $clientBuilder);
-
         $this->versionComparator = $versionComparator ?: new SemverVersionComparator();
+        $this->http = $http ?? new HttpAdapter();
     }
 
     public function check(): Result
     {
-        try {
-            $client = $this->createClient();
+        $result = $this->sendRequest($this->http, $this->connectionParameters, '');
 
-            $info = $client->info();
-        } catch (\Throwable $e) {
-            return new Failure(\sprintf(
-                'Fail connect to %s: %s.',
-                $this->getEngineName(),
-                \rtrim($e->getMessage(), '.')
-            ));
+        if ($result instanceof Result) {
+            return $result;
         }
 
-        if (!\array_key_exists('version', $info)) {
+        $version = $result['version'] ?? null;
+
+        if (!$version) {
             return new Failure('Missing "version" key in response.');
         }
 
-        $this->actualVersion = $info['version']['number'];
-        $this->actualLuceneVersion = $info['version']['lucene_version'];
+        $this->actualVersion = $version['number'];
+        $this->actualLuceneVersion = $version['lucene_version'];
 
         if ($this->expectedVersion && !$this->versionComparator->satisfies((string) $this->actualVersion, $this->expectedVersion)) {
-            return new Failure(\sprintf('Fail check %s version.', $this->getEngineName()));
+            return new Failure('Fail check Elasticsearch/Opensearch version.');
         }
 
         if ($this->expectedLuceneVersion && !$this->versionComparator->satisfies((string) $this->actualLuceneVersion, $this->expectedLuceneVersion)) {
             return new Failure('Fail check Lucene version.');
         }
 
-        return new Success(\sprintf('Success check %s version.', $this->getEngineName()));
+        return new Success('Success check Elasticsearch/Opensearch version.');
     }
 
     public function getExtraParameters(): array
     {
-        $params = $this->convertConnectionParametersToArray();
+        $params = [
+            'dsn' => $this->connectionParameters->getDsn(true),
+        ];
 
         return \array_merge($params, [
             'actual version'          => $this->actualVersion ?: '(null)',

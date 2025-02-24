@@ -39,12 +39,12 @@ readonly class ElasticsearchConnectionParameters
         );
     }
 
-    public function getDsn(): string
+    public function getDsn(bool $maskedPassword = false): string
     {
         $userPass = '';
 
         if ($this->username) {
-            $userPass = \sprintf('%s:%s@', $this->username, $this->password);
+            $userPass = \sprintf('%s:%s@', $this->username, $maskedPassword ? '***' : $this->password);
         }
 
         return \sprintf(

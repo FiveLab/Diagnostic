@@ -13,61 +13,51 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
-use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
-use Elasticsearch\Common\Exceptions\Missing404Exception as ElasticsearchMissing404Exception;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\ArrayUtils;
-use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
-use OpenSearch\Common\Exceptions\Missing404Exception as OpenSearchMissing404Exception;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 
-class ElasticsearchIndexCheck extends AbstractElasticsearchCheck implements CheckInterface
+class ElasticsearchIndexCheck implements CheckInterface
 {
+    use ElasticsearchHelperTrait;
+
     /**
      * @var array<string, mixed>
      */
     private array $actualSettings = [];
 
+    private HttpAdapterInterface $http;
+
     /**
      * Constructor.
      *
-     * @param ElasticsearchConnectionParameters                       $connectionParameters
-     * @param string                                                  $index
-     * @param array<string, mixed>                                    $expectedSettings
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder
+     * @param ElasticsearchConnectionParameters $connectionParameters
+     * @param string                            $index
+     * @param array<string, mixed>              $expectedSettings
+     * @param HttpAdapterInterface|null         $http
      */
-    public function __construct(ElasticsearchConnectionParameters $connectionParameters, private readonly string $index, private readonly array $expectedSettings = [], ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder = null)
-    {
-        parent::__construct($connectionParameters, $clientBuilder);
+    public function __construct(
+        private readonly ElasticsearchConnectionParameters $connectionParameters,
+        private readonly string                            $index,
+        private readonly array                             $expectedSettings = [],
+        ?HttpAdapterInterface                              $http = null
+    ) {
+        $this->http = $http ?? new HttpAdapter();
     }
 
     public function check(): Result
     {
-        try {
-            $client = $this->createClient();
+        $result = $this->sendRequest($this->http, $this->connectionParameters, $this->index.'/_settings');
 
-            $client->ping();
-        } catch (\Throwable $e) {
-            return new Failure(\sprintf(
-                'Fail connect to %s: %s.',
-                $this->getEngineName(),
-                \rtrim($e->getMessage(), '.')
-            ));
+        if ($result instanceof Result) {
+            return $result;
         }
 
-        try {
-            $indexes = $client->indices()->getSettings([
-                'index' => $this->index,
-            ]);
-        } catch (ElasticsearchMissing404Exception|OpenSearchMissing404Exception $e) {
-            return new Failure(\sprintf('The index was not found in %s.', $this->getEngineName()));
-        } catch (\Throwable $e) {
-            return new Failure(\sprintf('Fail connect to %s: %s.', $this->getEngineName(), \rtrim($e->getMessage(), '.')));
-        }
-
-        $indexInfo = $indexes[$this->index];
+        $indexInfo = $result[$this->index];
 
         $this->actualSettings = $indexInfo['settings'];
 
@@ -88,12 +78,14 @@ class ElasticsearchIndexCheck extends AbstractElasticsearchCheck implements Chec
             }
         }
 
-        return new Success(\sprintf('Success check %s index.', $this->getEngineName()));
+        return new Success(\sprintf('Success check "%s" index.', $this->index));
     }
 
     public function getExtraParameters(): array
     {
-        $parameters = $this->convertConnectionParametersToArray();
+        $parameters = [
+            'dsn' => $this->connectionParameters->getDsn(true),
+        ];
 
         $actualSettings = $this->actualSettings;
 

@@ -13,60 +13,51 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
+use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 
-class ElasticsearchClusterStateCheck extends AbstractElasticsearchCheck
+readonly class ElasticsearchClusterStateCheck implements CheckInterface
 {
-    public function check(): Result
+    use ElasticsearchHelperTrait;
+
+    private HttpAdapterInterface $http;
+
+    public function __construct(private ElasticsearchConnectionParameters $connectionParameters, ?HttpAdapterInterface $http = null)
     {
-        try {
-            $client = $this->createClient();
-
-            $client->ping();
-        } catch (\Throwable $e) {
-            return new Failure(\sprintf(
-                'Fail connect to ElasticSearch: %s.',
-                \rtrim($e->getMessage(), '.')
-            ));
-        }
-
-        try {
-            $healthStatus = $client
-                ->cluster()
-                ->health();
-        } catch (\Throwable $e) {
-            return new Failure(\sprintf(
-                'Failed to get health status of the cluster : %s.',
-                \rtrim($e->getMessage(), '.')
-            ));
-        }
-
-        return $this->parseClusterStatus($healthStatus);
+        $this->http = $http ?? new HttpAdapter();
     }
 
-    /**
-     * Parse cluster status
-     *
-     * @param array<string, mixed> $responseParams
-     *
-     * @return Result
-     */
-    private function parseClusterStatus(array $responseParams): Result
+    public function check(): Result
     {
-        $default =  new Failure('Cluster status is undefined. Please check the logs.');
+        $result = $this->sendRequest($this->http, $this->connectionParameters, '_cat/health');
 
-        if (\array_key_exists('status', $responseParams)) {
-            return match ($responseParams['status']) {
-                'green'  => new Success('Cluster status is GREEN.'),
-                'yellow' => new Warning('Cluster status is YELLOW. Please check the logs.'),
-                'red'    => new Failure('Cluster status is RED. Please check the logs.'),
-                default  => $default,
-            };
+        if ($result instanceof Result) {
+            return $result;
         }
 
-        return $default;
+        $status = $result[0]['status'] ?? null;
+
+        if (null === $status) {
+            return new Failure('Fail connect to Elasticsearch/Opensearch - missed status in _cat/health.');
+        }
+
+        return match ($status) {
+            'green'  => new Success('Cluster status is GREEN.'),
+            'yellow' => new Warning('Cluster status is YELLOW.'),
+            'red'    => new Failure('Cluster status is RED.'),
+            default  => new Failure(\sprintf('Unknown cluster status "%s".', $status)),
+        };
+    }
+
+    public function getExtraParameters(): array
+    {
+        return [
+            'dsn' => $this->connectionParameters->getDsn(true),
+        ];
     }
 }

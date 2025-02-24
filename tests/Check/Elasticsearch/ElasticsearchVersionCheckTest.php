@@ -13,13 +13,11 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Elasticsearch;
 
-use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
 use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
 use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchVersionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractElasticsearchTestCase;
-use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -27,33 +25,37 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
 {
     #[Test]
     #[DataProvider('successCheckVersionsProvider')]
-    public function shouldSuccessCheckVersions(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string $version, string $luceneVersion): void
+    public function shouldSuccessCheckVersions(string $target, ElasticsearchConnectionParameters $connectionParameters, string $version, string $luceneVersion): void
     {
-        $this->markTestSkippedIfNotConfigured($clientBuilder);
+        $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchVersionCheck($connectionParameters, $version, $luceneVersion, null, $clientBuilder);
+        $check = new ElasticsearchVersionCheck($connectionParameters, $version, $luceneVersion, null);
 
         $result = $check->check();
 
-        self::assertEquals(new Success(\sprintf('Success check %s version.', $check->getEngineName())), $result);
+        self::assertEquals(new Success('Success check Elasticsearch/Opensearch version.'), $result);
     }
 
     #[Test]
     #[DataProvider('failCheckElasticsearchVersionsProvider')]
-    public function shouldFailCheckForElasticsearchVersion(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string $version): void
+    public function shouldFailCheckForElasticsearchVersion(string $target, ElasticsearchConnectionParameters $connectionParameters, string $version): void
     {
-        $check = new ElasticsearchVersionCheck($connectionParameters, $version, null, null, $clientBuilder);
+        $this->markTestSkippedIfNotConfigured($target);
+
+        $check = new ElasticsearchVersionCheck($connectionParameters, $version, null, null);
 
         $result = $check->check();
 
-        self::assertEquals(new Failure(\sprintf('Fail check %s version.', $check->getEngineName())), $result);
+        self::assertEquals(new Failure('Fail check Elasticsearch/Opensearch version.'), $result);
     }
 
     #[Test]
     #[DataProvider('failCheckLuceneVersionsProvider')]
-    public function shouldFailCheckLuceneVersion(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string $version): void
+    public function shouldFailCheckLuceneVersion(string $target, ElasticsearchConnectionParameters $connectionParameters, string $version): void
     {
-        $check = new ElasticsearchVersionCheck($connectionParameters, null, $version, null, $clientBuilder);
+        $this->markTestSkippedIfNotConfigured($target);
+
+        $check = new ElasticsearchVersionCheck($connectionParameters, null, $version, null);
 
         $result = $check->check();
 
@@ -61,28 +63,30 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
     }
 
     #[Test]
-    #[DataProvider('clientBuildersProvider')]
-    public function shouldFailIfCannotConnect(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder): void
+    #[DataProvider('provideTargets')]
+    public function shouldFailIfCannotConnect(string $target): void
     {
-        $check = new ElasticsearchVersionCheck(new ElasticsearchConnectionParameters('some', 9201), null, null, null, $clientBuilder);
+        $this->markTestSkippedIfNotConfigured($target);
+
+        $check = new ElasticsearchVersionCheck(new ElasticsearchConnectionParameters('some', 9201), null, null, null);
 
         $result = $check->check();
 
-        self::assertEquals(new Failure(\sprintf('Fail connect to %s: No alive nodes found in your cluster.', $check->getEngineName())), $result);
+        self::assertEquals(new Failure('Fail connect to http://some:9201 with error: cURL error 6: Could not resolve host: some (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for http://some:9201/.'), $result);
     }
 
     #[Test]
     #[DataProvider('successGetParametersProvider')]
-    public function shouldSuccessGetParameters(ElasticsearchClientBuilder|OpenSearchClientBuilder $clientBuilder, ElasticsearchConnectionParameters $connectionParameters, string $version, string $luceneVersion): void
+    public function shouldSuccessGetParameters(string $target, ElasticsearchConnectionParameters $connectionParameters, string $version, string $luceneVersion): void
     {
-        $check = new ElasticsearchVersionCheck($connectionParameters, $version, $luceneVersion, null, $clientBuilder);
+        $this->markTestSkippedIfNotConfigured($target);
+
+        $check = new ElasticsearchVersionCheck($connectionParameters, $version, $luceneVersion, null);
 
         $check->check();
         $parameters = $check->getExtraParameters();
 
-        self::assertEquals($connectionParameters->host, $parameters['host']);
-        self::assertEquals($connectionParameters->port, $parameters['port']);
-        self::assertEquals($connectionParameters->ssl ? 'yes' : 'no', $parameters['ssl']);
+        self::assertEquals($connectionParameters->getDsn(true), $parameters['dsn']);
 
         self::assertArrayHasKey('actual version', $parameters);
         self::assertArrayHasKey('expected version', $parameters);
@@ -98,40 +102,40 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
     public static function successCheckVersionsProvider(): array
     {
         return [
-            [ElasticsearchClientBuilder::create(), self::getElasticsearchConnectionParameters(), '~7.12.0', '~8.0'],
-            [OpenSearchClientBuilder::create(), self::getOpenSearchConnectionParameters(), '~2.4.0', '~9.0'],
+            ['Elasticsearch', self::getElasticsearchConnectionParameters(), '~7.12.0', '~8.0'],
+            ['Opensearch', self::getOpenSearchConnectionParameters(), '~2.4.0', '~9.0'],
         ];
     }
 
     public static function failCheckElasticsearchVersionsProvider(): array
     {
         return [
-            [ElasticsearchClientBuilder::create(), self::getElasticsearchConnectionParameters(), '~6.7'],
-            [OpenSearchClientBuilder::create(), self::getOpenSearchConnectionParameters(), '~1.4.0'],
+            ['Elasticsearch', self::getElasticsearchConnectionParameters(), '~6.7'],
+            ['Opensearch', self::getOpenSearchConnectionParameters(), '~1.4.0'],
         ];
     }
 
     public static function failCheckLuceneVersionsProvider(): array
     {
         return [
-            [ElasticsearchClientBuilder::create(), self::getElasticsearchConnectionParameters(), '~6.0'],
-            [OpenSearchClientBuilder::create(), self::getOpenSearchConnectionParameters(), '~8.0'],
+            ['Elasticsearch', self::getElasticsearchConnectionParameters(), '~6.0'],
+            ['Opensearch', self::getOpenSearchConnectionParameters(), '~8.0'],
         ];
     }
 
     public static function failIfCannotConnectProvider(): array
     {
         return [
-            [ElasticsearchClientBuilder::create()],
-            [OpenSearchClientBuilder::create()],
+            ['Elasticsearch'],
+            ['Opensearch'],
         ];
     }
 
     public static function successGetParametersProvider(): array
     {
         return [
-            [ElasticsearchClientBuilder::create(), self::getElasticsearchConnectionParameters(), '~6.8.0', '~7.0'],
-            [OpenSearchClientBuilder::create(), self::getOpenSearchConnectionParameters(), '~2.4.0', '~9.0'],
+            ['Elasticsearch', self::getElasticsearchConnectionParameters(), '~6.8.0', '~7.0'],
+            ['Opensearch', self::getOpenSearchConnectionParameters(), '~2.4.0', '~9.0'],
         ];
     }
 }

@@ -13,37 +13,45 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
+use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 
-/**
- * Check success connect to ElasticSearch.
- *
- * Critical: the client library for ping request only check via HEAD method.
- *           As result if you connect to any services via ssl, check return success result.
- *           For fix this, please use additional check for check version of ElasticSearch (as an example).
- */
-class ElasticsearchConnectionCheck extends AbstractElasticsearchCheck
+readonly class ElasticsearchConnectionCheck implements CheckInterface
 {
+    use ElasticsearchHelperTrait;
+
+    private HttpAdapterInterface $http;
+
+    public function __construct(private ElasticsearchConnectionParameters $connectionParameters, ?HttpAdapterInterface $http = null)
+    {
+        $this->http = $http ?? new HttpAdapter();
+    }
+
     public function check(): Result
     {
-        try {
-            $client = $this->createClient();
+        $result = $this->sendRequest($this->http, $this->connectionParameters, '_cat/health');
 
-            $ping = $client->ping();
-        } catch (\Throwable $e) {
-            return new Failure(\sprintf(
-                'Fail connect to %s: %s.',
-                $this->getEngineName(),
-                \rtrim($e->getMessage(), '.')
-            ));
+        if ($result instanceof Result) {
+            return $result;
         }
 
-        if ($ping) {
-            return new Success(\sprintf('Success connect to %s and send ping request.', $this->getEngineName()));
+        $status = $result[0]['status'] ?? null;
+
+        if (!$status) {
+            return new Failure('Fail connect to Elasticsearch/Opensearch - missed status in _cat/health.');
         }
 
-        return new Failure(\sprintf('Fail connect to %s or send ping request.', $this->getEngineName()));
+        return new Success('Success connect to Elasticsearch/Opensearch.');
+    }
+
+    public function getExtraParameters(): array
+    {
+        return [
+            'dsn' => $this->connectionParameters->getDsn(true),
+        ];
     }
 }

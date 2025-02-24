@@ -13,18 +13,20 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
-use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
-use Elasticsearch\Common\Exceptions\Missing404Exception as ElasticsearchMissing404Exception;
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\ArrayUtils;
-use OpenSearch\ClientBuilder as OpenSearchClientBuilder;
-use OpenSearch\Common\Exceptions\Missing404Exception as OpenSearchMissing404Exception;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
+use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 
-class ElasticsearchTemplateCheck extends AbstractElasticsearchCheck implements CheckInterface
+class ElasticsearchTemplateCheck implements CheckInterface
 {
+    use ElasticsearchHelperTrait;
+
+    private HttpAdapterInterface $http;
+
     /**
      * @var array<string>
      */
@@ -38,45 +40,45 @@ class ElasticsearchTemplateCheck extends AbstractElasticsearchCheck implements C
     /**
      * Constructor.
      *
-     * @param ElasticsearchConnectionParameters                       $connectionParameters
-     * @param string                                                  $name
-     * @param array<string>                                           $expectedPatterns
-     * @param array<string, mixed>                                    $expectedSettings
-     * @param ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder
+     * @param ElasticsearchConnectionParameters $connectionParameters
+     * @param string                            $name
+     * @param array<string>                     $expectedPatterns
+     * @param array<string, mixed>              $expectedSettings
+     * @param HttpAdapterInterface|null         $http
      */
-    public function __construct(ElasticsearchConnectionParameters $connectionParameters, private readonly string $name, private array $expectedPatterns = [], private readonly array $expectedSettings = [], ElasticsearchClientBuilder|OpenSearchClientBuilder|null $clientBuilder = null)
-    {
-        parent::__construct($connectionParameters, $clientBuilder);
+    public function __construct(
+        private readonly ElasticsearchConnectionParameters $connectionParameters,
+        private readonly string                            $name,
+        private array                                      $expectedPatterns = [],
+        private readonly array                             $expectedSettings = [],
+        ?HttpAdapterInterface                              $http = null
+    ) {
+        $this->http = $http ?? new HttpAdapter();
     }
 
     public function check(): Result
     {
-        try {
-            $client = $this->createClient();
+        $result = $this->sendRequest($this->http, $this->connectionParameters, '_index_template/'.$this->name);
 
-            $client->ping();
-        } catch (\Throwable $e) {
-            return new Failure(\sprintf(
-                'Fail connect to %s: %s.',
-                $this->getEngineName(),
-                \rtrim($e->getMessage(), '.')
-            ));
+        if ($result instanceof Result) {
+            return $result;
         }
 
-        try {
-            $template = $client->indices()->getTemplate([
-                'name' => $this->name,
-            ]);
-        } catch (ElasticsearchMissing404Exception|OpenSearchMissing404Exception) {
-            return new Failure(\sprintf('The template was not found in %s.', $this->getEngineName()));
-        } catch (\Throwable $e) {
-            return new Failure(\sprintf('Fail connect to %s: %s.', $this->getEngineName(), \rtrim($e->getMessage(), '.')));
+        $templateInfo = null;
+
+        foreach ($result['index_templates'] as $template) {
+            if ($template['name'] === $this->name) {
+                $templateInfo = $template['index_template'];
+                break;
+            }
         }
 
-        $templateInfo = $template[$this->name];
+        if (!$templateInfo) {
+            return new Failure(\sprintf('The index template "%s" was not found.', $this->name));
+        }
 
         $this->actualPatterns = $templateInfo['index_patterns'];
-        $this->actualSettings = $templateInfo['settings'];
+        $this->actualSettings = $templateInfo['template']['settings'];
 
         if (\count($this->expectedPatterns)) {
             \sort($this->expectedPatterns);
@@ -104,12 +106,14 @@ class ElasticsearchTemplateCheck extends AbstractElasticsearchCheck implements C
             }
         }
 
-        return new Success('Success check Elasticsearch template.');
+        return new Success(\sprintf('Success check "%s" template.', $this->name));
     }
 
     public function getExtraParameters(): array
     {
-        $parameters = $this->convertConnectionParametersToArray();
+        $parameters = [
+            'dsn' => $this->connectionParameters->getDsn(true),
+        ];
 
         return \array_merge($parameters, [
             'template'                => $this->name,
