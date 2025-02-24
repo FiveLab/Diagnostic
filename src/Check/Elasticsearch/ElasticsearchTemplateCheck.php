@@ -58,27 +58,20 @@ class ElasticsearchTemplateCheck implements CheckInterface
 
     public function check(): Result
     {
-        $result = $this->sendRequest($this->http, $this->connectionParameters, '_index_template/'.$this->name);
+        $result = $this->sendRequest($this->http, $this->connectionParameters, '_template/'.$this->name);
 
         if ($result instanceof Result) {
             return $result;
         }
 
-        $templateInfo = null;
-
-        foreach ($result['index_templates'] as $template) {
-            if ($template['name'] === $this->name) {
-                $templateInfo = $template['index_template'];
-                break;
-            }
-        }
+        $templateInfo = $result[$this->name] ?? null;
 
         if (!$templateInfo) {
             return new Failure(\sprintf('The index template "%s" was not found.', $this->name));
         }
 
         $this->actualPatterns = $templateInfo['index_patterns'];
-        $this->actualSettings = $templateInfo['template']['settings'];
+        $this->actualSettings = $templateInfo['settings'];
 
         if (\count($this->expectedPatterns)) {
             \sort($this->expectedPatterns);

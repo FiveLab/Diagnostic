@@ -28,11 +28,9 @@ class ElasticsearchTemplateCheckTest extends AbstractElasticsearchTestCase
     {
         $template = [
             'index_patterns' => ['my-test-indices-*'],
-            'template'       => [
-                'settings' => [
-                    'number_of_shards'       => 3,
-                    'index.refresh_interval' => '10s',
-                ],
+            'settings' => [
+                'number_of_shards'       => 3,
+                'index.refresh_interval' => '10s',
             ],
         ];
 
@@ -46,14 +44,14 @@ class ElasticsearchTemplateCheckTest extends AbstractElasticsearchTestCase
         if ($this->canTestingWithElasticsearch()) {
             $esParameters = $this->getElasticsearchConnectionParameters();
 
-            $request = $http->createRequest('PUT', $esParameters->getDsn().'/_index_template/test-template', $headers, \json_encode($template));
-            $response = $http->sendRequest($request);
+            $request = $http->createRequest('PUT', $esParameters->getDsn().'/_template/test-template', $headers, \json_encode($template));
+            $http->sendRequest($request);
         }
 
         if ($this->canTestingWithOpenSearch()) {
             $osParameters = $this->getOpenSearchConnectionParameters();
 
-            $request = $http->createRequest('PUT', $osParameters->getDsn().'/_index_template/test-template', $headers, \json_encode($template));
+            $request = $http->createRequest('PUT', $osParameters->getDsn().'/_template/test-template', $headers, \json_encode($template));
             $http->sendRequest($request);
         }
     }
@@ -134,7 +132,7 @@ class ElasticsearchTemplateCheckTest extends AbstractElasticsearchTestCase
 
         $result = $check->check();
 
-        self::assertEquals(new Failure('Fail connect to http://some:9201 with error: cURL error 6: Could not resolve host: some (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for http://some:9201/_index_template/some.'), $result);
+        self::assertEquals(new Failure('Fail connect to http://some:9201 with error: cURL error 6: Could not resolve host: some (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for http://some:9201/_template/some.'), $result);
     }
 
     #[Test]
@@ -147,7 +145,7 @@ class ElasticsearchTemplateCheckTest extends AbstractElasticsearchTestCase
 
         $result = $check->check();
 
-        self::assertEquals(new Failure('Fail check: index template matching [some-foo] not found'), $result);
+        self::assertEquals(new Failure('The index template "some-foo" was not found.'), $result);
     }
 
     #[Test]
