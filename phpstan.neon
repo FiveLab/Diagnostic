@@ -19,7 +19,3 @@ parameters:
         -
             message: '#Call to an undefined method (.+)\\Connection::get(Host|Port|Username)\(\)#'
             path: src/
-
-        -
-            message: '#^Property FiveLab\\Component\\Diagnostic\\Command\\.+::\$(defaultName|defaultDescription) has no type specified.$#'
-            path: src/

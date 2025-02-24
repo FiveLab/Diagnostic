@@ -27,9 +27,6 @@ class RunDiagnosticCommand extends Command
 {
     use FilterDefinitionsTrait;
 
-    protected static $defaultName = 'diagnostic:run';
-    protected static $defaultDescription = 'Run diagnostics.';
-
     public function __construct(private readonly RunnerInterface $runner, private readonly CheckDefinitions $definitions)
     {
         parent::__construct();
@@ -38,7 +35,6 @@ class RunDiagnosticCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addOption('group', 'g', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The list of groups.', []);
     }
 

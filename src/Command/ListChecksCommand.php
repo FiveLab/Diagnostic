@@ -25,9 +25,6 @@ class ListChecksCommand extends Command
 {
     use FilterDefinitionsTrait;
 
-    protected static $defaultName = 'diagnostic:checks';
-    protected static $defaultDescription = 'List available checks.';
-
     public function __construct(private readonly CheckDefinitions $definitions)
     {
         parent::__construct();
@@ -36,7 +33,6 @@ class ListChecksCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addOption('group', 'g', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The list of groups.', []);
     }
 

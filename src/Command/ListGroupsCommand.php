@@ -22,18 +22,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'diagnostic:groups', description: 'List available groups.')]
 class ListGroupsCommand extends Command
 {
-    protected static $defaultName = 'diagnostic:groups';
-    protected static $defaultDescription = 'List available groups.';
-
     public function __construct(private readonly CheckDefinitions $definitions)
     {
         parent::__construct();
-    }
-
-    protected function configure(): void
-    {
-        $this
-            ->setDescription(self::$defaultDescription);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
