@@ -19,10 +19,8 @@ use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use Predis\Client;
 
-readonly class PredisSetGetCheck implements CheckInterface
+readonly class PredisCheck implements CheckInterface
 {
-    private const PREFIX = '__diagnostic__';
-
     public function __construct(private string $host, private int $port, private ?string $password = null)
     {
     }
@@ -45,10 +43,8 @@ readonly class PredisSetGetCheck implements CheckInterface
         try {
             $client = new Client($parameters);
 
-            $key = \sprintf('%s:%s', self::PREFIX, \md5(\uniqid((string) \random_int(0, PHP_INT_MAX), true)));
-
             // We must execute first check on try/catch because the connection maybe open only on first operation.
-            $client->set($key, 'value');
+            $client->ping();
         } catch (\Throwable $e) {
             return new Failure(\sprintf(
                 'Cannot connect to Redis: %s.',
@@ -56,13 +52,7 @@ readonly class PredisSetGetCheck implements CheckInterface
             ));
         }
 
-        if ('value' !== $client->get($key)) {
-            return new Failure('Fail set or get the key. Writes correct value but get different value.');
-        }
-
-        $client->del([$key]);
-
-        return new Success('Success connect to Redis and SET/GET from Redis.');
+        return new Success('Success connect to Redis.');
     }
 
     public function getExtraParameters(): array

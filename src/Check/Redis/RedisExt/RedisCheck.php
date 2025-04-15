@@ -18,7 +18,7 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 
-readonly class RedisSetGetCheck implements CheckInterface
+readonly class RedisCheck implements CheckInterface
 {
     private const PREFIX = '__diagnostic__';
 
@@ -40,6 +40,7 @@ readonly class RedisSetGetCheck implements CheckInterface
 
         try {
             $this->connect($redis);
+            $redis->ping();
         } catch (\Throwable $e) {
             return new Failure(\sprintf(
                 'Cannot connect to Redis: %s.',
@@ -49,17 +50,7 @@ readonly class RedisSetGetCheck implements CheckInterface
             \restore_error_handler();
         }
 
-        $key = \sprintf('%s:%s', self::PREFIX, \md5(\uniqid((string) \random_int(0, PHP_INT_MAX), true)));
-
-        $redis->set($key, 'value');
-
-        if ('value' !== $redis->get($key)) {
-            return new Failure('Fail set or get the key. Writes correct value but get different value.');
-        }
-
-        $redis->del($key);
-
-        return new Success('Success connect to Redis and SET/GET from Redis.');
+        return new Success('Success connect to Redis.');
     }
 
     public function getExtraParameters(): array

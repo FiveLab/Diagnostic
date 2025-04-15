@@ -13,13 +13,13 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Redis\Predis;
 
-use FiveLab\Component\Diagnostic\Check\Redis\Predis\PredisSetGetCheck;
+use FiveLab\Component\Diagnostic\Check\Redis\Predis\PredisCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRedisTestCase;
 use PHPUnit\Framework\Attributes\Test;
 
-class PredisSetGetCheckTest extends AbstractRedisTestCase
+class PredisCheckTest extends AbstractRedisTestCase
 {
     protected function setUp(): void
     {
@@ -35,7 +35,7 @@ class PredisSetGetCheckTest extends AbstractRedisTestCase
     #[Test]
     public function shouldSuccessCheck(): void
     {
-        $check = new PredisSetGetCheck(
+        $check = new PredisCheck(
             $this->getRedisHost(),
             $this->getRedisPort(),
             $this->getRedisPassword()
@@ -43,13 +43,13 @@ class PredisSetGetCheckTest extends AbstractRedisTestCase
 
         $result = $check->check();
 
-        self::assertEquals(new Success('Success connect to Redis and SET/GET from Redis.'), $result);
+        self::assertEquals(new Success('Success connect to Redis.'), $result);
     }
 
     #[Test]
     public function shouldSuccessGetExtraParameters(): void
     {
-        $check = new PredisSetGetCheck(
+        $check = new PredisCheck(
             $this->getRedisHost(),
             $this->getRedisPort(),
             $this->getRedisPassword()
@@ -64,7 +64,7 @@ class PredisSetGetCheckTest extends AbstractRedisTestCase
     #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
-        $check = new PredisSetGetCheck(
+        $check = new PredisCheck(
             $this->getRedisHost().'some',
             $this->getRedisPort(),
             $this->getRedisPassword()
