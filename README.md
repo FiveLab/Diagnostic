@@ -179,4 +179,6 @@ Before create the PR or merge into develop, please run next commands for validat
 ./bin/phpcs --standard=src/phpcs-ruleset.xml src/
 ./bin/phpcs --standard=tests/phpcs-ruleset.xml tests/
 
+php -d memory_limit=-1 ./bin/phpstan
+
 ```
