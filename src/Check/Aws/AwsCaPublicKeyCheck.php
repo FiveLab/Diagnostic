@@ -66,7 +66,7 @@ class AwsCaPublicKeyCheck implements CheckInterface
 
     private function generateFingerprint(string $path): Result|string
     {
-        $key = \openssl_pkey_get_public(\file_get_contents($path));
+        $key = \openssl_pkey_get_public((string) \file_get_contents($path));
 
         if (false === $key) {
             return new Failure(\sprintf(
@@ -76,10 +76,18 @@ class AwsCaPublicKeyCheck implements CheckInterface
         }
 
         $details = \openssl_pkey_get_details($key);
+
+        if (!$details) {
+            return new Failure(\sprintf(
+                'Fail getting public key details (%s).',
+                $path
+            ));
+        }
+
         $der = \preg_replace('/-----BEGIN PUBLIC KEY-----|-----END PUBLIC KEY-----|\s+/', '', $details['key']);
         $der = \base64_decode($der, true);
 
-        $md5 = \md5($der);
+        $md5 = \md5((string) $der);
 
         return \implode(':', \str_split(\strtoupper($md5), 2));
     }
