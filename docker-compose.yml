@@ -23,7 +23,7 @@ services:
             - diagnostic
 
     rabbitmq:
-        image: rabbitmq:management
+        image: rabbitmq:3.13-management
         container_name: 'diagnostic-rabbitmq'
         networks:
             - diagnostic

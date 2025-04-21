@@ -43,7 +43,7 @@ readonly class CheckDefinitions implements \IteratorAggregate, \Countable
     /**
      * {@inheritdoc}
      *
-     * @return \ArrayIterator<int, CheckDefinition>
+     * @return \Iterator<CheckDefinition>
      */
     public function getIterator(): \Iterator
     {

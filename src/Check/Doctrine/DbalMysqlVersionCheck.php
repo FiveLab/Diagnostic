@@ -77,6 +77,6 @@ class DbalMysqlVersionCheck extends AbstractDbalCheck
         $matches = [];
         \preg_match(self::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
 
-        return \rtrim($matches[0], '.'); // @phpstan-ignore-line
+        return \rtrim($matches[0], '.');
     }
 }

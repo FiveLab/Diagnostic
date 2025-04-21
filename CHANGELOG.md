@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+Next release
+------------
+
+Add next checks:
+
+* `FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementVersionCheck` - check RabbitMQ version based on Management.
+
 v2.1.0
 ------
 

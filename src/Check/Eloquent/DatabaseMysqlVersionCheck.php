@@ -63,9 +63,8 @@ class DatabaseMysqlVersionCheck implements CheckInterface
 
     public function getExtraParameters(): array
     {
-        $parameters = [];
-
         $parameters = $this->connection->getConfig();
+
         $parameters['password'] = '***';
         $parameters['actualVersion'] = $this->actualVersion;
         $parameters['expectedVersion'] = $this->expectedVersion;
@@ -78,6 +77,6 @@ class DatabaseMysqlVersionCheck implements CheckInterface
         $matches = [];
         \preg_match(self::MYSQL_EXTRACT_VERSION_REGEX, $buildVersion, $matches);
 
-        return \rtrim($matches[0], '.'); // @phpstan-ignore-line
+        return \rtrim($matches[0], '.');
     }
 }
