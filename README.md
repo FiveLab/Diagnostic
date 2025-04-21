@@ -103,7 +103,7 @@ Integrate with applications
 
 ### Dependency Injection
 
-You can easy integrate this library to Symfony application, or application with DependencyInjection support.
+You can easily integrate this library to Symfony application, or application with DependencyInjection support.
 
 For integrate, you can add the compiler pass to your container builder:
 
@@ -121,7 +121,7 @@ $containerBuilder->addCompilerPass(new AddDiagnosticToBuilderCheckPass());
 $containerBuilder->compile();
 ```
 
-Add add check services:
+And add check services:
 
 ```yaml
 services:
@@ -176,7 +176,9 @@ Before create the PR or merge into develop, please run next commands for validat
 ./bin/phpunit
 
 ./bin/phpcs --config-set show_warnings 0
-./bin/phpcs --standard=vendor/escapestudios/symfony2-coding-standard/Symfony/ src/
+./bin/phpcs --standard=src/phpcs-ruleset.xml src/
 ./bin/phpcs --standard=tests/phpcs-ruleset.xml tests/
+
+php -d memory_limit=-1 ./bin/phpstan
 
 ```

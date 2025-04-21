@@ -99,11 +99,13 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         $containerBuilder = $this->createContainerBuilderWithDefinitionsBuilder();
 
         $checkContainerDefinition1 = new Definition(StubCheck::class);
+
         $checkContainerDefinition1->addTag('diagnostic.check', [
             'group' => 'foo',
         ]);
 
         $checkContainerDefinition2 = new Definition(StubCheck::class);
+
         $checkContainerDefinition2->addTag('diagnostic.check', [
             'group' => 'bar',
         ]);
@@ -147,12 +149,14 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         $containerBuilder = $this->createContainerBuilderWithDefinitionsBuilder();
 
         $checkContainerDefinition1 = new Definition(StubCheck::class);
+
         $checkContainerDefinition1->addTag('diagnostic.check', [
             'key'              => 'foo',
             'error_on_failure' => true,
         ]);
 
         $checkContainerDefinition2 = new Definition(StubCheck::class);
+
         $checkContainerDefinition2->addTag('diagnostic.check', [
             'key'              => 'bar',
             'error_on_failure' => false,
@@ -197,6 +201,7 @@ class AddDiagnosticToBuilderCheckPassTest extends TestCase
         $containerBuilder = $this->createContainerBuilderWithDefinitionsBuilder();
 
         $checkContainerDefinition = new Definition(StubCheck::class);
+
         $checkContainerDefinition->addTag('diagnostic.check', [
             'group' => 'foo',
         ]);
