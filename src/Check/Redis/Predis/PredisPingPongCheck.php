@@ -55,7 +55,7 @@ readonly class PredisPingPongCheck implements CheckInterface
 
     public function getExtraParameters(): array
     {
-        // By security we not return password (because many redis instances work in internal network).
+        // By security, we not return password (because many redis instances work in internal network).
         return [
             'host' => $this->host,
             'port' => $this->port,

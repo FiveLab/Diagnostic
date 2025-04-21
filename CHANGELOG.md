@@ -7,6 +7,8 @@ Next release
 Add next checks:
 
 * `FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementVersionCheck` - check RabbitMQ version based on Management.
+* `FiveLab\Component\Diagnostic\Check\Redis\RedisExt\RedisPingPongCheck` - check Redis by Ping/Pong via php extension.
+* `FiveLab\Component\Diagnostic\Check\Redis\Predis\PredisPingPongCheck` - check Redis by Ping/Ping via `predis/predis` library.
 
 v2.1.0
 ------
