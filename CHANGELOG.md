@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+Next release
+------------
+
+* Add skip groups to `EnvVariableSkipRegistry` (Default ENV: `SKIP_CHECK_GROUPS`).
+
+
 v2.1.1
 ------
 

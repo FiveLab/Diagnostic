@@ -22,21 +22,38 @@ readonly class EnvVariableSkipRegistry implements SkipRegistryInterface
      */
     private array $skipKeys;
 
-    public function __construct(string $envName = 'SKIP_CHECKS')
+    /**
+     * @var array<string>
+     */
+    private array $skipGroups;
+
+    public function __construct(string $envName = 'SKIP_CHECKS', string $groupsEnvName = 'SKIP_CHECK_GROUPS')
     {
-        $envValue = (string) \getenv($envName);
-
-        $skipKeys = \explode(',', $envValue);
-
-        $skipKeys = \array_map('\trim', $skipKeys);
-        $skipKeys = \array_filter($skipKeys);
-        $skipKeys = \array_map('\strtolower', $skipKeys);
-
-        $this->skipKeys = $skipKeys;
+        $this->skipKeys = $this->parseEnv($envName);
+        $this->skipGroups = $this->parseEnv($groupsEnvName);
     }
 
     public function isShouldBeSkipped(CheckDefinition $definition): bool
     {
-        return \in_array($definition->key, $this->skipKeys, true);
+        if (\in_array($definition->key, $this->skipKeys, true)) {
+            return true;
+        }
+
+        foreach ($this->skipGroups as $skipGroup) {
+            if (\in_array($skipGroup, $definition->groups, true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function parseEnv(string $env): array
+    {
+        $parts = \explode(',', (string) \getenv($env));
+        $parts = \array_map('\trim', $parts);
+        $parts = \array_filter($parts);
+
+        return \array_map('\strtolower', $parts);
     }
 }
