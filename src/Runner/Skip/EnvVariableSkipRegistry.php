@@ -48,6 +48,13 @@ readonly class EnvVariableSkipRegistry implements SkipRegistryInterface
         return false;
     }
 
+    /**
+     * Parse ENV as string and return elements as array.
+     *
+     * @param string $env
+     *
+     * @return array<string>
+     */
     private function parseEnv(string $env): array
     {
         $parts = \explode(',', (string) \getenv($env));
