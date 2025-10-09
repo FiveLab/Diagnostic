@@ -13,12 +13,10 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\ClickHouse;
 
-use FiveLab\Component\Diagnostic\Check\ClickHouse\ClickHouseDbCheck;
 use FiveLab\Component\Diagnostic\Check\ClickHouse\ClickHouseVersionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractClickHouseTestCase;
-use FiveLab\Component\Diagnostic\Util\Dsn;
 use PHPUnit\Framework\Attributes\Test;
 
 class ClickHouseVersionCheckTest extends AbstractClickHouseTestCase

@@ -43,7 +43,7 @@ readonly class ClickHouseDbCheck implements CheckInterface
             return $result;
         }
 
-        if ($result !== '1') {
+        if ('1' !== $result) {
             return new Failure('Database does not exist in ClickHouse.');
         }
 

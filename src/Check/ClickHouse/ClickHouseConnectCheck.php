@@ -40,7 +40,7 @@ readonly class ClickHouseConnectCheck implements CheckInterface
             return $result;
         }
 
-        if ($result !== 'Ok.') {
+        if ('Ok.' !== $result) {
             return new Failure('Fail connect to ClickHouse: '.$result);
         }
 
