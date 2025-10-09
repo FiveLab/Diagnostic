@@ -65,7 +65,7 @@ class ClickHouseConnectCheckTest extends AbstractClickHouseTestCase
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
-        self::assertStringStartsWith('Fail connect to', $result->message);
+        self::assertStringStartsWith('Fail connect to '.$dsn->getDsn(maskedPassword: true), $result->message);
         self::assertStringContainsString('cURL error 6: Could not resolve host', $result->message);
     }
 }

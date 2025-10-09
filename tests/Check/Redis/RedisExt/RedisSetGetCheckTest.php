@@ -54,6 +54,22 @@ class RedisSetGetCheckTest extends AbstractRedisTestCase
     }
 
     #[Test]
+    public function shouldFailIfDbIsNotNumeric(): void
+    {
+        $check = new RedisSetGetCheck(new Dsn(
+            'tcp',
+            $this->getRedisHost(),
+            '/abc',
+            $this->getRedisPort(),
+            password: $this->getRedisPassword()
+        ));
+
+        $result = $check->check();
+
+        self::assertEquals(new Failure('Cannot connect to Redis: The database name must be numeric.'), $result);
+    }
+
+    #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
         $check = new RedisSetGetCheck(new Dsn(

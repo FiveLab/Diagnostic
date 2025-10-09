@@ -38,6 +38,10 @@ readonly class RedisPingPongCheck implements CheckInterface
         });
 
         try {
+            if ($this->dsn->target && !\is_numeric($this->dsn->target)) {
+                throw new \InvalidArgumentException('The database name must be numeric.');
+            }
+
             $this->connect($redis);
             $redis->ping();
         } catch (\Throwable $e) {

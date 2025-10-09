@@ -44,6 +44,10 @@ readonly class PredisSetGetCheck implements CheckInterface
         }
 
         try {
+            if ($this->dsn->target && !\is_numeric($this->dsn->target)) {
+                throw new \InvalidArgumentException('The database name must be numeric.');
+            }
+
             $client = new Client($parameters, [
                 'parameters' => [
                     'database' => (int) $this->dsn->target,

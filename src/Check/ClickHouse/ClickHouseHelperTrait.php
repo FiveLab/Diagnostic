@@ -42,7 +42,7 @@ trait ClickHouseHelperTrait
         } catch (\Throwable $error) {
             return new Failure(\sprintf(
                 'Fail connect to %s with error: %s.',
-                $dsn->getDsn(),
+                $dsn->getDsn(maskedPassword: true),
                 \rtrim($error->getMessage(), '.')
             ));
         }

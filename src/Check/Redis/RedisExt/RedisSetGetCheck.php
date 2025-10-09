@@ -40,6 +40,10 @@ readonly class RedisSetGetCheck implements CheckInterface
         });
 
         try {
+            if ($this->dsn->target && !\is_numeric($this->dsn->target)) {
+                throw new \InvalidArgumentException('The database name must be numeric.');
+            }
+
             $this->connect($redis);
         } catch (\Throwable $e) {
             return new Failure(\sprintf(
