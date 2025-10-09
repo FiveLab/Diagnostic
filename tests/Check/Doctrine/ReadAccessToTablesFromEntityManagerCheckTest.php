@@ -93,7 +93,7 @@ class ReadAccessToTablesFromEntityManagerCheckTest extends AbstractDoctrineCheck
     private function setUpDatabase(): void
     {
         $connection = $this->makeDbalConnection();
-        $isDevMode = true;  // Creates doctrine cache as a php array
+        $isDevMode = true; // Creates doctrine cache as a php array
 
         $config = Setup::createAnnotationMetadataConfiguration([__DIR__.'/Entity'], $isDevMode);
 
