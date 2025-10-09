@@ -14,10 +14,10 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Check\RabbitMq\Management;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
-use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -26,7 +26,7 @@ readonly class RabbitMqManagementCheck implements CheckInterface
 {
     private HttpAdapterInterface $http;
 
-    public function __construct(private RabbitMqConnectionParameters $connectionParameters, ?HttpAdapterInterface $http = null)
+    public function __construct(private Dsn $dsn, ?HttpAdapterInterface $http = null)
     {
         $this->http = $http ?: new HttpAdapter();
     }
@@ -35,7 +35,7 @@ readonly class RabbitMqManagementCheck implements CheckInterface
     {
         $url = \sprintf(
             '%s/api/overview',
-            $this->connectionParameters->getDsn(true, false)
+            $this->dsn->getDsn()
         );
 
         $request = $this->http->createRequest('GET', $url, [
@@ -64,7 +64,7 @@ readonly class RabbitMqManagementCheck implements CheckInterface
     public function getExtraParameters(): array
     {
         return [
-            'dsn' => $this->connectionParameters->getDsn(true, true),
+            'dsn' => $this->dsn->getDsn(path: true, maskedPassword: true),
         ];
     }
 }

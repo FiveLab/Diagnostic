@@ -18,6 +18,7 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\ArrayUtils;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 
@@ -40,25 +41,25 @@ class ElasticsearchTemplateCheck implements CheckInterface
     /**
      * Constructor.
      *
-     * @param ElasticsearchConnectionParameters $connectionParameters
-     * @param string                            $name
-     * @param array<string>                     $expectedPatterns
-     * @param array<string, mixed>              $expectedSettings
-     * @param HttpAdapterInterface|null         $http
+     * @param Dsn                       $dsn
+     * @param string                    $name
+     * @param array<string>             $expectedPatterns
+     * @param array<string, mixed>      $expectedSettings
+     * @param HttpAdapterInterface|null $http
      */
     public function __construct(
-        private readonly ElasticsearchConnectionParameters $connectionParameters,
-        private readonly string                            $name,
-        private array                                      $expectedPatterns = [],
-        private readonly array                             $expectedSettings = [],
-        ?HttpAdapterInterface                              $http = null
+        private readonly Dsn    $dsn,
+        private readonly string $name,
+        private array           $expectedPatterns = [],
+        private readonly array  $expectedSettings = [],
+        ?HttpAdapterInterface   $http = null
     ) {
         $this->http = $http ?? new HttpAdapter();
     }
 
     public function check(): Result
     {
-        $result = $this->sendRequest($this->http, $this->connectionParameters, '_template/'.$this->name);
+        $result = $this->sendRequest($this->http, $this->dsn, '_template/'.$this->name);
 
         if ($result instanceof Result) {
             return $result;
@@ -105,7 +106,7 @@ class ElasticsearchTemplateCheck implements CheckInterface
     public function getExtraParameters(): array
     {
         $parameters = [
-            'dsn' => $this->connectionParameters->getDsn(true),
+            'dsn' => $this->dsn->getDsn(maskedPassword: true),
         ];
 
         return \array_merge($parameters, [

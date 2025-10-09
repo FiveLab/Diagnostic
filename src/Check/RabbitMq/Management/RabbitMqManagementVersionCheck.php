@@ -14,10 +14,10 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Check\RabbitMq\Management;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
-use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
@@ -31,10 +31,10 @@ class RabbitMqManagementVersionCheck implements CheckInterface
     private ?string $actualVersion = null;
 
     public function __construct(
-        private RabbitMqConnectionParameters $connectionParameters,
-        private string                       $expectedVersion,
-        ?VersionComparatorInterface          $versionComparator = null,
-        ?HttpAdapterInterface                $http = null
+        private Dsn                 $dsn,
+        private string              $expectedVersion,
+        ?VersionComparatorInterface $versionComparator = null,
+        ?HttpAdapterInterface       $http = null
     ) {
         $this->http = $http ?: new HttpAdapter();
         $this->versionComparator = $versionComparator ?: new SemverVersionComparator();
@@ -44,7 +44,7 @@ class RabbitMqManagementVersionCheck implements CheckInterface
     {
         $url = \sprintf(
             '%s/api/overview',
-            $this->connectionParameters->getDsn(true, false)
+            $this->dsn->getDsn()
         );
 
         $request = $this->http->createRequest('GET', $url, [
@@ -81,7 +81,7 @@ class RabbitMqManagementVersionCheck implements CheckInterface
     public function getExtraParameters(): array
     {
         $params = [
-            'dsn' => $this->connectionParameters->getDsn(true, true),
+            'dsn' => $this->dsn->getDsn(path: true, maskedPassword: true),
         ];
 
         return \array_merge($params, [

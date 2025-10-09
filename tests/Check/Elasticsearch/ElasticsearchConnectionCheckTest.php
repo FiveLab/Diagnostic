@@ -14,10 +14,10 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\Elasticsearch;
 
 use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionCheck;
-use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractElasticsearchTestCase;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -25,11 +25,11 @@ class ElasticsearchConnectionCheckTest extends AbstractElasticsearchTestCase
 {
     #[Test]
     #[DataProvider('provideTargets')]
-    public function shouldSuccessCheck(string $target, ElasticsearchConnectionParameters $connectionParameters): void
+    public function shouldSuccessCheck(string $target, Dsn $dsn): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchConnectionCheck($connectionParameters);
+        $check = new ElasticsearchConnectionCheck($dsn);
 
         $result = $check->check();
 
@@ -38,19 +38,20 @@ class ElasticsearchConnectionCheckTest extends AbstractElasticsearchTestCase
 
     #[Test]
     #[DataProvider('provideTargets')]
-    public function shouldFailCheckIfHostIsInvalid(string $target, ElasticsearchConnectionParameters $connectionParameters): void
+    public function shouldFailCheckIfHostIsInvalid(string $target, Dsn $dsn): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $connectionParameters = new ElasticsearchConnectionParameters(
-            $connectionParameters->host.'_some',
-            $connectionParameters->port,
-            $connectionParameters->username,
-            $connectionParameters->password,
-            false
+        $dsn = new Dsn(
+            'http',
+            $dsn->host.'_some',
+            '',
+            $dsn->port,
+            $dsn->username,
+            $dsn->password
         );
 
-        $check = new ElasticsearchConnectionCheck($connectionParameters);
+        $check = new ElasticsearchConnectionCheck($dsn);
 
         $result = $check->check();
 
@@ -64,7 +65,7 @@ class ElasticsearchConnectionCheckTest extends AbstractElasticsearchTestCase
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchConnectionCheck(new ElasticsearchConnectionParameters('some', 9201));
+        $check = new ElasticsearchConnectionCheck(new Dsn('http', 'some', '', 9201));
 
         $parameters = $check->getExtraParameters();
 
@@ -79,15 +80,16 @@ class ElasticsearchConnectionCheckTest extends AbstractElasticsearchTestCase
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $connectionParameters = new ElasticsearchConnectionParameters(
+        $dsn = new Dsn(
+            'https',
             'foo',
+            '',
             9202,
             'some',
-            'bar-foo',
-            true
+            'bar-foo'
         );
 
-        $check = new ElasticsearchConnectionCheck($connectionParameters);
+        $check = new ElasticsearchConnectionCheck($dsn);
 
         $parameters = $check->getExtraParameters();
 

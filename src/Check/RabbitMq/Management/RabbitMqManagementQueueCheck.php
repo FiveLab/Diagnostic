@@ -14,11 +14,11 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Check\RabbitMq\Management;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
-use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -29,12 +29,12 @@ readonly class RabbitMqManagementQueueCheck implements CheckInterface
     private HttpAdapterInterface $http;
 
     public function __construct(
-        private RabbitMqConnectionParameters $connectionParameters,
-        private string                       $queueName,
-        private ?int                         $maxMessages = null,
-        private ?int                         $minMessages = null,
-        private ?int                         $maxWarningPercentage = null,
-        ?HttpAdapterInterface                $http = null
+        private Dsn           $dsn,
+        private string        $queueName,
+        private ?int          $maxMessages = null,
+        private ?int          $minMessages = null,
+        private ?int          $maxWarningPercentage = null,
+        ?HttpAdapterInterface $http = null
     ) {
         if ($this->maxWarningPercentage < 0 || $this->maxWarningPercentage > 100) {
             throw new \InvalidArgumentException('$maxWarningPercentage must be between 0 and 100');
@@ -47,8 +47,8 @@ readonly class RabbitMqManagementQueueCheck implements CheckInterface
     {
         $url = \sprintf(
             '%s/api/queues/%s/%s',
-            $this->connectionParameters->getDsn(true, false),
-            \urlencode($this->connectionParameters->vhost),
+            $this->dsn->getDsn(),
+            $this->dsn->target,
             \urlencode($this->queueName)
         );
 
@@ -88,8 +88,7 @@ readonly class RabbitMqManagementQueueCheck implements CheckInterface
     public function getExtraParameters(): array
     {
         return [
-            'dsn'                    => $this->connectionParameters->getDsn(true, true),
-            'vhost'                  => $this->connectionParameters->vhost,
+            'dsn'                    => $this->dsn->getDsn(path: true, maskedPassword: true),
             'queue'                  => $this->queueName,
             'max_messages'           => $this->maxMessages,
             'min_messages'           => $this->minMessages,

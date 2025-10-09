@@ -14,10 +14,10 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\RabbitMq\Management;
 
 use FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementExchangeCheck;
-use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqManagementExchangeCheckTest extends AbstractRabbitMqTestCase
@@ -46,9 +46,9 @@ class RabbitMqManagementExchangeCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldSuccessCheck(): void
     {
-        $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
+        $dsn = $this->getRabbitMqManagementDsn();
 
-        $check = new RabbitMqManagementExchangeCheck($connectionParameters, $this->exchangeName, 'direct');
+        $check = new RabbitMqManagementExchangeCheck($dsn, $this->exchangeName, 'direct');
         $result = $check->check();
 
         self::assertEquals(new Success('Success check exchange via RabbitMQ Management API.'), $result);
@@ -57,13 +57,12 @@ class RabbitMqManagementExchangeCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldSuccessGetExtra(): void
     {
-        $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
+        $dsn = $this->getRabbitMqManagementDsn();
 
-        $check = new RabbitMqManagementExchangeCheck($connectionParameters, $this->exchangeName, 'direct');
+        $check = new RabbitMqManagementExchangeCheck($dsn, $this->exchangeName, 'direct');
 
         self::assertEquals([
-            'dsn'         => $connectionParameters->getDsn(true, true),
-            'vhost'       => $connectionParameters->vhost,
+            'dsn'         => $dsn->getDsn(path: true, maskedPassword: true),
             'exchange'    => $this->exchangeName,
             'type'        => 'direct',
             'actual type' => null,
@@ -73,15 +72,16 @@ class RabbitMqManagementExchangeCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfPasswordIsWrong(): void
     {
-        $connectionParameters = new RabbitMqConnectionParameters(
+        $dsn = new Dsn(
+            'http',
             $this->getRabbitMqHost(),
+            '/'.$this->getRabbitMqVhost(),
             $this->getRabbitMqManagementPort(),
             $this->getRabbitMqLogin(),
             'some-foo-bar',
-            $this->getRabbitMqVhost()
         );
 
-        $check = new RabbitMqManagementExchangeCheck($connectionParameters, $this->exchangeName, 'direct');
+        $check = new RabbitMqManagementExchangeCheck($dsn, $this->exchangeName, 'direct');
         $result = $check->check();
 
         self::assertEquals(new Failure('Fail connect to RabbitMQ Management API. Return wrong status code - 401.'), $result);
@@ -90,15 +90,16 @@ class RabbitMqManagementExchangeCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
-        $connectionParameters = new RabbitMqConnectionParameters(
+        $dsn = new Dsn(
+            'http',
             'some-foo-bar',
+            '/'.$this->getRabbitMqVhost(),
             $this->getRabbitMqManagementPort(),
             $this->getRabbitMqLogin(),
-            $this->getRabbitMqPassword(),
-            $this->getRabbitMqVhost()
+            $this->getRabbitMqPassword()
         );
 
-        $check = new RabbitMqManagementExchangeCheck($connectionParameters, $this->exchangeName, 'direct');
+        $check = new RabbitMqManagementExchangeCheck($dsn, $this->exchangeName, 'direct');
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
@@ -108,9 +109,9 @@ class RabbitMqManagementExchangeCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfExchangeNotFound(): void
     {
-        $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
+        $dsn = $this->getRabbitMqManagementDsn();
 
-        $check = new RabbitMqManagementExchangeCheck($connectionParameters, $this->exchangeName.'a', 'direct');
+        $check = new RabbitMqManagementExchangeCheck($dsn, $this->exchangeName.'a', 'direct');
         $result = $check->check();
 
         self::assertEquals(new Failure('Exchange was not found.'), $result);
@@ -119,16 +120,15 @@ class RabbitMqManagementExchangeCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfTypeIsInvalid(): void
     {
-        $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
+        $dsn = $this->getRabbitMqManagementDsn();
 
-        $check = new RabbitMqManagementExchangeCheck($connectionParameters, $this->exchangeName, 'fanout');
+        $check = new RabbitMqManagementExchangeCheck($dsn, $this->exchangeName, 'fanout');
         $result = $check->check();
 
         self::assertEquals(new Failure('Invalid exchange types.'), $result);
 
         self::assertEquals([
-            'dsn'         => $connectionParameters->getDsn(true, true),
-            'vhost'       => '/',
+            'dsn'         => $dsn->getDsn(path: true, maskedPassword: true),
             'exchange'    => $this->exchangeName,
             'type'        => 'fanout',
             'actual type' => 'direct',

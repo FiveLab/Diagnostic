@@ -14,11 +14,11 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\RabbitMq\Management;
 
 use FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementQueueCheck;
-use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -48,9 +48,9 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldSuccessCheck(): void
     {
-        $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
+        $dsn = $this->getRabbitMqManagementDsn();
 
-        $check = new RabbitMqManagementQueueCheck($connectionParameters, $this->queueName);
+        $check = new RabbitMqManagementQueueCheck($dsn, $this->queueName);
         $result = $check->check();
 
         self::assertEquals(new Success('Success check queue via RabbitMQ Management API.'), $result);
@@ -59,13 +59,12 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldSuccessGetExtra(): void
     {
-        $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
+        $dsn = $this->getRabbitMqManagementDsn();
 
-        $check = new RabbitMqManagementQueueCheck($connectionParameters, $this->queueName);
+        $check = new RabbitMqManagementQueueCheck($dsn, $this->queueName);
 
         self::assertEquals([
-            'dsn'                    => $connectionParameters->getDsn(true, true),
-            'vhost'                  => $connectionParameters->vhost,
+            'dsn'                    => $dsn->getDsn(path: true, maskedPassword: true),
             'queue'                  => $this->queueName,
             'max_messages'           => null,
             'min_messages'           => null,
@@ -76,15 +75,16 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfPasswordIsWrong(): void
     {
-        $connectionParameters = new RabbitMqConnectionParameters(
+        $dsn = new Dsn(
+            'http',
             $this->getRabbitMqHost(),
+            '/'.$this->getRabbitMqVhost(),
             $this->getRabbitMqManagementPort(),
             $this->getRabbitMqLogin(),
-            'some-foo-bar',
-            $this->getRabbitMqVhost()
+            'some-foo-bar'
         );
 
-        $check = new RabbitMqManagementQueueCheck($connectionParameters, $this->queueName);
+        $check = new RabbitMqManagementQueueCheck($dsn, $this->queueName);
         $result = $check->check();
 
         self::assertEquals(new Failure('Fail connect to RabbitMQ Management API. Return wrong status code - 401.'), $result);
@@ -93,15 +93,16 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
-        $connectionParameters = new RabbitMqConnectionParameters(
+        $dsn = new Dsn(
+            'http',
             'some-foo-bar',
+            '/'.$this->getRabbitMqVhost(),
             $this->getRabbitMqManagementPort(),
             $this->getRabbitMqLogin(),
-            $this->getRabbitMqPassword(),
-            $this->getRabbitMqVhost()
+            $this->getRabbitMqPassword()
         );
 
-        $check = new RabbitMqManagementQueueCheck($connectionParameters, $this->queueName);
+        $check = new RabbitMqManagementQueueCheck($dsn, $this->queueName);
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
@@ -111,15 +112,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfQueueNotFound(): void
     {
-        $connectionParameters = new RabbitMqConnectionParameters(
-            $this->getRabbitMqHost(),
-            $this->getRabbitMqManagementPort(),
-            $this->getRabbitMqLogin(),
-            $this->getRabbitMqPassword(),
-            $this->getRabbitMqVhost()
-        );
-
-        $check = new RabbitMqManagementQueueCheck($connectionParameters, $this->queueName.'a');
+        $check = new RabbitMqManagementQueueCheck($this->getRabbitMqManagementDsn(), $this->queueName.'a');
         $result = $check->check();
 
         self::assertEquals(new Failure('Queue was not found.'), $result);
@@ -131,15 +124,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
     {
         $this->publishDummyMessagesToQueue($this->queueName, $actualLength);
 
-        $connectionParameters = new RabbitMqConnectionParameters(
-            $this->getRabbitMqHost(),
-            $this->getRabbitMqManagementPort(),
-            $this->getRabbitMqLogin(),
-            $this->getRabbitMqPassword(),
-            $this->getRabbitMqVhost()
-        );
-
-        $check = new RabbitMqManagementQueueCheck($connectionParameters, $this->queueName, $max, $min, $percentage);
+        $check = new RabbitMqManagementQueueCheck($this->getRabbitMqManagementDsn(), $this->queueName, $max, $min, $percentage);
 
         \sleep(10); // RabbitMQ-management does not update stats fast (By default emit stats every 5 seconds).
         $result = $check->check();
@@ -151,7 +136,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
     public static function lengthCheckProvider(): array
     {
         return [
-            'below maximum'  => [
+            'below maximum' => [
                 Success::class,
                 'Success check queue via RabbitMQ Management API.',
                 4,
@@ -160,7 +145,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
                 null,
             ],
 
-            'above minimum'  => [
+            'above minimum' => [
                 Success::class,
                 'Success check queue via RabbitMQ Management API.',
                 6,
@@ -169,7 +154,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
                 5,
             ],
 
-            'above maximum'  => [
+            'above maximum' => [
                 Failure::class,
                 '6 messages found! Max allowed 5 for queue ',
                 6,
@@ -187,7 +172,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
                 1,
             ],
 
-            'below minimum'  => [
+            'below minimum' => [
                 Failure::class,
                 '2 messages found! Minimum required 5 for queue ',
                 2,
@@ -203,7 +188,7 @@ class RabbitMqManagementQueueCheckTest extends AbstractRabbitMqTestCase
         $connection = new \AMQPConnection([
             'host'     => $this->getRabbitMqHost(),
             'port'     => $this->getRabbitMqPort(),
-            'vhost'    => $this->getRabbitMqVhost(),
+            'vhost'    => \urldecode($this->getRabbitMqVhost()),
             'login'    => $this->getRabbitMqLogin(),
             'password' => $this->getRabbitMqPassword(),
         ]);

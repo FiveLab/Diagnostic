@@ -95,6 +95,21 @@ services:
         networks:
             - diagnostic
 
+    clickhouse-server:
+        image: clickhouse:25.9
+        container_name: diagnostic-clickhouse-server
+        ulimits:
+            nofile:
+                soft: 262144
+                hard: 262144
+        environment:
+            CLICKHOUSE_DB: diagnostic
+            CLICKHOUSE_USER: diagnostic
+            CLICKHOUSE_PASSWORD: Q1w2e3r4
+            CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+        networks:
+            - diagnostic
+
 networks:
     diagnostic:
         driver: bridge

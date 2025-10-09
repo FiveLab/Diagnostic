@@ -13,11 +13,11 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Elasticsearch;
 
-use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
 use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchIndexCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractElasticsearchTestCase;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -50,14 +50,14 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
         ];
 
         if ($this->canTestingWithElasticsearch()) {
-            $esParameters = $this->getElasticsearchConnectionParameters();
+            $esParameters = $this->getElasticsearchDsn();
 
             $request = $http->createRequest('PUT', $esParameters->getDsn().'/test-index', $headers, \json_encode($settings));
             $http->sendRequest($request);
         }
 
         if ($this->canTestingWithOpenSearch()) {
-            $osParameters = $this->getOpenSearchConnectionParameters();
+            $osParameters = $this->getOpenSearchDsn();
 
             $request = $http->createRequest('PUT', $osParameters->getDsn().'/test-index', $headers, \json_encode($settings));
             $http->sendRequest($request);
@@ -69,14 +69,14 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
         $http = new HttpAdapter();
 
         if ($this->canTestingWithElasticsearch()) {
-            $esParameters = $this->getElasticsearchConnectionParameters();
+            $esParameters = $this->getElasticsearchDsn();
 
             $request = $http->createRequest('DELETE', $esParameters->getDsn().'/test-index');
             $http->sendRequest($request);
         }
 
         if ($this->canTestingWithOpenSearch()) {
-            $osParameters = $this->getOpenSearchConnectionParameters();
+            $osParameters = $this->getOpenSearchDsn();
 
             $request = $http->createRequest('DELETE', $osParameters->getDsn().'/test-index');
             $http->sendRequest($request);
@@ -85,11 +85,11 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
 
     #[Test]
     #[DataProvider('provideTargets')]
-    public function shouldSuccessCheckWithoutParameters(string $target, ElasticsearchConnectionParameters $connectionParameters): void
+    public function shouldSuccessCheckWithoutParameters(string $target, Dsn $dsn): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchIndexCheck($connectionParameters, 'test-index', []);
+        $check = new ElasticsearchIndexCheck($dsn, 'test-index', []);
 
         $result = $check->check();
 
@@ -98,12 +98,12 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
 
     #[Test]
     #[DataProvider('provideTargets')]
-    public function shouldSuccessCheckWithSettings(string $target, ElasticsearchConnectionParameters $connectionParameters): void
+    public function shouldSuccessCheckWithSettings(string $target, Dsn $dsn): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
         $check = new ElasticsearchIndexCheck(
-            $connectionParameters,
+            $dsn,
             'test-index',
             [
                 'index.number_of_shards' => '3',
@@ -122,7 +122,7 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchIndexCheck(new ElasticsearchConnectionParameters('some', 9201), 'some', []);
+        $check = new ElasticsearchIndexCheck(new Dsn('http', 'some', '', 9201), 'some', []);
 
         $result = $check->check();
 
@@ -131,11 +131,11 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
 
     #[Test]
     #[DataProvider('provideTargets')]
-    public function shouldFailIfIndexNotFound(string $target, ElasticsearchConnectionParameters $connectionParameters): void
+    public function shouldFailIfIndexNotFound(string $target, Dsn $dsn): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchIndexCheck($connectionParameters, 'some-foo', []);
+        $check = new ElasticsearchIndexCheck($dsn, 'some-foo', []);
 
         $result = $check->check();
 
@@ -144,11 +144,11 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
 
     #[Test]
     #[DataProvider('provideTargets')]
-    public function shouldFailIfSettingIsMissed(string $target, ElasticsearchConnectionParameters $connectionParameters): void
+    public function shouldFailIfSettingIsMissed(string $target, Dsn $dsn): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchIndexCheck($connectionParameters, 'test-index', [
+        $check = new ElasticsearchIndexCheck($dsn, 'test-index', [
             'index.number_of_replica' => 1,
         ]);
 
@@ -159,11 +159,11 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
 
     #[Test]
     #[DataProvider('provideTargets')]
-    public function shouldFailIfPartOfPathSettingIsMissed(string $target, ElasticsearchConnectionParameters $connectionParameters): void
+    public function shouldFailIfPartOfPathSettingIsMissed(string $target, Dsn $dsn): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchIndexCheck($connectionParameters, 'test-index', [
+        $check = new ElasticsearchIndexCheck($dsn, 'test-index', [
             'some.foo.bar' => 1,
         ]);
 
@@ -174,11 +174,11 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
 
     #[Test]
     #[DataProvider('provideTargets')]
-    public function shouldFailIfSettingIsDifferent(string $target, ElasticsearchConnectionParameters $connectionParameters): void
+    public function shouldFailIfSettingIsDifferent(string $target, Dsn $dsn): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchIndexCheck($connectionParameters, 'test-index', [
+        $check = new ElasticsearchIndexCheck($dsn, 'test-index', [
             'index.number_of_shards' => '5',
         ]);
 
@@ -189,12 +189,12 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
 
     #[Test]
     #[DataProvider('provideTargets')]
-    public function shouldSuccessGetParameters(string $target, ElasticsearchConnectionParameters $connectionParameters): void
+    public function shouldSuccessGetParameters(string $target, Dsn $dsn): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
         $check = new ElasticsearchIndexCheck(
-            $connectionParameters,
+            $dsn,
             'test-index',
             [
                 'index.number_of_shards'   => '3',
@@ -213,7 +213,7 @@ class ElasticsearchIndexCheckTest extends AbstractElasticsearchTestCase
         unset($parameters['actual settings']['index']['creation_date']);
 
         self::assertEquals([
-            'dsn'               => $connectionParameters->getDsn(true),
+            'dsn'               => $dsn->getDsn(maskedPassword: true),
             'index'             => 'test-index',
             'expected settings' => [
                 'index.number_of_shards'   => '3',

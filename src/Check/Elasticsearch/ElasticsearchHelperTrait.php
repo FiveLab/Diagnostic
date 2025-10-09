@@ -15,6 +15,7 @@ namespace FiveLab\Component\Diagnostic\Check\Elasticsearch;
 
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 
 trait ElasticsearchHelperTrait
@@ -22,15 +23,15 @@ trait ElasticsearchHelperTrait
     /**
      * Send request to elasticsearch API.
      *
-     * @param HttpAdapterInterface              $http
-     * @param ElasticsearchConnectionParameters $connectionParameters
-     * @param string                            $uri
+     * @param HttpAdapterInterface $http
+     * @param Dsn                  $dsn
+     * @param string               $uri
      *
      * @return Result|array<string|int, mixed>
      */
-    protected function sendRequest(HttpAdapterInterface $http, ElasticsearchConnectionParameters $connectionParameters, string $uri): Result|array
+    protected function sendRequest(HttpAdapterInterface $http, Dsn $dsn, string $uri): Result|array
     {
-        $uri = \sprintf('%s/%s', \rtrim($connectionParameters->getDsn(), \ltrim($uri, '/')), $uri);
+        $uri = \sprintf('%s/%s', \rtrim($dsn->getDsn(), \ltrim($uri, '/')), $uri);
 
         $request = $http->createRequest('GET', $uri, [
             'accept' => 'application/json',
@@ -43,7 +44,7 @@ trait ElasticsearchHelperTrait
         } catch (\Throwable $error) {
             return new Failure(\sprintf(
                 'Fail connect to %s with error: %s.',
-                $connectionParameters->getDsn(),
+                $dsn->getDsn(),
                 \rtrim($error->getMessage(), '.')
             ));
         }

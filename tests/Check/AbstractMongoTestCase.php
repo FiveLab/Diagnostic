@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check;
 
-use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionParameters;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractMongoTestCase extends TestCase
@@ -58,15 +58,15 @@ abstract class AbstractMongoTestCase extends TestCase
         return $this->getHost() && $this->getPort() && $this->getDb();
     }
 
-    protected function getConnectionParameters(): MongoConnectionParameters
+    protected function getDsn(): Dsn
     {
-        return new MongoConnectionParameters(
+        return new Dsn(
             $this->getProtocol(),
             $this->getHost(),
+            '/'.$this->getDb(),
             $this->getPort(),
             $this->getUsername(),
-            $this->getPassword(),
-            $this->getDb(),
+            $this->getPassword()
         );
     }
 

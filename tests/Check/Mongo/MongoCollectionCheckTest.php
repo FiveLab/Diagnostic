@@ -14,10 +14,10 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\Mongo;
 
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoCollectionCheck;
-use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractMongoTestCase;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\Manager;
 use PHPUnit\Framework\Attributes\Test;
@@ -33,27 +33,27 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         }
 
         $jsonSchema = [
-            'required' => [ 'a', 'b', 'c' ],
+            'required'   => ['a', 'b', 'c'],
             'properties' => [
-                'a' => [ 'bsonType' => 'string' ],
-                'b' => [ 'bsonType' => 'string' ],
-                'c' => [ 'bsonType' => 'string' ],
+                'a' => ['bsonType' => 'string'],
+                'b' => ['bsonType' => 'string'],
+                'c' => ['bsonType' => 'string'],
             ],
         ];
 
         $createCollection = new Command(
             [
-                'create' => $this->getCollection(),
-                'validator' => [
+                'create'           => $this->getCollection(),
+                'validator'        => [
                     '$jsonSchema' => $jsonSchema,
                 ],
-                'validationLevel' => 'strict',
+                'validationLevel'  => 'strict',
                 'validationAction' => 'error',
             ],
         );
 
         try {
-            $this->mongoManager = new Manager($this->getConnectionParameters()->getDsn());
+            $this->mongoManager = new Manager($this->getDsn()->getDsn());
             $this->mongoManager->executeCommand($this->getDb(), $createCollection);
         } catch (\Exception $e) {
             self::throwException($e);
@@ -73,7 +73,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     public function shouldSuccessfulCheck(): void
     {
         $check = new MongoCollectionCheck(
-            $this->getConnectionParameters(),
+            $this->getDsn(),
             $this->getCollection(),
             $this->getExpectedSettings()
         );
@@ -88,17 +88,17 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     {
         $invalidHost = $this->getHost().'_some';
 
-        $connectionParameters = new MongoConnectionParameters(
+        $dsn = new Dsn(
             $this->getProtocol(),
             $invalidHost,
+            '/'.$this->getDb(),
             $this->getPort(),
             $this->getUsername(),
-            $this->getPassword(),
-            $this->getDb(),
+            $this->getPassword()
         );
 
         $check = new MongoCollectionCheck(
-            $connectionParameters,
+            $dsn,
             $this->getCollection(),
             $this->getExpectedSettings()
         );
@@ -117,7 +117,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         $wrongCollection = 'wrong_collection';
 
         $check = new MongoCollectionCheck(
-            $this->getConnectionParameters(),
+            $this->getDsn(),
             $wrongCollection,
             $this->getExpectedSettings()
         );
@@ -147,7 +147,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         ];
 
         $check = new MongoCollectionCheck(
-            $this->getConnectionParameters(),
+            $this->getDsn(),
             $this->getCollection(),
             $expectedSettings
         );
@@ -161,7 +161,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     public function shouldGetExtraParameters(): void
     {
         $check = new MongoCollectionCheck(
-            $this->getConnectionParameters(),
+            $this->getDsn(),
             'test',
             $this->getExpectedSettings()
         );
@@ -171,17 +171,11 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
         $parameters = $check->getExtraParameters();
 
         self::assertEquals([
-            'protocol' => 'mongodb',
-            'host' => 'diagnostic-mongo',
-            'port' => 27017,
-            'user' => 'root',
-            'pass' => '***',
-            'db' => 'diagnostic',
-            'options' => [],
-            'collection' => 'test',
+            'dsn'               => 'mongodb://root:***@diagnostic-mongo:27017/diagnostic',
+            'collection'        => 'test',
             'expected settings' => [
                 'options.validator.$jsonSchema' => [
-                    'required' => [
+                    'required'   => [
                         'a',
                         'b',
                         'c',
@@ -199,13 +193,13 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
                     ],
                 ],
             ],
-            'actual settings' => [
-                'name' => 'test',
-                'type' => 'collection',
+            'actual settings'   => [
+                'name'    => 'test',
+                'type'    => 'collection',
                 'options' => [
-                    'validator' => [
+                    'validator'        => [
                         '$jsonSchema' => [
-                            'required' => [
+                            'required'   => [
                                 'a',
                                 'b',
                                 'c',
@@ -223,7 +217,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
                             ],
                         ],
                     ],
-                    'validationLevel' => 'strict',
+                    'validationLevel'  => 'strict',
                     'validationAction' => 'error',
                 ],
             ],

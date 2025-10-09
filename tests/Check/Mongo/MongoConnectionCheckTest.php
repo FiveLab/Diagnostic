@@ -14,10 +14,10 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\Mongo;
 
 use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionCheck;
-use FiveLab\Component\Diagnostic\Check\Mongo\MongoConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractMongoTestCase;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use PHPUnit\Framework\Attributes\Test;
 
 class MongoConnectionCheckTest extends AbstractMongoTestCase
@@ -32,7 +32,7 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
     #[Test]
     public function shouldSuccessfulCheck(): void
     {
-        $check = new MongoConnectionCheck($this->getConnectionParameters());
+        $check = new MongoConnectionCheck($this->getDsn());
 
         $result = $check->check();
 
@@ -44,16 +44,16 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
     {
         $invalidHost = $this->getHost().'_some';
 
-        $connectionParameters = new MongoConnectionParameters(
+        $dsn = new Dsn(
             $this->getProtocol(),
             $invalidHost,
+            '/'.$this->getDb(),
             $this->getPort(),
             $this->getUsername(),
-            $this->getPassword(),
-            $this->getDb(),
+            $this->getPassword()
         );
 
-        $check = new MongoConnectionCheck($connectionParameters);
+        $check = new MongoConnectionCheck($dsn);
 
         $result = $check->check();
 
@@ -67,26 +67,20 @@ class MongoConnectionCheckTest extends AbstractMongoTestCase
     public function shouldGetExtraParameters(): void
     {
         $check = new MongoConnectionCheck(
-            new MongoConnectionParameters(
+            new Dsn(
                 'mongodb',
                 'mongo',
+                '/db',
                 27017,
                 'user',
                 'pass',
-                'db',
             ),
         );
 
         $parameters = $check->getExtraParameters();
 
         self::assertEquals([
-            'protocol' => 'mongodb',
-            'host'     => 'mongo',
-            'port'     => 27017,
-            'user'     => 'user',
-            'pass'     => '***',
-            'db'       => 'db',
-            'options'  => [],
+            'dsn' => 'mongodb://user:***@mongo:27017/db',
         ], $parameters);
     }
 }

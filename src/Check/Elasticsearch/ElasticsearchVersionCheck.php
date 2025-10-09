@@ -17,6 +17,7 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use FiveLab\Component\Diagnostic\Util\VersionComparator\SemverVersionComparator;
@@ -32,11 +33,11 @@ class ElasticsearchVersionCheck implements CheckInterface
     private ?string $actualLuceneVersion = null;
 
     public function __construct(
-        private readonly ElasticsearchConnectionParameters $connectionParameters,
-        private readonly ?string                           $expectedVersion = null,
-        private readonly ?string                           $expectedLuceneVersion = null,
-        ?VersionComparatorInterface                        $versionComparator = null,
-        ?HttpAdapterInterface                              $http = null
+        private readonly Dsn        $dsn,
+        private readonly ?string    $expectedVersion = null,
+        private readonly ?string    $expectedLuceneVersion = null,
+        ?VersionComparatorInterface $versionComparator = null,
+        ?HttpAdapterInterface       $http = null
     ) {
         $this->versionComparator = $versionComparator ?: new SemverVersionComparator();
         $this->http = $http ?? new HttpAdapter();
@@ -44,7 +45,7 @@ class ElasticsearchVersionCheck implements CheckInterface
 
     public function check(): Result
     {
-        $result = $this->sendRequest($this->http, $this->connectionParameters, '');
+        $result = $this->sendRequest($this->http, $this->dsn, '');
 
         if ($result instanceof Result) {
             return $result;
@@ -73,7 +74,7 @@ class ElasticsearchVersionCheck implements CheckInterface
     public function getExtraParameters(): array
     {
         $params = [
-            'dsn' => $this->connectionParameters->getDsn(true),
+            'dsn' => $this->dsn->getDsn(maskedPassword: true),
         ];
 
         return \array_merge($params, [

@@ -17,12 +17,13 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 
 readonly class RedisSetGetCheck implements CheckInterface
 {
     private const PREFIX = '__diagnostic__';
 
-    public function __construct(private string $host, private int $port, private ?string $password = null)
+    public function __construct(private Dsn $dsn)
     {
     }
 
@@ -64,19 +65,19 @@ readonly class RedisSetGetCheck implements CheckInterface
 
     public function getExtraParameters(): array
     {
-        // By security we not return password (because many redis instances work in internal network).
         return [
-            'host' => $this->host,
-            'port' => $this->port,
+            'dsn' => $this->dsn->getDsn(path: true, maskedPassword: true),
         ];
     }
 
     private function connect(\Redis $redis): void
     {
-        $redis->connect($this->host, $this->port);
+        $redis->connect($this->dsn->host, $this->dsn->port ?: 6379);
 
-        if ($this->password) {
-            $redis->auth($this->password);
+        if ($this->dsn->password) {
+            $redis->auth($this->dsn->password);
         }
+
+        $redis->select((int) $this->dsn->target);
     }
 }

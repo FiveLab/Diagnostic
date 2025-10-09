@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check;
 
-use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractRabbitMqTestCase extends TestCase
@@ -26,14 +26,14 @@ abstract class AbstractRabbitMqTestCase extends TestCase
             'durable'     => true,
         ];
 
-        $parameters = $this->getRabbitMqManagementConnectionParameters();
+        $parameters = $this->getRabbitMqManagementDsn();
 
-        $dsn = $parameters->getDsn(true, false);
+        $dsn = $parameters->getDsn();
 
         $url = \sprintf(
             '%s/api/exchanges/%s/%s',
             $dsn,
-            \urlencode($parameters->vhost),
+            $parameters->target,
             \urlencode($exchangeName)
         );
 
@@ -50,10 +50,10 @@ abstract class AbstractRabbitMqTestCase extends TestCase
 
     protected function deleteAllExchanges(): void
     {
-        $parameters = $this->getRabbitMqManagementConnectionParameters();
+        $parameters = $this->getRabbitMqManagementDsn();
 
-        $dsn = $parameters->getDsn(true, false);
-        $url = \sprintf('%s/api/exchanges/%s', $dsn, \urlencode($parameters->vhost));
+        $dsn = $parameters->getDsn();
+        $url = \sprintf('%s/api/exchanges/%s', $dsn, $parameters->target);
 
         $data = \json_decode(\file_get_contents($url), true);
 
@@ -72,7 +72,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
             $url = \sprintf(
                 '%s/api/exchanges/%s/%s',
                 $dsn,
-                \urlencode($parameters->vhost),
+                $parameters->target,
                 \urlencode($exchangeInfo['name'])
             );
 
@@ -87,14 +87,14 @@ abstract class AbstractRabbitMqTestCase extends TestCase
             'durable'     => true,
         ];
 
-        $parameters = $this->getRabbitMqManagementConnectionParameters();
+        $parameters = $this->getRabbitMqManagementDsn();
 
-        $dsn = $parameters->getDsn(true, false);
+        $dsn = $parameters->getDsn();
 
         $url = \sprintf(
             '%s/api/queues/%s/%s',
             $dsn,
-            \urlencode($parameters->vhost),
+            $parameters->target,
             \urlencode($queueName)
         );
 
@@ -111,10 +111,10 @@ abstract class AbstractRabbitMqTestCase extends TestCase
 
     protected function deleteAllQueues(): void
     {
-        $parameters = $this->getRabbitMqManagementConnectionParameters();
+        $parameters = $this->getRabbitMqManagementDsn();
 
-        $dsn = $parameters->getDsn(true, false);
-        $url = \sprintf('%s/api/queues/%s', $dsn, \urlencode($parameters->vhost));
+        $dsn = $parameters->getDsn();
+        $url = \sprintf('%s/api/queues/%s', $dsn, $parameters->target);
 
         $data = \json_decode(\file_get_contents($url), true);
 
@@ -128,7 +128,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
             $url = \sprintf(
                 '%s/api/queues/%s/%s',
                 $dsn,
-                \urlencode($parameters->vhost),
+                $parameters->target,
                 \urlencode($queueInfo['name'])
             );
 
@@ -136,35 +136,35 @@ abstract class AbstractRabbitMqTestCase extends TestCase
         }
     }
 
-    protected function getRabbitMqConnectionParameters(): RabbitMqConnectionParameters
+    protected function getRabbitMqDsn(): Dsn
     {
         if (!$this->canTestingWithRabbitMq()) {
             throw new \LogicException('Can\'t get connection parameters. No configured.');
         }
 
-        return new RabbitMqConnectionParameters(
+        return new Dsn(
+            'tcp',
             $this->getRabbitMqHost(),
+            '/'.$this->getRabbitMqVhost(),
             $this->getRabbitMqPort(),
             $this->getRabbitMqLogin(),
-            $this->getRabbitMqPassword(),
-            $this->getRabbitMqVhost(),
-            false
+            $this->getRabbitMqPassword()
         );
     }
 
-    protected function getRabbitMqManagementConnectionParameters(): RabbitMqConnectionParameters
+    protected function getRabbitMqManagementDsn(): Dsn
     {
         if (!$this->canTestingWithRabbitMq()) {
             throw new \LogicException('Can\'t get connection parameters. No configured.');
         }
 
-        return new RabbitMqConnectionParameters(
+        return new Dsn(
+            'http',
             $this->getRabbitMqHost(),
+            '/'.$this->getRabbitMqVhost(),
             $this->getRabbitMqManagementPort(),
             $this->getRabbitMqLogin(),
-            $this->getRabbitMqPassword(),
-            $this->getRabbitMqVhost(),
-            false
+            $this->getRabbitMqPassword()
         );
     }
 
@@ -185,7 +185,7 @@ abstract class AbstractRabbitMqTestCase extends TestCase
 
     protected function getRabbitMqVhost(): string
     {
-        return \getenv('RABBITMQ_VHOST') ?: '/';
+        return \getenv('RABBITMQ_VHOST') ?: '%2f';
     }
 
     protected function getRabbitMqLogin(): string

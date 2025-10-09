@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 
+Next release
+------------
+
+* Remove connection parameters data transfer objects, use `Dsn` instead of. Affected checks:
+  * Redis
+  * ElasticSearch/OpenSearch
+  * RabbitMQ
+  * MongoDB
+
 v2.1.2
 ------
 

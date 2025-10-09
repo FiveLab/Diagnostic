@@ -13,7 +13,7 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check;
 
-use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractElasticsearchTestCase extends TestCase
@@ -48,14 +48,15 @@ abstract class AbstractElasticsearchTestCase extends TestCase
         return self::getElasticsearchHost() && self::getElasticsearchPort();
     }
 
-    protected static function getElasticsearchConnectionParameters(): ElasticsearchConnectionParameters
+    protected static function getElasticsearchDsn(): Dsn
     {
-        return new ElasticsearchConnectionParameters(
+        return new Dsn(
+            self::isElasticsearchSsl() ? 'https' : 'http',
             self::getElasticsearchHost(),
+            '/',
             self::getElasticsearchPort(),
             self::getElasticsearchUser(),
-            self::getElasticsearchPassword(),
-            self::isElasticsearchSsl()
+            self::getElasticsearchPassword()
         );
     }
 
@@ -89,14 +90,15 @@ abstract class AbstractElasticsearchTestCase extends TestCase
         return self::getOpenSearchHost() && self::getOpenSearchPort();
     }
 
-    protected static function getOpenSearchConnectionParameters(): ElasticsearchConnectionParameters
+    protected static function getOpenSearchDsn(): Dsn
     {
-        return new ElasticsearchConnectionParameters(
+        return new Dsn(
+            self::isOpenSearchSsl() ? 'https' : 'http',
             self::getOpenSearchHost(),
+            '',
             self::getOpenSearchPort(),
             self::getOpenSearchUser(),
-            self::getOpenSearchPassword(),
-            self::isOpenSearchSsl()
+            self::getOpenSearchPassword()
         );
     }
 
@@ -121,8 +123,8 @@ abstract class AbstractElasticsearchTestCase extends TestCase
     public static function provideTargets(): array
     {
         return [
-            ['Elasticsearch', self::getElasticsearchConnectionParameters()],
-            ['Opensearch', self::getOpenSearchConnectionParameters()],
+            ['Elasticsearch', self::getElasticsearchDsn()],
+            ['Opensearch', self::getOpenSearchDsn()],
         ];
     }
 }

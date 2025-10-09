@@ -14,10 +14,10 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\RabbitMq\Management;
 
 use FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementVhostCheck;
-use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqManagementVhostCheckTest extends AbstractRabbitMqTestCase
@@ -34,9 +34,7 @@ class RabbitMqManagementVhostCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldSuccessCheck(): void
     {
-        $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
-
-        $check = new RabbitMqManagementVhostCheck($connectionParameters);
+        $check = new RabbitMqManagementVhostCheck($this->getRabbitMqManagementDsn());
         $result = $check->check();
 
         self::assertEquals(new Success('Success check virtual host via RabbitMQ Management API.'), $result);
@@ -45,28 +43,28 @@ class RabbitMqManagementVhostCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldSuccessGetExtra(): void
     {
-        $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
+        $dsn = $this->getRabbitMqManagementDsn();
 
-        $check = new RabbitMqManagementVhostCheck($connectionParameters);
+        $check = new RabbitMqManagementVhostCheck($dsn);
 
         self::assertEquals([
-            'dsn'   => $connectionParameters->getDsn(true, true),
-            'vhost' => $connectionParameters->vhost,
+            'dsn' => $dsn->getDsn(path: true, maskedPassword: true),
         ], $check->getExtraParameters());
     }
 
     #[Test]
     public function shouldFailIfPasswordIsWrong(): void
     {
-        $connectionParameters = new RabbitMqConnectionParameters(
+        $dsn = new Dsn(
+            'http',
             $this->getRabbitMqHost(),
+            '/'.$this->getRabbitMqVhost(),
             $this->getRabbitMqManagementPort(),
             $this->getRabbitMqLogin(),
-            'some-foo-bar',
-            $this->getRabbitMqVhost()
+            'some-foo-bar'
         );
 
-        $check = new RabbitMqManagementVhostCheck($connectionParameters);
+        $check = new RabbitMqManagementVhostCheck($dsn);
         $result = $check->check();
 
         self::assertEquals(new Failure('Fail connect to RabbitMQ Management API. Return wrong status code - 401.'), $result);
@@ -75,15 +73,16 @@ class RabbitMqManagementVhostCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
-        $connectionParameters = new RabbitMqConnectionParameters(
+        $dsn = new Dsn(
+            'http',
             'some-foo-bar',
+            '/'.$this->getRabbitMqVhost(),
             $this->getRabbitMqManagementPort(),
             $this->getRabbitMqLogin(),
-            $this->getRabbitMqPassword(),
-            $this->getRabbitMqVhost()
+            $this->getRabbitMqPassword()
         );
 
-        $check = new RabbitMqManagementVhostCheck($connectionParameters);
+        $check = new RabbitMqManagementVhostCheck($dsn);
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
@@ -93,15 +92,16 @@ class RabbitMqManagementVhostCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfVhostNotFound(): void
     {
-        $connectionParameters = new RabbitMqConnectionParameters(
+        $dsn = new Dsn(
+            'http',
             $this->getRabbitMqHost(),
+            '/'.$this->getRabbitMqVhost().'a',
             $this->getRabbitMqManagementPort(),
             $this->getRabbitMqLogin(),
-            $this->getRabbitMqPassword(),
-            $this->getRabbitMqVhost().'a'
+            $this->getRabbitMqPassword()
         );
 
-        $check = new RabbitMqManagementVhostCheck($connectionParameters);
+        $check = new RabbitMqManagementVhostCheck($dsn);
         $result = $check->check();
 
         self::assertEquals(new Failure('Virtual host was not found.'), $result);

@@ -18,6 +18,7 @@ use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Util\ArrayUtils;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\Exception\Exception;
 use MongoDB\Driver\Manager;
@@ -32,14 +33,14 @@ class MongoCollectionCheck implements CheckInterface
     /**
      * Constructor.
      *
-     * @param MongoConnectionParameters $connectionParameters
-     * @param string                    $collection
-     * @param array<string, mixed>      $expectedSettings
+     * @param Dsn                  $dsn
+     * @param string               $collection
+     * @param array<string, mixed> $expectedSettings
      */
     public function __construct(
-        private readonly MongoConnectionParameters $connectionParameters,
-        private readonly string                    $collection,
-        private readonly array                     $expectedSettings
+        private readonly Dsn    $dsn,
+        private readonly string $collection,
+        private readonly array  $expectedSettings
     ) {
     }
 
@@ -49,7 +50,7 @@ class MongoCollectionCheck implements CheckInterface
             return new Failure('MongoDB driver is not installed.');
         }
 
-        $manager = new Manager($this->connectionParameters->getDsn());
+        $manager = new Manager($this->dsn->getDsn());
 
         $listCollections = new Command(
             [
@@ -61,7 +62,7 @@ class MongoCollectionCheck implements CheckInterface
         );
 
         try {
-            $cursor = $manager->executeCommand($this->connectionParameters->db, $listCollections);
+            $cursor = $manager->executeCommand($this->dsn->target, $listCollections);
             $cursor->setTypeMap(['root' => 'array', 'document' => 'array', 'array' => 'array']);
         } catch (Exception $e) {
             return new Failure(\sprintf(
@@ -76,7 +77,7 @@ class MongoCollectionCheck implements CheckInterface
             $msg = \sprintf(
                 'collection \'%s\' not found in db \'%s\'.',
                 $this->collection,
-                $this->connectionParameters->db
+                $this->dsn->target
             );
 
             return new Failure(\sprintf('MongoDB collection check failed: %s', $msg));
@@ -110,13 +111,11 @@ class MongoCollectionCheck implements CheckInterface
 
         unset($actualSettings['info'], $actualSettings['idIndex']);
 
-        return \array_merge(
-            MongoHelper::convertConnectionParametersToArray($this->connectionParameters),
-            [
-                'collection'        => $this->collection,
-                'expected settings' => \count($this->expectedSettings) ? $this->expectedSettings : '(none)',
-                'actual settings'   => $actualSettings,
-            ],
-        );
+        return [
+            'dsn'               => $this->dsn->getDsn(path: true, maskedPassword: true),
+            'collection'        => $this->collection,
+            'expected settings' => \count($this->expectedSettings) ? $this->expectedSettings : '(none)',
+            'actual settings'   => $actualSettings,
+        ];
     }
 }

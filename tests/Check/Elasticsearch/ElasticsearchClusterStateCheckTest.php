@@ -14,12 +14,12 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\Elasticsearch;
 
 use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchClusterStateCheck;
-use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Result\Warning;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractElasticsearchTestCase;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -33,7 +33,7 @@ class ElasticsearchClusterStateCheckTest extends AbstractElasticsearchTestCase
     public function shouldSuccessCheckGreen(?string $status, Result $expectedResult): void
     {
         $adapter = $this->createMock(HttpAdapterInterface::class);
-        $params = ElasticsearchConnectionParameters::fromDsn('http://elasticsearch.local');
+        $params = Dsn::parse('http://elasticsearch.local:9200');
 
         $healthRequest = new Request('GET', 'http://elasticsearch.local/_cat/health');
 
@@ -59,8 +59,8 @@ class ElasticsearchClusterStateCheckTest extends AbstractElasticsearchTestCase
     #[Test]
     public function shouldSuccessGetExtraParameters(): void
     {
-        $connectionParameters = ElasticsearchConnectionParameters::fromDsn('http://user:pass@host:9201');
-        $check = new ElasticsearchClusterStateCheck($connectionParameters);
+        $dsn = Dsn::parse('http://user:pass@host:9201');
+        $check = new ElasticsearchClusterStateCheck($dsn);
 
         $parameters = $check->getExtraParameters();
 

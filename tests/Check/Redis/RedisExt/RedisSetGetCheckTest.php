@@ -17,6 +17,7 @@ use FiveLab\Component\Diagnostic\Check\Redis\RedisExt\RedisSetGetCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRedisTestCase;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use PHPUnit\Framework\Attributes\Test;
 
 class RedisSetGetCheckTest extends AbstractRedisTestCase
@@ -35,11 +36,7 @@ class RedisSetGetCheckTest extends AbstractRedisTestCase
     #[Test]
     public function shouldSuccessCheck(): void
     {
-        $check = new RedisSetGetCheck(
-            $this->getRedisHost(),
-            $this->getRedisPort(),
-            $this->getRedisPassword()
-        );
+        $check = new RedisSetGetCheck($this->getDsn());
 
         $result = $check->check();
 
@@ -49,26 +46,23 @@ class RedisSetGetCheckTest extends AbstractRedisTestCase
     #[Test]
     public function shouldSuccessGetExtraParameters(): void
     {
-        $check = new RedisSetGetCheck(
-            $this->getRedisHost(),
-            $this->getRedisPort(),
-            $this->getRedisPassword()
-        );
+        $check = new RedisSetGetCheck($this->getDsn());
 
         self::assertEquals([
-            'host' => $this->getRedisHost(),
-            'port' => $this->getRedisPort(),
+            'dsn' => 'tcp://diagnostic-redis:6379/',
         ], $check->getExtraParameters());
     }
 
     #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
-        $check = new RedisSetGetCheck(
+        $check = new RedisSetGetCheck(new Dsn(
+            'tcp',
             $this->getRedisHost().'some',
+            '/0',
             $this->getRedisPort(),
-            $this->getRedisPassword()
-        );
+            password: $this->getRedisPassword()
+        ));
 
         $result = $check->check();
 

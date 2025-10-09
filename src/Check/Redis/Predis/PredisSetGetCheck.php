@@ -17,13 +17,14 @@ use FiveLab\Component\Diagnostic\Check\CheckInterface;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use Predis\Client;
 
 readonly class PredisSetGetCheck implements CheckInterface
 {
     private const PREFIX = '__diagnostic__';
 
-    public function __construct(private string $host, private int $port, private ?string $password = null)
+    public function __construct(private Dsn $dsn)
     {
     }
 
@@ -34,16 +35,20 @@ readonly class PredisSetGetCheck implements CheckInterface
         }
 
         $parameters = [
-            'host' => $this->host,
-            'port' => $this->port,
+            'host' => $this->dsn->host,
+            'port' => $this->dsn->port,
         ];
 
-        if ($this->password) {
-            $parameters['password'] = $this->password;
+        if ($this->dsn->password) {
+            $parameters['password'] = $this->dsn->password;
         }
 
         try {
-            $client = new Client($parameters);
+            $client = new Client($parameters, [
+                'parameters' => [
+                    'database' => (int) $this->dsn->target,
+                ],
+            ]);
 
             $key = \sprintf('%s:%s', self::PREFIX, \md5(\uniqid((string) \random_int(0, PHP_INT_MAX), true)));
 
@@ -67,10 +72,8 @@ readonly class PredisSetGetCheck implements CheckInterface
 
     public function getExtraParameters(): array
     {
-        // By security we not return password (because many redis instances work in internal network).
         return [
-            'host' => $this->host,
-            'port' => $this->port,
+            'dsn' => $this->dsn->getDsn(path: true, maskedPassword: true),
         ];
     }
 }

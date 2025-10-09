@@ -13,11 +13,11 @@ declare(strict_types = 1);
 
 namespace FiveLab\Component\Diagnostic\Tests\Check\Elasticsearch;
 
-use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchConnectionParameters;
 use FiveLab\Component\Diagnostic\Check\Elasticsearch\ElasticsearchVersionCheck;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractElasticsearchTestCase;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -25,11 +25,11 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
 {
     #[Test]
     #[DataProvider('successCheckVersionsProvider')]
-    public function shouldSuccessCheckVersions(string $target, ElasticsearchConnectionParameters $connectionParameters, string $version, string $luceneVersion): void
+    public function shouldSuccessCheckVersions(string $target, Dsn $dsn, string $version, string $luceneVersion): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchVersionCheck($connectionParameters, $version, $luceneVersion, null);
+        $check = new ElasticsearchVersionCheck($dsn, $version, $luceneVersion, null);
 
         $result = $check->check();
 
@@ -38,11 +38,11 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
 
     #[Test]
     #[DataProvider('failCheckElasticsearchVersionsProvider')]
-    public function shouldFailCheckForElasticsearchVersion(string $target, ElasticsearchConnectionParameters $connectionParameters, string $version): void
+    public function shouldFailCheckForElasticsearchVersion(string $target, Dsn $dsn, string $version): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchVersionCheck($connectionParameters, $version, null, null);
+        $check = new ElasticsearchVersionCheck($dsn, $version, null, null);
 
         $result = $check->check();
 
@@ -51,11 +51,11 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
 
     #[Test]
     #[DataProvider('failCheckLuceneVersionsProvider')]
-    public function shouldFailCheckLuceneVersion(string $target, ElasticsearchConnectionParameters $connectionParameters, string $version): void
+    public function shouldFailCheckLuceneVersion(string $target, Dsn $dsn, string $version): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchVersionCheck($connectionParameters, null, $version, null);
+        $check = new ElasticsearchVersionCheck($dsn, null, $version, null);
 
         $result = $check->check();
 
@@ -68,7 +68,7 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchVersionCheck(new ElasticsearchConnectionParameters('some', 9201), null, null, null);
+        $check = new ElasticsearchVersionCheck(new Dsn('http', 'some', '', 9201), null, null, null);
 
         $result = $check->check();
 
@@ -77,16 +77,16 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
 
     #[Test]
     #[DataProvider('successGetParametersProvider')]
-    public function shouldSuccessGetParameters(string $target, ElasticsearchConnectionParameters $connectionParameters, string $version, string $luceneVersion): void
+    public function shouldSuccessGetParameters(string $target, Dsn $dsn, string $version, string $luceneVersion): void
     {
         $this->markTestSkippedIfNotConfigured($target);
 
-        $check = new ElasticsearchVersionCheck($connectionParameters, $version, $luceneVersion, null);
+        $check = new ElasticsearchVersionCheck($dsn, $version, $luceneVersion, null);
 
         $check->check();
         $parameters = $check->getExtraParameters();
 
-        self::assertEquals($connectionParameters->getDsn(true), $parameters['dsn']);
+        self::assertEquals($dsn->getDsn(maskedPassword: true), $parameters['dsn']);
 
         self::assertArrayHasKey('actual version', $parameters);
         self::assertArrayHasKey('expected version', $parameters);
@@ -102,24 +102,24 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
     public static function successCheckVersionsProvider(): array
     {
         return [
-            ['Elasticsearch', self::getElasticsearchConnectionParameters(), '~7.12.0', '~8.0'],
-            ['Opensearch', self::getOpenSearchConnectionParameters(), '~2.4.0', '~9.0'],
+            ['Elasticsearch', self::getElasticsearchDsn(), '~7.12.0', '~8.0'],
+            ['Opensearch', self::getOpenSearchDsn(), '~2.4.0', '~9.0'],
         ];
     }
 
     public static function failCheckElasticsearchVersionsProvider(): array
     {
         return [
-            ['Elasticsearch', self::getElasticsearchConnectionParameters(), '~6.7'],
-            ['Opensearch', self::getOpenSearchConnectionParameters(), '~1.4.0'],
+            ['Elasticsearch', self::getElasticsearchDsn(), '~6.7'],
+            ['Opensearch', self::getOpenSearchDsn(), '~1.4.0'],
         ];
     }
 
     public static function failCheckLuceneVersionsProvider(): array
     {
         return [
-            ['Elasticsearch', self::getElasticsearchConnectionParameters(), '~6.0'],
-            ['Opensearch', self::getOpenSearchConnectionParameters(), '~8.0'],
+            ['Elasticsearch', self::getElasticsearchDsn(), '~6.0'],
+            ['Opensearch', self::getOpenSearchDsn(), '~8.0'],
         ];
     }
 
@@ -134,8 +134,8 @@ class ElasticsearchVersionCheckTest extends AbstractElasticsearchTestCase
     public static function successGetParametersProvider(): array
     {
         return [
-            ['Elasticsearch', self::getElasticsearchConnectionParameters(), '~6.8.0', '~7.0'],
-            ['Opensearch', self::getOpenSearchConnectionParameters(), '~2.4.0', '~9.0'],
+            ['Elasticsearch', self::getElasticsearchDsn(), '~6.8.0', '~7.0'],
+            ['Opensearch', self::getOpenSearchDsn(), '~2.4.0', '~9.0'],
         ];
     }
 }

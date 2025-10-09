@@ -14,10 +14,10 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Tests\Check\RabbitMq\AmqpLib;
 
 use FiveLab\Component\Diagnostic\Check\RabbitMq\AmqpLib\RabbitMqStreamConnectionCheck;
-use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -37,18 +37,17 @@ class RabbitMqStreamConnectionCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldSuccessGetExtraParams(): void
     {
-        $check = new RabbitMqStreamConnectionCheck($this->getRabbitMqConnectionParameters());
+        $check = new RabbitMqStreamConnectionCheck($this->getRabbitMqDsn());
 
         self::assertEquals([
-            'dsn'   => $this->getRabbitMqConnectionParameters()->getDsn(false, true),
-            'vhost' => '/',
+            'dsn' => $this->getRabbitMqDsn()->getDsn(path: true, maskedPassword: true),
         ], $check->getExtraParameters());
     }
 
     #[Test]
     public function shouldReturnOkIfSuccessConnect(): void
     {
-        $check = new RabbitMqStreamConnectionCheck($this->getRabbitMqConnectionParameters());
+        $check = new RabbitMqStreamConnectionCheck($this->getRabbitMqDsn());
 
         $result = $check->check();
 
@@ -58,15 +57,16 @@ class RabbitMqStreamConnectionCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldReturnFailIfPasswordIsWrong(): void
     {
-        $connectionParameters = new RabbitMqConnectionParameters(
+        $dsn = new Dsn(
+            'tcp',
             $this->getRabbitMqHost(),
+            '/'.$this->getRabbitMqVhost(),
             $this->getRabbitMqPort(),
             $this->getRabbitMqLogin(),
             \uniqid(),
-            $this->getRabbitMqVhost()
         );
 
-        $check = new RabbitMqStreamConnectionCheck($connectionParameters);
+        $check = new RabbitMqStreamConnectionCheck($dsn);
 
         $result = $check->check();
 
@@ -79,15 +79,16 @@ class RabbitMqStreamConnectionCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfHostIsDown(): void
     {
-        $connectionParameters = new RabbitMqConnectionParameters(
+        $dsn = new Dsn(
+            'tcp',
             \uniqid(),
+            '/'.$this->getRabbitMqVhost(),
             $this->getRabbitMqPort(),
             $this->getRabbitMqLogin(),
-            $this->getRabbitMqPassword(),
-            $this->getRabbitMqVhost()
+            $this->getRabbitMqPassword()
         );
 
-        $check = new RabbitMqStreamConnectionCheck($connectionParameters);
+        $check = new RabbitMqStreamConnectionCheck($dsn);
 
         $result = $check->check();
 

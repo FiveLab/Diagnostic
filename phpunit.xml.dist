@@ -4,6 +4,7 @@
          colors="true"
          bootstrap="./vendor/autoload.php"
          displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
 >
     <testsuites>
         <testsuite name="Diagnostic tests">

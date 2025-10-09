@@ -15,10 +15,10 @@ namespace FiveLab\Component\Diagnostic\Tests\Check\RabbitMq\Management;
 
 use FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementCheck;
 use FiveLab\Component\Diagnostic\Check\RabbitMq\Management\RabbitMqManagementVersionCheck;
-use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Success;
 use FiveLab\Component\Diagnostic\Tests\Check\AbstractRabbitMqTestCase;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use PHPUnit\Framework\Attributes\Test;
 
 class RabbitMqManagementVersionCheckTest extends AbstractRabbitMqTestCase
@@ -35,9 +35,9 @@ class RabbitMqManagementVersionCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldSuccessCheck(): void
     {
-        $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
+        $dsn = $this->getRabbitMqManagementDsn();
 
-        $check = new RabbitMqManagementVersionCheck($connectionParameters, '~3.13.0');
+        $check = new RabbitMqManagementVersionCheck($dsn, '~3.13.0');
         $result = $check->check();
 
         self::assertEquals(new Success('Success check RabbitMQ version.'), $result);
@@ -46,16 +46,16 @@ class RabbitMqManagementVersionCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldSuccessGetExtra(): void
     {
-        $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
+        $dsn = $this->getRabbitMqManagementDsn();
 
-        $check = new RabbitMqManagementVersionCheck($connectionParameters, '~3.13.0');
+        $check = new RabbitMqManagementVersionCheck($dsn, '~3.13.0');
         $check->check();
 
         $extraParams = $check->getExtraParameters();
 
         self::assertCount(3, $extraParams);
 
-        self::assertEquals($connectionParameters->getDsn(true, true), $extraParams['dsn']);
+        self::assertEquals($dsn->getDsn(path: true, maskedPassword: true), $extraParams['dsn']);
         self::assertEquals('~3.13.0', $extraParams['expected version']);
         self::assertStringStartsWith('3.13.', $extraParams['actual version']);
     }
@@ -63,15 +63,16 @@ class RabbitMqManagementVersionCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfPasswordIsWrong(): void
     {
-        $connectionParameters = new RabbitMqConnectionParameters(
+        $dsn = new Dsn(
+            'http',
             $this->getRabbitMqHost(),
+            '/'.$this->getRabbitMqVhost(),
             $this->getRabbitMqManagementPort(),
             $this->getRabbitMqLogin(),
-            'some-foo-bar',
-            $this->getRabbitMqVhost()
+            'some-foo-bar'
         );
 
-        $check = new RabbitMqManagementCheck($connectionParameters);
+        $check = new RabbitMqManagementCheck($dsn);
         $result = $check->check();
 
         self::assertEquals(new Failure('Fail connect to RabbitMQ Management API. Return wrong status code - 401.'), $result);
@@ -80,15 +81,16 @@ class RabbitMqManagementVersionCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfHostIsWrong(): void
     {
-        $connectionParameters = new RabbitMqConnectionParameters(
+        $dsn = new Dsn(
+            'http',
             'some-foo-bar',
+            '/$this->getRabbitMqVhost()',
             $this->getRabbitMqManagementPort(),
             $this->getRabbitMqLogin(),
-            $this->getRabbitMqPassword(),
-            $this->getRabbitMqVhost()
+            $this->getRabbitMqPassword()
         );
 
-        $check = new RabbitMqManagementCheck($connectionParameters);
+        $check = new RabbitMqManagementCheck($dsn);
         $result = $check->check();
 
         self::assertInstanceOf(Failure::class, $result);
@@ -98,9 +100,9 @@ class RabbitMqManagementVersionCheckTest extends AbstractRabbitMqTestCase
     #[Test]
     public function shouldFailIfVersionNotSatisfied(): void
     {
-        $connectionParameters = $this->getRabbitMqManagementConnectionParameters();
+        $dsn = $this->getRabbitMqManagementDsn();
 
-        $check = new RabbitMqManagementVersionCheck($connectionParameters, '~3.12.0');
+        $check = new RabbitMqManagementVersionCheck($dsn, '~3.12.0');
         $result = $check->check();
 
         self::assertEquals(new Failure('Fail check RabbitMQ version.'), $result);

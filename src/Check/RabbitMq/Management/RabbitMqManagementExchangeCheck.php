@@ -14,10 +14,10 @@ declare(strict_types = 1);
 namespace FiveLab\Component\Diagnostic\Check\RabbitMq\Management;
 
 use FiveLab\Component\Diagnostic\Check\CheckInterface;
-use FiveLab\Component\Diagnostic\Check\RabbitMq\RabbitMqConnectionParameters;
 use FiveLab\Component\Diagnostic\Result\Failure;
 use FiveLab\Component\Diagnostic\Result\Result;
 use FiveLab\Component\Diagnostic\Result\Success;
+use FiveLab\Component\Diagnostic\Util\Dsn;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapter;
 use FiveLab\Component\Diagnostic\Util\Http\HttpAdapterInterface;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -28,10 +28,10 @@ class RabbitMqManagementExchangeCheck implements CheckInterface
     private ?string $actualExchangeType = null;
 
     public function __construct(
-        private readonly RabbitMqConnectionParameters $connectionParameters,
-        private readonly string                       $exchangeName,
-        private readonly string                       $exchangeType,
-        ?HttpAdapterInterface                         $http = null
+        private readonly Dsn    $dsn,
+        private readonly string $exchangeName,
+        private readonly string $exchangeType,
+        ?HttpAdapterInterface   $http = null
     ) {
         $this->http = $http ?: new HttpAdapter();
     }
@@ -40,8 +40,8 @@ class RabbitMqManagementExchangeCheck implements CheckInterface
     {
         $url = \sprintf(
             '%s/api/exchanges/%s/%s',
-            $this->connectionParameters->getDsn(true, false),
-            \urlencode($this->connectionParameters->vhost),
+            $this->dsn->getDsn(),
+            $this->dsn->target,
             \urlencode($this->exchangeName)
         );
 
@@ -82,8 +82,7 @@ class RabbitMqManagementExchangeCheck implements CheckInterface
     public function getExtraParameters(): array
     {
         return [
-            'dsn'         => $this->connectionParameters->getDsn(true, true),
-            'vhost'       => $this->connectionParameters->vhost,
+            'dsn'         => $this->dsn->getDsn(path: true, maskedPassword: true),
             'exchange'    => $this->exchangeName,
             'type'        => $this->exchangeType,
             'actual type' => $this->actualExchangeType,
