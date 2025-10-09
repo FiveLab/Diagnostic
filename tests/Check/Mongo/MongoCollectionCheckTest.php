@@ -24,7 +24,7 @@ use PHPUnit\Framework\Attributes\Test;
 
 class MongoCollectionCheckTest extends AbstractMongoTestCase
 {
-    private Manager $mongoManager;
+    private ?Manager $mongoManager = null;
 
     protected function setUp(): void
     {
@@ -63,7 +63,7 @@ class MongoCollectionCheckTest extends AbstractMongoTestCase
     public function tearDown(): void
     {
         try {
-            $this->mongoManager->executeCommand($this->getDb(), new Command(['drop' => $this->getCollection()]));
+            $this->mongoManager?->executeCommand($this->getDb(), new Command(['drop' => $this->getCollection()]));
         } catch (\Exception $e) {
             self::throwException($e);
         }

@@ -49,7 +49,7 @@ class RedisPingPongCheckTest extends AbstractRedisTestCase
         $check = new RedisPingPongCheck($this->getDsn());
 
         self::assertEquals([
-            'dsn' => 'tcp://diagnostic-redis:6379/',
+            'dsn' => $this->getDsn()->getDsn(path: true, maskedPassword: true),
         ], $check->getExtraParameters());
     }
 

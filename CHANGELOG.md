@@ -4,6 +4,7 @@ CHANGELOG
 Next release
 ------------
 
+* Add ClickHouse DB checks (connection/version/database/table).
 * Remove connection parameters data transfer objects, use `Dsn` instead of. Affected checks:
   * Redis
   * ElasticSearch/OpenSearch

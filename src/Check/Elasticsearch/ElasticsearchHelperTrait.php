@@ -31,7 +31,7 @@ trait ElasticsearchHelperTrait
      */
     protected function sendRequest(HttpAdapterInterface $http, Dsn $dsn, string $uri): Result|array
     {
-        $uri = \sprintf('%s/%s', \rtrim($dsn->getDsn(), \ltrim($uri, '/')), $uri);
+        $uri = \sprintf('%s/%s', $dsn->getDsn(), \ltrim($uri, '/'));
 
         $request = $http->createRequest('GET', $uri, [
             'accept' => 'application/json',

@@ -115,6 +115,15 @@ jobs:
                 ports:
                     - 8000:8000
 
+            clickhouse:
+                image: clickhouse/clickhouse-server:25.9
+                ports:
+                    - 8123:8123
+                env:
+                    CLICKHOUSE_USER: diagnostic
+                    CLICKHOUSE_PASSWORD: Q1w2e3r4
+                    CLICKHOUSE_DB: diagnostic
+
         env:
             RABBITMQ_HOST: '127.0.0.1'
             DATABASE_HOST: '127.0.0.1'
@@ -124,6 +133,7 @@ jobs:
             AWS_DYNAMODB_ENDPOINT: 'http://127.0.0.1:8000'
             OPENSEARCH_HOST: '127.0.0.1'
             OPENSEARCH_PORT: 9201
+            CLICKHOUSE_HOST: '127.0.0.1'
 
         steps:
             -   name: Configure sysctl limits

@@ -49,7 +49,7 @@ class PredisSetGetCheckTest extends AbstractRedisTestCase
         $check = new PredisSetGetCheck($this->getDsn());
 
         self::assertEquals([
-            'dsn' => 'tcp://diagnostic-redis:6379/',
+            'dsn' => $this->getDsn()->getDsn(path: true, maskedPassword: true),
         ], $check->getExtraParameters());
     }
 

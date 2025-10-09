@@ -17,6 +17,7 @@ services:
             MONGO_COLLECTION: 'test'
             AWS_DYNAMODB_ENDPOINT: 'http://dynamodb:8000'
             OPENSEARCH_HOST: 'opensearch'
+            CLICKHOUSE_HOST: 'diagnostic-clickhouse'
         volumes:
             - './:/code'
         networks:
@@ -97,7 +98,7 @@ services:
 
     clickhouse-server:
         image: clickhouse:25.9
-        container_name: diagnostic-clickhouse-server
+        container_name: 'diagnostic-clickhouse'
         ulimits:
             nofile:
                 soft: 262144
