@@ -102,7 +102,8 @@ abstract class AbstractClickHouseTestCase extends TestCase
         }
 
         $request = $adapter->createRequest($method, $uri, [
-            'authorization' => 'Basic '.\base64_encode(\sprintf('%s:%s', $dsn->username, $dsn->password)),
+            'authorization'         => 'Basic '.\base64_encode(\sprintf('%s:%s', $dsn->username, $dsn->password)),
+            'x-clickhouse-database' => $dsn->target,
         ], $body);
 
         $response = $adapter->sendRequest($request);

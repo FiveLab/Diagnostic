@@ -34,7 +34,8 @@ trait ClickHouseHelperTrait
         $uri = \sprintf('%s/%s', $dsn->getDsn(), \ltrim($uri, '/'));
 
         $request = $http->createRequest('GET', $uri, [
-            'authorization' => 'Basic '.\base64_encode($dsn->username.':'.$dsn->password),
+            'authorization'         => 'Basic '.\base64_encode($dsn->username.':'.$dsn->password),
+            'x-clickhouse-database' => $dsn->target,
         ]);
 
         try {
