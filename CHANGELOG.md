@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+v2.2.1
+------
+
+* Fix [#19](https://github.com/FiveLab/Diagnostic/issues/19) - pass database in clickhouse checks.
+
 v2.2.0
 ------
 
